@@ -39,20 +39,18 @@ public class TestBook3 implements IGuideBook {
     @Override
     public Book buildBook() {
         BookBinder binder = new BookBinder(new ResourceLocation(GuideMod.ID, "test_book3"));
-        binder.setAuthor("TehNut").setColor(new Color(80, 50, 5)).setItemName("Display Name").setHeader("Hello there").setSpawnWithBook().setGuideTitle("Title message").setContentProvider(this::buildContent);
-
+        binder.setAuthor("Maxanier").setColor(new Color(80, 50, 5)).setItemName("Display Name").setHeader("Hello there").setSpawnWithBook().setGuideTitle("Title message").setContentProvider(this::buildContent);
         book = binder.build();
         return book;
     }
 
     @Override
     public void registerInfoRenderer(Book yourBook) {
-        GuideAPI.registerInfoRenderer(yourBook, new InfoRendererDescription(new ItemStack(Blocks.COAL_BLOCK), new TranslationTextComponent("guideapi.test.compressed_blocks.hint")), Blocks.COAL_BLOCK, Blocks.IRON_BLOCK, Blocks.GOLD_BLOCK);
+        GuideAPI.registerInfoRenderer(yourBook, new InfoRendererDescription(new ItemStack(Blocks.COAL_BLOCK), new TranslationTextComponent("guideapi.test.blocks.compressed_blocks.hint")), Blocks.COAL_BLOCK, Blocks.IRON_BLOCK, Blocks.GOLD_BLOCK);
     }
 
     private void buildContent(List<CategoryAbstract> categories) {
         BookHelper helper = new BookHelper.Builder(GuideMod.ID).setBaseKey("guideapi.test").build();
-
 
         CategoryAbstract blocks = new CategoryItemStack("Blocks", new ItemStack(Blocks.STONE)).withKeyBase(GuideMod.ID);
         Map<ResourceLocation, EntryAbstract> blockEntries = new LinkedHashMap<>();
@@ -66,7 +64,6 @@ public class TestBook3 implements IGuideBook {
         helper.info(false, Ingredient.fromTag(Tags.Items.INGOTS), new ItemStack(Items.IRON_INGOT)).useCustomEntryName().recipes(new ResourceLocation("minecraft", "iron_ingot"), new ResourceLocation("gold_ingot")).setKeyName("ingots").setLinks(new ResourceLocation("guideapi.test.blocks.compressed_blocks")).build(itemEntries);
         items.addEntries(itemEntries);
         categories.add(items);
-
 
         helper.registerLinkablePages(categories);
     }
