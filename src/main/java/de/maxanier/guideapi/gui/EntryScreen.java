@@ -166,6 +166,9 @@ public class EntryScreen extends BaseScreen {
     @Override
     public void onClose() {
         super.onClose();
+        for (IPage page : this.entry.pageList) {
+            page.onClose();
+        }
 
         ResourceLocation key = null;
         for (Map.Entry<ResourceLocation, EntryAbstract> mapEntry : category.entries.entrySet())
