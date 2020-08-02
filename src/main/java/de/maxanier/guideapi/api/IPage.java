@@ -29,4 +29,9 @@ public interface IPage {
 
     @OnlyIn(Dist.CLIENT)
     void onInit(Book book, CategoryAbstract category, EntryAbstract entry, PlayerEntity player, ItemStack bookStack, EntryScreen guiEntry);
+
+    @OnlyIn(Dist.CLIENT)
+    default void onClose() {
+
+    }
 }
