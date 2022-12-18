@@ -11,7 +11,6 @@ import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelEvent;
-import net.minecraftforge.client.event.ModelEvent.BakingCompleted;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -33,7 +32,7 @@ public class RegistrarGuideAPIClient {
 
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
-    public static void bakeModel(BakingCompleted event) {
+    public static void bakeModel(ModelEvent.ModifyBakingResult event) {
         for (Pair<Book, IGuideBook> guide : AnnotationHandler.BOOK_CLASSES) {
             ResourceLocation loc = guide.getRight().getModel();
             if (loc != null) {
@@ -43,7 +42,6 @@ public class RegistrarGuideAPIClient {
                 BakedModel model = event.getModels().get(newMrl);
 
                 event.getModels().put(oldMrl, model);
-
             }
         }
 
