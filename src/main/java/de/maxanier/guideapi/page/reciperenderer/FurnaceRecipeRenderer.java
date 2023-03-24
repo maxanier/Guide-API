@@ -10,6 +10,7 @@ import de.maxanier.guideapi.api.util.GuiHelper;
 import de.maxanier.guideapi.api.util.IngredientCycler;
 import de.maxanier.guideapi.gui.BaseScreen;
 import net.minecraft.client.gui.Font;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -26,7 +27,7 @@ public class FurnaceRecipeRenderer extends IRecipeRenderer.RecipeRendererBase<Sm
     }
 
     @Override
-    public void draw(PoseStack stack, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj, IngredientCycler cycler) {
+    public void draw(PoseStack stack, RegistryAccess registryAccess, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj, IngredientCycler cycler) {
         SubTexture.FURNACE_GRID.draw(stack, guiLeft + 90, guiTop + 71);
 
         guiBase.drawCenteredStringWithoutShadow(stack, fontRendererObj, title, guiLeft + guiBase.xSize / 2, guiTop + 12, 0);
@@ -44,7 +45,7 @@ public class FurnaceRecipeRenderer extends IRecipeRenderer.RecipeRendererBase<Sm
         });
 
 
-        ItemStack output = recipe.getResultItem();
+        ItemStack output = recipe.getResultItem(registryAccess);
 
         int x2 = guiLeft + 135;
         GuiHelper.drawItemStack(stack, output, x2, y);

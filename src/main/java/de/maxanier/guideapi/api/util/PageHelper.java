@@ -7,6 +7,7 @@ import de.maxanier.guideapi.page.PageItemStack;
 import de.maxanier.guideapi.page.PageText;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
@@ -120,11 +121,11 @@ public class PageHelper {
      * @param recipe2 - The second IRecipe to compare
      * @return whether or not the class, size and the output of the recipes are the same
      */
-    public static boolean areIRecipesEqual(Recipe recipe1, Recipe recipe2) {
+    public static boolean areIRecipesEqual(Recipe recipe1, Recipe recipe2, RegistryAccess registryAccess) {
         if (recipe1 == recipe2) return true;
         if (recipe1 == null || recipe2 == null || recipe1.getClass() != recipe2.getClass()) return false;
         if (recipe1.equals(recipe2)) return true;
-        return recipe1.getResultItem().sameItem(recipe2.getResultItem());
+        return recipe1.getResultItem(registryAccess).sameItem(recipe2.getResultItem(registryAccess));
 //        if (recipe1.getRecipeSize() != recipe2.getRecipeSize()) return false;//FN was removed, there is no size now
     }
 

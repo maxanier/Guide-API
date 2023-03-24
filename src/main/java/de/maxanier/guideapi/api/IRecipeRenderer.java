@@ -8,6 +8,7 @@ import de.maxanier.guideapi.api.impl.abstraction.EntryAbstract;
 import de.maxanier.guideapi.api.util.IngredientCycler;
 import de.maxanier.guideapi.gui.BaseScreen;
 import net.minecraft.client.gui.Font;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraftforge.api.distmarker.Dist;
@@ -18,7 +19,7 @@ import java.util.List;
 public interface IRecipeRenderer {
 
     @OnlyIn(Dist.CLIENT)
-    void draw(PoseStack stack, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj, IngredientCycler cycler);
+    void draw(PoseStack stack, RegistryAccess registryAccess, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj, IngredientCycler cycler);
 
     @OnlyIn(Dist.CLIENT)
     void drawExtras(PoseStack stack, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj);
@@ -27,7 +28,6 @@ public interface IRecipeRenderer {
 
         protected T recipe;
         protected List<Component> tooltips = Lists.newArrayList();
-
 
         public RecipeRendererBase(T recipe) {
             this.recipe = recipe;

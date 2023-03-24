@@ -192,7 +192,7 @@ public class GuiUtilsCopy {
             for (int lineNumber = 0; lineNumber < finalTexLines.size(); ++lineNumber) {
                 FormattedCharSequence line = finalTexLines.get(lineNumber);
                 if (line != null)
-                    font.drawInBatch(line, (float) tooltipX, (float) tooltipY, -1, true, mat, renderType, false, 0, 15728880);
+                    font.drawInBatch(line, (float) tooltipX, (float) tooltipY, -1, true, mat, renderType, Font.DisplayMode.NORMAL, 0, 15728880);
 
                 if (lineNumber + 1 == titleLinesCount)
                     tooltipY += 2;

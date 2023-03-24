@@ -51,8 +51,8 @@ public class GuiHelper {
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         RenderSystem.enableDepthTest();
-        render.renderAndDecorateItem(stack, x, y);
-        render.renderGuiItemDecorations(Minecraft.getInstance().font, stack, x, y, null);
+        render.renderAndDecorateItem(poseStack, stack, x, y);
+        render.renderGuiItemDecorations(poseStack, Minecraft.getInstance().font, stack, x, y, null);
         mStack.popPose();
         RenderSystem.applyModelViewMatrix();
     }
@@ -74,7 +74,7 @@ public class GuiHelper {
         RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         RenderSystem.enableDepthTest();
         RenderSystem.applyModelViewMatrix();
-        render.renderAndDecorateItem(stack, (int) (x / scale), (int) (y / scale));
+        render.renderAndDecorateItem(poseStack, stack, (int) (x / scale), (int) (y / scale));
         mStack.popPose();
         RenderSystem.applyModelViewMatrix();
     }

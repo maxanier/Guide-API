@@ -44,8 +44,7 @@ public class EventHandler {
 
     @SubscribeEvent
     public static void onPlayerJoinWorld(EntityJoinLevelEvent event) {
-        if (!event.getEntity().level.isClientSide && event.getEntity() instanceof Player) {
-            Player player = (Player) event.getEntity();
+        if (!event.getEntity().level.isClientSide && event.getEntity() instanceof Player player) {
             CompoundTag tag = getModTag(player, GuideMod.ID);
             if (GuideConfig.COMMON.canSpawnWithBook.get()) {
                 for (Book book : GuideAPI.getBooks().values()) {
@@ -107,7 +106,7 @@ public class EventHandler {
             int drawX = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 10;
             int drawY = Minecraft.getInstance().getWindow().getGuiScaledHeight() / 2 - 8;
 
-            Minecraft.getInstance().getItemRenderer().renderGuiItem(held, drawX, drawY);
+            Minecraft.getInstance().getItemRenderer().renderGuiItem(event.getPoseStack(), held, drawX, drawY);
 
             drawY -= 2;
             drawX += 20;

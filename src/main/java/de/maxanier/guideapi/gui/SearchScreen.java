@@ -13,6 +13,7 @@ import de.maxanier.guideapi.button.ButtonBack;
 import de.maxanier.guideapi.button.ButtonNext;
 import de.maxanier.guideapi.button.ButtonPrev;
 import de.maxanier.guideapi.util.GuiUtilsCopy;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -105,7 +106,7 @@ public class SearchScreen extends BaseScreen {
 
         searchField = new EditBox(font, guiLeft + 43, guiTop + 12, 100, 10, Component.translatable("guideapi.button.search"));
         searchField.setBordered(false);
-        searchField.changeFocus(true);
+        searchField.setFocused(true);
         searchResults = getMatches(book, null, player, bookStack);
     }
 
@@ -116,7 +117,7 @@ public class SearchScreen extends BaseScreen {
         }
 
         if (keyCode == GLFW.GLFW_KEY_ESCAPE)
-            searchField.changeFocus(false);
+            searchField.setFocused(false);
 
         if (searchField.keyPressed(keyCode, p_keyPressed_2_, p_keyPressed_3_)) {
             this.updateSearch();
@@ -193,7 +194,7 @@ public class SearchScreen extends BaseScreen {
         if (searchResults.size() != 0 && currentPage >= 0 && currentPage < searchResults.size()) {
             List<Pair<EntryAbstract, CategoryAbstract>> pageResults = searchResults.get(currentPage);
             for (Pair<EntryAbstract, CategoryAbstract> entry : pageResults) {
-                entry.getLeft().draw(stack, book, entry.getRight(), entryX, entryY, 4 * xSize / 6, 10, mouseX, mouseY, this, font);
+                entry.getLeft().draw(stack, Minecraft.getInstance().level.registryAccess(), book, entry.getRight(), entryX, entryY, 4 * xSize / 6, 10, mouseX, mouseY, this, font);
                 entry.getLeft().drawExtras(stack, book, entry.getRight(), entryX, entryY, 4 * xSize / 6, 10, mouseX, mouseY, this, font);
 
                 if (GuiHelper.isMouseBetween(mouseX, mouseY, entryX, entryY, 4 * xSize / 6, 10)) {

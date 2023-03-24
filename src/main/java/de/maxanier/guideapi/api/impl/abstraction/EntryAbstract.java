@@ -7,6 +7,7 @@ import de.maxanier.guideapi.api.impl.Book;
 import de.maxanier.guideapi.gui.BaseScreen;
 import de.maxanier.guideapi.gui.CategoryScreen;
 import net.minecraft.client.gui.Font;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -14,6 +15,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.List;
+import java.util.Objects;
 
 public abstract class EntryAbstract {
 
@@ -41,7 +43,7 @@ public abstract class EntryAbstract {
     public abstract boolean canSee(Player player, ItemStack bookStack);
 
     @OnlyIn(Dist.CLIENT)
-    public abstract void draw(PoseStack stack, Book book, CategoryAbstract category, int entryX, int entryY, int entryWidth, int entryHeight, int mouseX, int mouseY, BaseScreen guiBase, Font renderer);
+    public abstract void draw(PoseStack stack, RegistryAccess registryAccess, Book book, CategoryAbstract category, int entryX, int entryY, int entryWidth, int entryHeight, int mouseX, int mouseY, BaseScreen guiBase, Font renderer);
 
     @OnlyIn(Dist.CLIENT)
     public abstract void drawExtras(PoseStack stack, Book book, CategoryAbstract category, int entryX, int entryY, int entryWidth, int entryHeight, int mouseX, int mouseY, BaseScreen guiBase, Font renderer);
@@ -52,8 +54,8 @@ public abstract class EntryAbstract {
         if (o == null || getClass() != o.getClass()) return false;
 
         EntryAbstract that = (EntryAbstract) o;
-        if (pageList != null ? !pageList.equals(that.pageList) : that.pageList != null) return false;
-        return name != null ? name.equals(that.name) : that.name == null;
+        if (!Objects.equals(pageList, that.pageList)) return false;
+        return Objects.equals(name, that.name);
     }
 
     public Component getName() {

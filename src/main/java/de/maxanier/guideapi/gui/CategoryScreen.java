@@ -14,6 +14,7 @@ import de.maxanier.guideapi.button.ButtonSearch;
 import de.maxanier.guideapi.network.PacketHandler;
 import de.maxanier.guideapi.network.PacketSyncCategory;
 import de.maxanier.guideapi.wrapper.EntryWrapper;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -169,12 +170,13 @@ public class CategoryScreen extends BaseScreen {
         blit(stack, guiLeft, guiTop, 0, 0, xSize, ySize);
         RenderSystem.setShaderTexture(0, outlineTexture);
         drawTexturedModalRectWithColor(stack, guiLeft, guiTop, 0, 0, xSize, ySize, book.getColor());
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
         entryPage = Mth.clamp(entryPage, 0, entryWrapperMap.size() - 1);
 
         for (EntryWrapper wrapper : this.entryWrapperMap.get(entryPage)) {
             if (wrapper.canPlayerSee()) {
-                wrapper.draw(stack, mouseX, mouseY, this);
+                wrapper.draw(stack, Minecraft.getInstance().level.registryAccess(), mouseX, mouseY, this);
                 wrapper.drawExtras(stack, mouseX, mouseY, this);
             }
             if (wrapper.isMouseOnWrapper(mouseX, mouseY) && wrapper.canPlayerSee()) {

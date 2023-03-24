@@ -25,13 +25,11 @@ public class BaseScreen extends Screen {
     public int ySize = 192;
     public Player player;
     public ItemStack bookStack;
-    public float publicZLevel;
 
     public BaseScreen(Component title, Player player, ItemStack bookStack) {
         super(title);
         this.player = player;
         this.bookStack = bookStack;
-        this.publicZLevel = this.getBlitOffset();
     }
 
     public void drawCenteredStringWithoutShadow(PoseStack matrixStack, Font fontRendererObj, String string, int x, int y, int color) {
@@ -56,10 +54,10 @@ public class BaseScreen extends Screen {
         RenderSystem.setShaderColor((float) color.getRed() / 255F, (float) color.getGreen() / 255F, (float) color.getBlue() / 255F, 1f);
         Tesselator tessellator = Tesselator.getInstance();
         tessellator.getBuilder().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        tessellator.getBuilder().vertex(x, y + height, this.publicZLevel).uv((float) (textureX) * f, (float) (textureY + height) * f1).endVertex();
-        tessellator.getBuilder().vertex(x + width, y + height, this.publicZLevel).uv((float) (textureX + width) * f, (float) (textureY + height) * f1).endVertex();
-        tessellator.getBuilder().vertex(x + width, y, this.publicZLevel).uv((float) (textureX + width) * f, (float) (textureY) * f1).endVertex();
-        tessellator.getBuilder().vertex(x, y, this.publicZLevel).uv((float) (textureX) * f, (float) (textureY) * f1).endVertex();
+        tessellator.getBuilder().vertex(x, y + height, 0).uv((float) (textureX) * f, (float) (textureY + height) * f1).endVertex();
+        tessellator.getBuilder().vertex(x + width, y + height, 0).uv((float) (textureX + width) * f, (float) (textureY + height) * f1).endVertex();
+        tessellator.getBuilder().vertex(x + width, y, 0).uv((float) (textureX + width) * f, (float) (textureY) * f1).endVertex();
+        tessellator.getBuilder().vertex(x, y, 0).uv((float) (textureX) * f, (float) (textureY) * f1).endVertex();
         tessellator.end();
         GlStateManager._disableBlend();
         stack.popPose();

@@ -10,6 +10,7 @@ import de.maxanier.guideapi.api.util.GuiHelper;
 import de.maxanier.guideapi.api.util.IngredientCycler;
 import de.maxanier.guideapi.gui.BaseScreen;
 import net.minecraft.client.gui.Font;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
@@ -26,7 +27,7 @@ public abstract class CraftingRecipeRenderer<T extends Recipe<?>> extends IRecip
     }
 
     @Override
-    public void draw(PoseStack stack, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj, IngredientCycler cycler) {
+    public void draw(PoseStack stack, RegistryAccess registryAccess, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj, IngredientCycler cycler) {
 
         SubTexture.CRAFTING_GRID.draw(stack, guiLeft + 68, guiTop + 53);
 
@@ -36,11 +37,11 @@ public abstract class CraftingRecipeRenderer<T extends Recipe<?>> extends IRecip
         int outputX = guiLeft + 148;
         int outputY = guiTop + 73;
 
-        ItemStack itemStack = recipe.getResultItem();
+        ItemStack itemStack = recipe.getResultItem(registryAccess);
 
         GuiHelper.drawItemStack(stack, itemStack, outputX, outputY);
         if (GuiHelper.isMouseBetween(mouseX, mouseY, outputX, outputY, 15, 15))
-            tooltips = GuiHelper.getTooltip(recipe.getResultItem());
+            tooltips = GuiHelper.getTooltip(recipe.getResultItem(registryAccess));
     }
 
 //    protected ItemStack getNextItem(ItemStack stack, int position) {

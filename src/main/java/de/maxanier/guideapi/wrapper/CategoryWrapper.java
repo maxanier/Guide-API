@@ -7,6 +7,7 @@ import de.maxanier.guideapi.api.util.GuiHelper;
 import de.maxanier.guideapi.gui.BaseScreen;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
@@ -41,7 +42,7 @@ public class CategoryWrapper extends AbstractWrapper {
     }
 
     @Override
-    public void draw(PoseStack stack, int mouseX, int mouseY, BaseScreen gui) {
+    public void draw(PoseStack stack, RegistryAccess registryAccess, int mouseX, int mouseY, BaseScreen gui) {
         category.draw(stack, book, x, y, width, height, mouseX, mouseY, gui, drawOnLeft, renderItem);
     }
 

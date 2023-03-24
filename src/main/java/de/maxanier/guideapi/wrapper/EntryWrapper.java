@@ -9,6 +9,7 @@ import de.maxanier.guideapi.gui.BaseScreen;
 import de.maxanier.guideapi.gui.CategoryScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
@@ -43,8 +44,8 @@ public class EntryWrapper extends AbstractWrapper {
     }
 
     @Override
-    public void draw(PoseStack stack, int mouseX, int mouseY, BaseScreen gui) {
-        entry.draw(stack, book, category, x, y, width, height, mouseX, mouseY, gui, Minecraft.getInstance().font);
+    public void draw(PoseStack stack, RegistryAccess registryAccess, int mouseX, int mouseY, BaseScreen gui) {
+        entry.draw(stack, registryAccess, book, category, x, y, width, height, mouseX, mouseY, gui, Minecraft.getInstance().font);
     }
 
     @Override

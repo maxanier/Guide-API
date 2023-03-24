@@ -11,6 +11,7 @@ import de.maxanier.guideapi.button.ButtonSearch;
 import de.maxanier.guideapi.network.PacketHandler;
 import de.maxanier.guideapi.network.PacketSyncHome;
 import de.maxanier.guideapi.wrapper.CategoryWrapper;
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -147,13 +148,15 @@ public class HomeScreen extends BaseScreen {
         blit(stack, guiLeft, guiTop, 0, 0, xSize, ySize);
         RenderSystem.setShaderTexture(0, outlineTexture);
         drawTexturedModalRectWithColor(stack, guiLeft, guiTop, 0, 0, xSize, ySize, book.getColor());
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+
         drawCenteredStringWithoutShadow(stack, font, book.getHeader().getVisualOrderText(), guiLeft + xSize / 2 + 1, guiTop + 15, 0);
 
         categoryPage = Mth.clamp(categoryPage, 0, categoryWrapperMap.size() - 1);
 
         for (CategoryWrapper wrapper : this.categoryWrapperMap.get(categoryPage))
             if (wrapper.canPlayerSee())
-                wrapper.draw(stack, mouseX, mouseY, this);
+                wrapper.draw(stack, Minecraft.getInstance().level.registryAccess(), mouseX, mouseY, this);
 
         for (CategoryWrapper wrapper : this.categoryWrapperMap.get(categoryPage))
             if (wrapper.canPlayerSee())

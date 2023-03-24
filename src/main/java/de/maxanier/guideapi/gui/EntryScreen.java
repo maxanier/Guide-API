@@ -13,6 +13,7 @@ import de.maxanier.guideapi.button.ButtonSearch;
 import de.maxanier.guideapi.network.PacketHandler;
 import de.maxanier.guideapi.network.PacketSyncEntry;
 import de.maxanier.guideapi.wrapper.PageWrapper;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -173,12 +174,13 @@ public class EntryScreen extends BaseScreen {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, outlineTexture);
         drawTexturedModalRectWithColor(stack, guiLeft, guiTop, 0, 0, xSize, ySize, book.getColor());
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
         pageNumber = Mth.clamp(pageNumber, 0, pageWrapperList.size() - 1);
 
         if (pageNumber < pageWrapperList.size()) {
             if (pageWrapperList.get(pageNumber).canPlayerSee()) {
-                pageWrapperList.get(pageNumber).draw(stack, mouseX, mouseY, this);
+                pageWrapperList.get(pageNumber).draw(stack, Minecraft.getInstance().level.registryAccess(), mouseX, mouseY, this);
                 pageWrapperList.get(pageNumber).drawExtras(stack, mouseX, mouseY, this);
             }
         }
