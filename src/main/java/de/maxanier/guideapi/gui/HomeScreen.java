@@ -1,8 +1,6 @@
 package de.maxanier.guideapi.gui;
 
 import com.google.common.collect.HashMultimap;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.maxanier.guideapi.api.impl.Book;
 import de.maxanier.guideapi.api.impl.abstraction.CategoryAbstract;
 import de.maxanier.guideapi.button.ButtonNext;
@@ -12,10 +10,12 @@ import de.maxanier.guideapi.network.PacketHandler;
 import de.maxanier.guideapi.network.PacketSyncHome;
 import de.maxanier.guideapi.wrapper.CategoryWrapper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
@@ -72,7 +72,7 @@ public class HomeScreen extends BaseScreen {
             category.onInit(book, this, player, bookStack);
             int x = i % 5;
             int y = i / 5;
-            categoryWrapperMap.put(pageNumber, new CategoryWrapper(book, category, cX + x * 27, cY + y * 30, 23, 23, player, this.font, itemRenderer, false, bookStack));
+            categoryWrapperMap.put(pageNumber, new CategoryWrapper(book, category, cX + x * 27, cY + y * 30, 23, 23, player, this.font, false, bookStack));
             i++;
 
             if (i >= 20) {
@@ -143,31 +143,31 @@ public class HomeScreen extends BaseScreen {
     }
 
     @Override
-    public void render(PoseStack stack, int mouseX, int mouseY, float renderPartialTicks) {
-        RenderSystem.setShaderTexture(0, pageTexture);
-        blit(stack, guiLeft, guiTop, 0, 0, xSize, ySize);
-        RenderSystem.setShaderTexture(0, outlineTexture);
-        drawTexturedModalRectWithColor(stack, guiLeft, guiTop, 0, 0, xSize, ySize, book.getColor());
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float renderPartialTicks) {
+        graphics.blit(pageTexture, guiLeft, guiTop, 0, 0, xSize, ySize);
+        graphics.setColor((float) book.getColor().getRed() / 255F, (float) book.getColor().getGreen() / 255F, (float) book.getColor().getBlue() / 255F, 1f);
+        graphics.blit(outlineTexture, guiLeft, guiTop, 0, 0, xSize, ySize);
+        graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
 
-        drawCenteredStringWithoutShadow(stack, font, book.getHeader().getVisualOrderText(), guiLeft + xSize / 2 + 1, guiTop + 15, 0);
+
+        drawCenteredStringWithoutShadow(graphics, font, book.getHeader().getVisualOrderText(), guiLeft + xSize / 2 + 1, guiTop + 15, 0);
 
         categoryPage = Mth.clamp(categoryPage, 0, categoryWrapperMap.size() - 1);
 
         for (CategoryWrapper wrapper : this.categoryWrapperMap.get(categoryPage))
             if (wrapper.canPlayerSee())
-                wrapper.draw(stack, Minecraft.getInstance().level.registryAccess(), mouseX, mouseY, this);
+                wrapper.draw(graphics, Minecraft.getInstance().level.registryAccess(), mouseX, mouseY, this);
 
         for (CategoryWrapper wrapper : this.categoryWrapperMap.get(categoryPage))
             if (wrapper.canPlayerSee())
-                wrapper.drawExtras(stack, mouseX, mouseY, this);
+                wrapper.drawExtras(graphics, mouseX, mouseY, this);
 
-        drawCenteredStringWithoutShadow(stack, font, String.format("%d/%d", categoryPage + 1, categoryWrapperMap.asMap().size()), guiLeft + xSize / 2, guiTop + 5 * ySize / 6, 0);
-        drawCenteredString(stack, font, book.getTitle(), guiLeft + xSize / 2, guiTop - 10, Color.WHITE.getRGB());
+        drawCenteredStringWithoutShadow(graphics, font, String.format("%d/%d", categoryPage + 1, categoryWrapperMap.asMap().size()), guiLeft + xSize / 2, guiTop + 5 * ySize / 6, 0);
+        graphics.drawCenteredString(font, book.getTitle(), guiLeft + xSize / 2, guiTop - 10, Color.WHITE.getRGB());
 
         buttonPrev.visible = categoryPage != 0;
         buttonNext.visible = categoryPage != categoryWrapperMap.asMap().size() - 1 && !categoryWrapperMap.asMap().isEmpty();
 
-        super.render(stack, mouseX, mouseY, renderPartialTicks);
+        super.render(graphics, mouseX, mouseY, renderPartialTicks);
     }
 }

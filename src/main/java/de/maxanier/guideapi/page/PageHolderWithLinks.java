@@ -1,7 +1,6 @@
 package de.maxanier.guideapi.page;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.maxanier.guideapi.api.IPage;
 import de.maxanier.guideapi.api.impl.Book;
 import de.maxanier.guideapi.api.impl.abstraction.CategoryAbstract;
@@ -14,6 +13,7 @@ import de.maxanier.guideapi.gui.LinkedEntryScreen;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -91,24 +91,24 @@ public class PageHolderWithLinks implements IPage {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void draw(PoseStack stack, RegistryAccess registryAccess, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
-        page.draw(stack, registryAccess, book, category, entry, guiLeft, guiTop, mouseX, mouseY, guiBase, fontRendererObj);
+    public void draw(GuiGraphics graphics, RegistryAccess registryAccess, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
+        page.draw(graphics, registryAccess, book, category, entry, guiLeft, guiTop, mouseX, mouseY, guiBase, fontRendererObj);
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void drawExtras(PoseStack stack, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
+    public void drawExtras(GuiGraphics graphics, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
         int ll = guiLeft + guiBase.xSize - 5;
         int y = guiTop + 10;
         for (Link l : links) {
             Component t = l.getDisplayName();
-            fontRendererObj.drawShadow(stack, t, ll, y, 0xFFFFFF);
+            graphics.drawString(fontRendererObj, t, ll, y, 0xFFFFFF, true);
             if (l.width == 0) {
                 l.width = fontRendererObj.width(t);
             }
             y += 20;
         }
-        page.drawExtras(stack, book, category, entry, guiLeft, guiTop, mouseX, mouseY, guiBase, fontRendererObj);
+        page.drawExtras(graphics, book, category, entry, guiLeft, guiTop, mouseX, mouseY, guiBase, fontRendererObj);
     }
 
     @OnlyIn(Dist.CLIENT)

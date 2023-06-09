@@ -1,7 +1,6 @@
 package de.maxanier.guideapi.api.impl;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.maxanier.guideapi.api.IPage;
 import de.maxanier.guideapi.api.impl.abstraction.CategoryAbstract;
 import de.maxanier.guideapi.api.impl.abstraction.EntryAbstract;
@@ -11,6 +10,7 @@ import de.maxanier.guideapi.gui.CategoryScreen;
 import de.maxanier.guideapi.gui.EntryScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
@@ -42,7 +42,7 @@ public class Entry extends EntryAbstract {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void draw(PoseStack stack, RegistryAccess registryAccess, Book book, CategoryAbstract category, int entryX, int entryY, int entryWidth, int entryHeight, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
+    public void draw(GuiGraphics graphics, RegistryAccess registryAccess, Book book, CategoryAbstract category, int entryX, int entryY, int entryWidth, int entryHeight, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
 
         // Cutting code ripped from GuiButtonExt#drawButton(...)
         FormattedText entryName = getName();
@@ -59,10 +59,10 @@ public class Entry extends EntryAbstract {
 
         FormattedCharSequence entryNameRe = Language.getInstance().getVisualOrder(entryName);
         if (GuiHelper.isMouseBetween(mouseX, mouseY, entryX, entryY, entryWidth, entryHeight)) {
-            fontRendererObj.draw(stack, entryNameRe, entryX + 12, entryY + 1, new Color(206, 206, 206).getRGB());
-            fontRendererObj.draw(stack, entryNameRe, entryX + 12, entryY, 0x423EBC);
+            graphics.drawString(fontRendererObj, entryNameRe, entryX + 12, entryY + 1, new Color(206, 206, 206).getRGB(), false);
+            graphics.drawString(fontRendererObj, entryNameRe, entryX + 12, entryY, 0x423EBC, false);
         } else {
-            fontRendererObj.draw(stack, entryNameRe, entryX + 12, entryY, 0);
+            graphics.drawString(fontRendererObj, entryNameRe, entryX + 12, entryY, 0, false);
         }
 
 
@@ -70,7 +70,7 @@ public class Entry extends EntryAbstract {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void drawExtras(PoseStack stack, Book book, CategoryAbstract category, int entryX, int entryY, int entryWidth, int entryHeight, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
+    public void drawExtras(GuiGraphics graphics, Book book, CategoryAbstract category, int entryX, int entryY, int entryWidth, int entryHeight, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
 
 
         // Cutting code ripped from GuiButtonExt#drawButton(...)
@@ -78,7 +78,7 @@ public class Entry extends EntryAbstract {
         boolean cutString = strWidth > guiBase.xSize - 80 && strWidth > fontRendererObj.width("...");
 
         if (GuiHelper.isMouseBetween(mouseX, mouseY, entryX, entryY, entryWidth, entryHeight) && cutString) {
-            guiBase.renderComponentTooltip(stack, Lists.newArrayList(getName()), entryX, entryY + 12);
+            graphics.renderComponentTooltip(fontRendererObj, Lists.newArrayList(getName()), entryX, entryY + 12);
         }
 
 

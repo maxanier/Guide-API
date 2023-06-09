@@ -1,21 +1,13 @@
 package de.maxanier.guideapi.gui;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL11;
-
-import java.awt.*;
 
 
 public class BaseScreen extends Screen {
@@ -32,35 +24,16 @@ public class BaseScreen extends Screen {
         this.bookStack = bookStack;
     }
 
-    public void drawCenteredStringWithoutShadow(PoseStack matrixStack, Font fontRendererObj, String string, int x, int y, int color) {
-        fontRendererObj.draw(matrixStack, string, x - fontRendererObj.width(string) / 2f, y, color);
+    public void drawCenteredStringWithoutShadow(GuiGraphics graphics, Font fontRendererObj, String string, int x, int y, int color) {
+        graphics.drawString(fontRendererObj, string, x - fontRendererObj.width(string) / 2, y, color, false);
     }
 
-    public void drawCenteredStringWithoutShadow(PoseStack matrixStack, Font fontRendererObj, FormattedCharSequence string, int x, int y, int color) {
-        fontRendererObj.draw(matrixStack, string, x - fontRendererObj.width(string) / 2f, y, color);
+    public void drawCenteredStringWithoutShadow(GuiGraphics graphics, Font fontRendererObj, FormattedCharSequence string, int x, int y, int color) {
+        graphics.drawString(fontRendererObj, string, x - fontRendererObj.width(string) / 2, y, color, false);
     }
 
-    public void drawCenteredStringWithoutShadow(PoseStack matrixStack, Font fontRendererObj, Component string, int x, int y, int color) {
-        fontRendererObj.draw(matrixStack, string, x - fontRendererObj.width(string) / 2f, y, color);
-    }
-
-
-    public void drawTexturedModalRectWithColor(PoseStack stack, int x, int y, int textureX, int textureY, int width, int height, Color color) {
-        stack.pushPose();
-        RenderSystem.enableBlend();
-        RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        float f = 0.00390625F;
-        float f1 = 0.00390625F;
-        RenderSystem.setShaderColor((float) color.getRed() / 255F, (float) color.getGreen() / 255F, (float) color.getBlue() / 255F, 1f);
-        Tesselator tessellator = Tesselator.getInstance();
-        tessellator.getBuilder().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        tessellator.getBuilder().vertex(x, y + height, 0).uv((float) (textureX) * f, (float) (textureY + height) * f1).endVertex();
-        tessellator.getBuilder().vertex(x + width, y + height, 0).uv((float) (textureX + width) * f, (float) (textureY + height) * f1).endVertex();
-        tessellator.getBuilder().vertex(x + width, y, 0).uv((float) (textureX + width) * f, (float) (textureY) * f1).endVertex();
-        tessellator.getBuilder().vertex(x, y, 0).uv((float) (textureX) * f, (float) (textureY) * f1).endVertex();
-        tessellator.end();
-        GlStateManager._disableBlend();
-        stack.popPose();
+    public void drawCenteredStringWithoutShadow(GuiGraphics graphics, Font fontRendererObj, Component string, int x, int y, int color) {
+        graphics.drawString(fontRendererObj, string, x - fontRendererObj.width(string) / 2, y, color, false);
     }
 
     @Override

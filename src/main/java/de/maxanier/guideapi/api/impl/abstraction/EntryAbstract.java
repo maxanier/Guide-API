@@ -1,12 +1,12 @@
 package de.maxanier.guideapi.api.impl.abstraction;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.maxanier.guideapi.api.IPage;
 import de.maxanier.guideapi.api.impl.Book;
 import de.maxanier.guideapi.gui.BaseScreen;
 import de.maxanier.guideapi.gui.CategoryScreen;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -43,10 +43,10 @@ public abstract class EntryAbstract {
     public abstract boolean canSee(Player player, ItemStack bookStack);
 
     @OnlyIn(Dist.CLIENT)
-    public abstract void draw(PoseStack stack, RegistryAccess registryAccess, Book book, CategoryAbstract category, int entryX, int entryY, int entryWidth, int entryHeight, int mouseX, int mouseY, BaseScreen guiBase, Font renderer);
+    public abstract void draw(GuiGraphics graphics, RegistryAccess registryAccess, Book book, CategoryAbstract category, int entryX, int entryY, int entryWidth, int entryHeight, int mouseX, int mouseY, BaseScreen guiBase, Font renderer);
 
     @OnlyIn(Dist.CLIENT)
-    public abstract void drawExtras(PoseStack stack, Book book, CategoryAbstract category, int entryX, int entryY, int entryWidth, int entryHeight, int mouseX, int mouseY, BaseScreen guiBase, Font renderer);
+    public abstract void drawExtras(GuiGraphics graphics, Book book, CategoryAbstract category, int entryX, int entryY, int entryWidth, int entryHeight, int mouseX, int mouseY, BaseScreen guiBase, Font renderer);
 
     @Override
     public boolean equals(Object o) {

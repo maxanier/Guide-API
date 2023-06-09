@@ -1,16 +1,18 @@
 package de.maxanier.guideapi.button;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.maxanier.guideapi.api.SubTexture;
 import de.maxanier.guideapi.api.button.ButtonGuideAPI;
 import de.maxanier.guideapi.api.util.GuiHelper;
 import de.maxanier.guideapi.gui.BaseScreen;
-import de.maxanier.guideapi.util.GuiUtilsCopy;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
 
 public class ButtonSearch extends ButtonGuideAPI {
 
@@ -19,16 +21,16 @@ public class ButtonSearch extends ButtonGuideAPI {
     }
 
     @Override
-    public void renderWidget(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         if (this.visible) {
             RenderSystem.enableBlend();
             RenderSystem.setShader(GameRenderer::getPositionTexShader);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             if (GuiHelper.isMouseBetween(mouseX, mouseY, getX(), getY(), width, height)) { //x,y,width,height
-                SubTexture.MAGNIFYING_GLASS.draw(stack, getX(), getY() + 1);
-                GuiUtilsCopy.drawHoveringText(stack, getHoveringText(), mouseX, mouseY, guiBase.width, guiBase.height, -1, Minecraft.getInstance().font);
+                SubTexture.MAGNIFYING_GLASS.draw(graphics, getX(), getY() + 1);
+                graphics.renderTooltip(Minecraft.getInstance().font, getHoveringText(), Optional.empty(), mouseX, mouseY);
             } else {
-                SubTexture.MAGNIFYING_GLASS.draw(stack, getX(), getY());
+                SubTexture.MAGNIFYING_GLASS.draw(graphics, getX(), getY());
             }
             RenderSystem.disableBlend();
         }

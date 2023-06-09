@@ -2,8 +2,6 @@ package de.maxanier.guideapi.gui;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.maxanier.guideapi.GuideMod;
 import de.maxanier.guideapi.api.impl.Book;
 import de.maxanier.guideapi.api.impl.abstraction.CategoryAbstract;
@@ -12,11 +10,10 @@ import de.maxanier.guideapi.api.util.GuiHelper;
 import de.maxanier.guideapi.button.ButtonBack;
 import de.maxanier.guideapi.button.ButtonNext;
 import de.maxanier.guideapi.button.ButtonPrev;
-import de.maxanier.guideapi.util.GuiUtilsCopy;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -29,6 +26,7 @@ import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 public class SearchScreen extends BaseScreen {
 
@@ -174,19 +172,16 @@ public class SearchScreen extends BaseScreen {
     }
 
     @Override
-    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, pageTexture);
-        blit(stack, guiLeft, guiTop, 0, 0, xSize, ySize);
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, outlineTexture);
-        drawTexturedModalRectWithColor(stack, guiLeft, guiTop, 0, 0, xSize, ySize, book.getColor());
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+        graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+        graphics.blit(pageTexture, guiLeft, guiTop, 0, 0, xSize, ySize);
+        graphics.setColor((float) book.getColor().getRed() / 255F, (float) book.getColor().getGreen() / 255F, (float) book.getColor().getBlue() / 255F, 1f);
+        graphics.blit(outlineTexture, guiLeft, guiTop, 0, 0, xSize, ySize);
+        graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
 
-        fill(stack, searchField.getX() - 1, searchField.getY() - 1, searchField.getX() + searchField.getInnerWidth() + 1, searchField.getY() + searchField.getHeight() + 1, new Color(166, 166, 166, 128).getRGB());
-        fill(stack, searchField.getX(), searchField.getY(), searchField.getX() + searchField.getInnerWidth(), searchField.getY() + searchField.getHeight(), new Color(58, 58, 58, 128).getRGB());
-        searchField.render(stack, mouseX, mouseY, partialTicks);
+        graphics.fill(searchField.getX() - 1, searchField.getY() - 1, searchField.getX() + searchField.getInnerWidth() + 1, searchField.getY() + searchField.getHeight() + 1, new Color(166, 166, 166, 128).getRGB());
+        graphics.fill(searchField.getX(), searchField.getY(), searchField.getX() + searchField.getInnerWidth(), searchField.getY() + searchField.getHeight(), new Color(58, 58, 58, 128).getRGB());
+        searchField.render(graphics, mouseX, mouseY, partialTicks);
 
         int entryX = guiLeft + renderXOffset;
         int entryY = guiTop + renderYOffset;
@@ -194,12 +189,12 @@ public class SearchScreen extends BaseScreen {
         if (searchResults.size() != 0 && currentPage >= 0 && currentPage < searchResults.size()) {
             List<Pair<EntryAbstract, CategoryAbstract>> pageResults = searchResults.get(currentPage);
             for (Pair<EntryAbstract, CategoryAbstract> entry : pageResults) {
-                entry.getLeft().draw(stack, Minecraft.getInstance().level.registryAccess(), book, entry.getRight(), entryX, entryY, 4 * xSize / 6, 10, mouseX, mouseY, this, font);
-                entry.getLeft().drawExtras(stack, book, entry.getRight(), entryX, entryY, 4 * xSize / 6, 10, mouseX, mouseY, this, font);
+                entry.getLeft().draw(graphics, Minecraft.getInstance().level.registryAccess(), book, entry.getRight(), entryX, entryY, 4 * xSize / 6, 10, mouseX, mouseY, this, font);
+                entry.getLeft().drawExtras(graphics, book, entry.getRight(), entryX, entryY, 4 * xSize / 6, 10, mouseX, mouseY, this, font);
 
                 if (GuiHelper.isMouseBetween(mouseX, mouseY, entryX, entryY, 4 * xSize / 6, 10)) {
                     if (GLFW.glfwGetKey(minecraft.getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_SHIFT) == GLFW.GLFW_PRESS)
-                        GuiUtilsCopy.drawHoveringText(stack, entry.getRight().getTooltip(), mouseX, mouseY, width, height, 300, font);
+                        graphics.renderTooltip(font, entry.getRight().getTooltip(), Optional.empty(), mouseX, mouseY);
                 }
 
                 entryY += 13;
@@ -209,7 +204,7 @@ public class SearchScreen extends BaseScreen {
         buttonPrev.visible = currentPage != 0;
         buttonNext.visible = currentPage != searchResults.size() - 1 && !searchResults.isEmpty();
 
-        super.render(stack, mouseX, mouseY, partialTicks);
+        super.render(graphics, mouseX, mouseY, partialTicks);
     }
 
     private void updateSearch() {

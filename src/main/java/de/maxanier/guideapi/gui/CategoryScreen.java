@@ -3,7 +3,6 @@ package de.maxanier.guideapi.gui;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.maxanier.guideapi.api.impl.Book;
 import de.maxanier.guideapi.api.impl.abstraction.CategoryAbstract;
 import de.maxanier.guideapi.api.impl.abstraction.EntryAbstract;
@@ -15,11 +14,13 @@ import de.maxanier.guideapi.network.PacketHandler;
 import de.maxanier.guideapi.network.PacketSyncCategory;
 import de.maxanier.guideapi.wrapper.EntryWrapper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
@@ -163,33 +164,32 @@ public class CategoryScreen extends BaseScreen {
     }
 
     @Override
-    public void render(PoseStack stack, int mouseX, int mouseY, float renderPartialTicks) {
+    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float renderPartialTicks) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1f);
-        RenderSystem.setShaderTexture(0, pageTexture); //minecraft
-        blit(stack, guiLeft, guiTop, 0, 0, xSize, ySize);
-        RenderSystem.setShaderTexture(0, outlineTexture);
-        drawTexturedModalRectWithColor(stack, guiLeft, guiTop, 0, 0, xSize, ySize, book.getColor());
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        graphics.setColor(1.0F, 1.0F, 1.0F, 1f);
+        graphics.blit(pageTexture, guiLeft, guiTop, 0, 0, xSize, ySize);
+        graphics.setColor((float) book.getColor().getRed() / 255F, (float) book.getColor().getGreen() / 255F, (float) book.getColor().getBlue() / 255F, 1f);
+        graphics.blit(outlineTexture, guiLeft, guiTop, 0, 0, xSize, ySize);
+        graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
 
         entryPage = Mth.clamp(entryPage, 0, entryWrapperMap.size() - 1);
 
         for (EntryWrapper wrapper : this.entryWrapperMap.get(entryPage)) {
             if (wrapper.canPlayerSee()) {
-                wrapper.draw(stack, Minecraft.getInstance().level.registryAccess(), mouseX, mouseY, this);
-                wrapper.drawExtras(stack, mouseX, mouseY, this);
+                wrapper.draw(graphics, Minecraft.getInstance().level.registryAccess(), mouseX, mouseY, this);
+                wrapper.drawExtras(graphics, mouseX, mouseY, this);
             }
             if (wrapper.isMouseOnWrapper(mouseX, mouseY) && wrapper.canPlayerSee()) {
                 wrapper.onHoverOver(mouseX, mouseY);
             }
         }
 
-        drawCenteredStringWithoutShadow(stack, font, String.format("%d/%d", entryPage + 1, entryWrapperMap.asMap().size()), guiLeft + xSize / 2, guiTop + 5 * ySize / 6, 0);
-        drawCenteredString(stack, font, category.getName(), guiLeft + xSize / 2, guiTop - 10, Color.WHITE.getRGB());
+        drawCenteredStringWithoutShadow(graphics, font, String.format("%d/%d", entryPage + 1, entryWrapperMap.asMap().size()), guiLeft + xSize / 2, guiTop + 5 * ySize / 6, 0);
+        graphics.drawCenteredString(font, category.getName(), guiLeft + xSize / 2, guiTop - 10, Color.WHITE.getRGB());
 
         buttonPrev.visible = entryPage != 0;
         buttonNext.visible = entryPage != entryWrapperMap.asMap().size() - 1 && !entryWrapperMap.asMap().isEmpty();
 
-        super.render(stack, mouseX, mouseY, renderPartialTicks);
+        super.render(graphics, mouseX, mouseY, renderPartialTicks);
     }
 }

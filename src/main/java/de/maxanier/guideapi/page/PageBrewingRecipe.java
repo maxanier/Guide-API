@@ -1,6 +1,5 @@
 package de.maxanier.guideapi.page;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.maxanier.guideapi.api.SubTexture;
 import de.maxanier.guideapi.api.impl.Book;
 import de.maxanier.guideapi.api.impl.Page;
@@ -11,6 +10,7 @@ import de.maxanier.guideapi.api.util.IngredientCycler;
 import de.maxanier.guideapi.api.util.TextHelper;
 import de.maxanier.guideapi.gui.BaseScreen;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
@@ -57,18 +57,18 @@ public class PageBrewingRecipe extends Page {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void draw(PoseStack stack, RegistryAccess registryAccess, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
+    public void draw(GuiGraphics graphics, RegistryAccess registryAccess, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
         cycler.tick(guiBase.getMinecraft());
 
         int xStart = guiLeft + 88;
         int yStart = guiTop + 52;
 
-        SubTexture.POTION_GRID.draw(stack, xStart, yStart);
+        SubTexture.POTION_GRID.draw(graphics, xStart, yStart);
 
         List<Component> badTip = new ArrayList<>();
         badTip.add(Component.translatable("guideapi.text.brewing.error"));
 
-        guiBase.drawCenteredStringWithoutShadow(stack, fontRendererObj, TextHelper.localizeEffect("guideapi.text.brewing.brew"), guiLeft + guiBase.xSize / 2, guiTop + 12, 0);
+        guiBase.drawCenteredStringWithoutShadow(graphics, fontRendererObj, TextHelper.localizeEffect("guideapi.text.brewing.brew"), guiLeft + guiBase.xSize / 2, guiTop + 12, 0);
 
         //int xmiddle =  guiLeft + guiBase.xSize / 2 - 6;
         int x = xStart + 25;//since item stack is approx 16 wide
@@ -77,7 +77,7 @@ public class PageBrewingRecipe extends Page {
         int finalX = x;
         int finalY = y;
         cycler.getCycledIngredientStack(ingredient, 0).ifPresent(s -> {
-            GuiHelper.drawItemStack(stack, s, finalX, finalY);
+            GuiHelper.drawItemStack(graphics, s, finalX, finalY);
         });
 
         List<Component> tooltip = null;
@@ -86,17 +86,17 @@ public class PageBrewingRecipe extends Page {
 
         //the three bottles
         y += 39;
-        GuiHelper.drawItemStack(stack, input.getItems()[0], x, y);
+        GuiHelper.drawItemStack(graphics, input.getItems()[0], x, y);
         if (GuiHelper.isMouseBetween(mouseX, mouseY, x, y, 15, 15))
             tooltip = GuiHelper.getTooltip(input.getItems()[0]);
         int hSpacing = 24;
         x -= hSpacing;
         y -= 8;
-        GuiHelper.drawItemStack(stack, input.getItems()[0], x, y);
+        GuiHelper.drawItemStack(graphics, input.getItems()[0], x, y);
         if (GuiHelper.isMouseBetween(mouseX, mouseY, x, y, 15, 15))
             tooltip = GuiHelper.getTooltip(input.getItems()[0]);
         x += hSpacing * 2;
-        GuiHelper.drawItemStack(stack, input.getItems()[0], x, y);
+        GuiHelper.drawItemStack(graphics, input.getItems()[0], x, y);
         if (GuiHelper.isMouseBetween(mouseX, mouseY, x, y, 15, 15))
             tooltip = GuiHelper.getTooltip(input.getItems()[0]);
 
@@ -106,15 +106,15 @@ public class PageBrewingRecipe extends Page {
         //start output
         x = xStart + 25;
         y += 31;
-        GuiHelper.drawItemStack(stack, output, x, y);
+        GuiHelper.drawItemStack(graphics, output, x, y);
         if (GuiHelper.isMouseBetween(mouseX, mouseY, x, y, 15, 15))
             tooltip = output.getItem() == Item.byBlock(Blocks.BARRIER) ? badTip : GuiHelper.getTooltip(output);
 
         if (output.getItem() == Item.byBlock(Blocks.BARRIER))
-            guiBase.drawCenteredStringWithoutShadow(stack, fontRendererObj, TextHelper.localizeEffect("guideapi.text.brewing.error"), guiLeft + guiBase.xSize / 2, guiTop + 4 * guiBase.ySize / 6, 0xED073D);
+            guiBase.drawCenteredStringWithoutShadow(graphics, fontRendererObj, TextHelper.localizeEffect("guideapi.text.brewing.error"), guiLeft + guiBase.xSize / 2, guiTop + 4 * guiBase.ySize / 6, 0xED073D);
 
         if (tooltip != null)
-            guiBase.renderComponentTooltip(stack, tooltip, mouseX, mouseY);
+            graphics.renderComponentTooltip(fontRendererObj, tooltip, mouseX, mouseY);
     }
 
 

@@ -7,6 +7,7 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -43,7 +44,7 @@ public class GuiHelper {
      * @param x         - The position on the x-axis to draw the itemstack
      * @param y         - The position on the y-axis to draw the itemstack
      */
-    public static void drawItemStack(PoseStack poseStack, ItemStack stack, int x, int y) {
+    public static void drawItemStack(GuiGraphics graphics, ItemStack stack, int x, int y) {
         PoseStack mStack = RenderSystem.getModelViewStack();
 
         mStack.pushPose();
@@ -51,8 +52,8 @@ public class GuiHelper {
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         RenderSystem.enableDepthTest();
-        render.renderAndDecorateItem(poseStack, stack, x, y);
-        render.renderGuiItemDecorations(poseStack, Minecraft.getInstance().font, stack, x, y, null);
+        graphics.renderItem(stack, x, y);
+        graphics.renderItemDecorations(Minecraft.getInstance().font, stack, x, y, null);
         mStack.popPose();
         RenderSystem.applyModelViewMatrix();
     }
@@ -65,7 +66,7 @@ public class GuiHelper {
      * @param y         - The position on the y-axis to draw the itemstack
      * @param scale     - The scale with which to draw the itemstack
      */
-    public static void drawScaledItemStack(PoseStack poseStack, ItemStack stack, int x, int y, float scale) {
+    public static void drawScaledItemStack(GuiGraphics graphics, ItemStack stack, int x, int y, float scale) {
         PoseStack mStack = RenderSystem.getModelViewStack();
 
         mStack.pushPose();
@@ -74,57 +75,11 @@ public class GuiHelper {
         RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         RenderSystem.enableDepthTest();
         RenderSystem.applyModelViewMatrix();
-        render.renderAndDecorateItem(poseStack, stack, (int) (x / scale), (int) (y / scale));
+        graphics.renderItem(stack, (int) (x / scale), (int) (y / scale));
         mStack.popPose();
         RenderSystem.applyModelViewMatrix();
     }
 
-    /**
-     * MatrixStack isn't used yet as vanilla ItemRenderer does not use it yet.
-     *
-     * @param x      - The position on the x-axis to draw the icon
-     * @param y      - The position on the y-axis to draw the icon
-     * @param width  - The width of the icon
-     * @param height - The height of the icon
-     * @param zLevel -
-     */
-    public static void drawIconWithoutColor(PoseStack poseStack, int x, int y, int width, int height, float zLevel) {
-        RenderSystem.enableBlend();
-        RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        RenderSystem.enableDepthTest();
-        Tesselator tessellator = Tesselator.getInstance();
-        tessellator.getBuilder().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        tessellator.getBuilder().vertex(x, y + height, zLevel).uv(0f, 1f).endVertex();
-        tessellator.getBuilder().vertex(x + width, y + height, zLevel).uv(1f, 1f).endVertex();
-        tessellator.getBuilder().vertex(x + width, y, zLevel).uv(1f, 0f).endVertex();
-        tessellator.getBuilder().vertex(x, y, zLevel).uv(0f, 0f).endVertex();
-        tessellator.end();
-    }
-
-    /**
-     * MatrixStack isn't used yet as vanilla ItemRenderer does not use it yet.
-     *
-     * @param x      - The position on the x-axis to draw the icon
-     * @param y      - The position on the y-axis to draw the icon
-     * @param width  - The width of the icon
-     * @param height - The height of the icon
-     * @param zLevel -
-     * @param color  - The color the icon will have
-     */
-    public static void drawIconWithColor(PoseStack poseStack, int x, int y, int width, int height, float zLevel, Color color) {
-        RenderSystem.enableBlend();
-        RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        RenderSystem.enableDepthTest();
-        RenderSystem.setShaderColor((float) color.getRed() / 255F, (float) color.getGreen() / 255F, (float) color.getBlue() / 255F, (float) color.getAlpha() / 255F);
-        Tesselator tessellator = Tesselator.getInstance();
-        tessellator.getBuilder().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        tessellator.getBuilder().vertex(x, y + height, zLevel).uv(0f, 1f).endVertex();
-        tessellator.getBuilder().vertex(x + width, y + height, zLevel).uv(1f, 1f).endVertex();
-        tessellator.getBuilder().vertex(x + width, y, zLevel).uv(1f, 0f).endVertex();
-        tessellator.getBuilder().vertex(x, y, zLevel).uv(0f, 0f).endVertex();
-        tessellator.end();
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-    }
 
     /**
      * MatrixStack isn't used yet as vanilla ItemRenderer does not use it yet.
@@ -135,7 +90,7 @@ public class GuiHelper {
      * @param height - The height of the icon
      * @param zLevel -
      */
-    public static void drawSizedIconWithoutColor(PoseStack poseStack, int x, int y, int width, int height, float zLevel) {
+    public static void drawSizedIconWithoutColor(GuiGraphics graphics, int x, int y, int width, int height, float zLevel) {
         PoseStack mStack = RenderSystem.getModelViewStack();
         mStack.pushPose();
         RenderSystem.enableBlend();
@@ -166,7 +121,7 @@ public class GuiHelper {
      * @param height - The height of the icon
      * @param color  - The color the icon will have
      */
-    public static void drawSizedIconWithColor(PoseStack poseStack, int x, int y, int width, int height, float zLevel, Color color) {
+    public static void drawSizedIconWithColor(GuiGraphics graphics, int x, int y, int width, int height, float zLevel, Color color) {
         PoseStack mStack = RenderSystem.getModelViewStack();
         mStack.pushPose();
         RenderSystem.enableBlend();

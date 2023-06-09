@@ -1,7 +1,6 @@
 package de.maxanier.guideapi.util;
 
 import com.google.common.collect.Multimap;
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.maxanier.guideapi.GuideConfig;
 import de.maxanier.guideapi.GuideMod;
 import de.maxanier.guideapi.api.GuideAPI;
@@ -13,6 +12,7 @@ import de.maxanier.guideapi.api.impl.abstraction.CategoryAbstract;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -44,7 +44,7 @@ public class EventHandler {
 
     @SubscribeEvent
     public static void onPlayerJoinWorld(EntityJoinLevelEvent event) {
-        if (!event.getEntity().level.isClientSide && event.getEntity() instanceof Player player) {
+        if (!event.getEntity().getCommandSenderWorld().isClientSide && event.getEntity() instanceof Player player) {
             CompoundTag tag = getModTag(player, GuideMod.ID);
             if (GuideConfig.COMMON.canSpawnWithBook.get()) {
                 for (Book book : GuideAPI.getBooks().values()) {
@@ -80,7 +80,6 @@ public class EventHandler {
                 break;
             }
         }
-        PoseStack stack = event.getPoseStack();
 
         if (book == null)
             return;
@@ -100,24 +99,26 @@ public class EventHandler {
             }
         }
 
+        GuiGraphics graphics = event.getGuiGraphics();
+
         if (linkedEntry != null) {
             Font fontRenderer = Minecraft.getInstance().font;
 
             int drawX = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 10;
             int drawY = Minecraft.getInstance().getWindow().getGuiScaledHeight() / 2 - 8;
 
-            Minecraft.getInstance().getItemRenderer().renderGuiItem(event.getPoseStack(), held, drawX, drawY);
+            graphics.renderItem(held, drawX, drawY);
 
             drawY -= 2;
             drawX += 20;
-            fontRenderer.drawShadow(stack, linkedEntry instanceof MutableComponent ? ((MutableComponent) linkedEntry).withStyle(ChatFormatting.WHITE) : linkedEntry, drawX, drawY, 0);
-            fontRenderer.drawShadow(stack, Component.translatable("guideapi.text.linked.open").withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC), drawX, drawY + 12, 0);
+            graphics.drawString(fontRenderer, linkedEntry instanceof MutableComponent ? ((MutableComponent) linkedEntry).withStyle(ChatFormatting.WHITE) : linkedEntry, drawX, drawY, 0, true);
+            graphics.drawString(fontRenderer, Component.translatable("guideapi.text.linked.open").withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC), drawX, drawY + 12, 0, true);
         }
 
         if (state.getBlock() instanceof IInfoRenderer.Block) {
             IInfoRenderer infoRenderer = ((IInfoRenderer.Block) state.getBlock()).getInfoRenderer(book, world, rayTracePos, state, rayTrace, player);
             if (book == ((IInfoRenderer.Block) state.getBlock()).getBook() && infoRenderer != null)
-                infoRenderer.drawInformation(stack, book, world, rayTracePos, state, rayTrace, player);
+                infoRenderer.drawInformation(graphics, book, world, rayTracePos, state, rayTrace, player);
         }
 
         Multimap<Block, IInfoRenderer> bookRenderers = GuideAPI.getInfoRenderers().get(book);
@@ -126,7 +127,7 @@ public class EventHandler {
 
         Collection<IInfoRenderer> renderers = bookRenderers.get(state.getBlock());
         for (IInfoRenderer renderer : renderers)
-            renderer.drawInformation(stack, book, world, rayTracePos, state, rayTrace, player);
+            renderer.drawInformation(graphics, book, world, rayTracePos, state, rayTrace, player);
     }
 
     public static CompoundTag getModTag(Player player, String modName) {

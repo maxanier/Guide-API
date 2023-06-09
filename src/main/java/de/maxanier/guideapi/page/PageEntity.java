@@ -1,6 +1,5 @@
 package de.maxanier.guideapi.page;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.maxanier.guideapi.api.impl.Book;
 import de.maxanier.guideapi.api.impl.Page;
 import de.maxanier.guideapi.api.impl.abstraction.CategoryAbstract;
@@ -8,6 +7,7 @@ import de.maxanier.guideapi.api.impl.abstraction.EntryAbstract;
 import de.maxanier.guideapi.gui.BaseScreen;
 import de.maxanier.guideapi.gui.EntryScreen;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
@@ -50,17 +50,17 @@ public class PageEntity extends Page {
     }
 
     @Override
-    public void draw(PoseStack stack, RegistryAccess registryAccess, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
+    public void draw(GuiGraphics graphics, RegistryAccess registryAccess, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
         if (e != null)
-            InventoryScreen.renderEntityInInventoryFollowsMouse(stack, guiLeft + 120, guiTop + 130, 50, (float) (guiLeft + 120) - mouseX, (float) (guiTop + 130) - mouseY, this.e);
+            InventoryScreen.renderEntityInInventoryFollowsMouse(graphics, guiLeft + 120, guiTop + 130, 50, (float) (guiLeft + 120) - mouseX, (float) (guiTop + 130) - mouseY, this.e);
 
     }
 
     @Override
-    public void drawExtras(PoseStack stack, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
+    public void drawExtras(GuiGraphics graphics, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
 
         if (e != null)
-            guiBase.drawCenteredStringWithoutShadow(stack, fontRendererObj, (title != null ? title : e.getName()), guiLeft + guiBase.xSize / 2, guiTop + 140, 0x050505);
+            guiBase.drawCenteredStringWithoutShadow(graphics, fontRendererObj, (title != null ? title : e.getName()), guiLeft + guiBase.xSize / 2, guiTop + 140, 0x050505);
     }
 
     @Override

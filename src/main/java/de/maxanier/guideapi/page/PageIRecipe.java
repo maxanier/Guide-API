@@ -1,6 +1,5 @@
 package de.maxanier.guideapi.page;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.maxanier.guideapi.api.IRecipeRenderer;
 import de.maxanier.guideapi.api.impl.Book;
 import de.maxanier.guideapi.api.impl.Page;
@@ -14,6 +13,7 @@ import de.maxanier.guideapi.page.reciperenderer.ShapedRecipesRenderer;
 import de.maxanier.guideapi.page.reciperenderer.ShapelessRecipesRenderer;
 import de.maxanier.guideapi.util.LogHelper;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -83,20 +83,20 @@ public class PageIRecipe extends Page {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void draw(PoseStack stack, RegistryAccess registryAccess, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
+    public void draw(GuiGraphics graphics, RegistryAccess registryAccess, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
         if (isValid) {
-            super.draw(stack, registryAccess, book, category, entry, guiLeft, guiTop, mouseX, mouseY, guiBase, fontRendererObj);
+            super.draw(graphics, registryAccess, book, category, entry, guiLeft, guiTop, mouseX, mouseY, guiBase, fontRendererObj);
             ingredientCycler.tick(guiBase.getMinecraft());
-            iRecipeRenderer.draw(stack, registryAccess, book, category, entry, guiLeft, guiTop, mouseX, mouseY, guiBase, fontRendererObj, ingredientCycler);
+            iRecipeRenderer.draw(graphics, registryAccess, book, category, entry, guiLeft, guiTop, mouseX, mouseY, guiBase, fontRendererObj, ingredientCycler);
         }
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void drawExtras(PoseStack stack, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
+    public void drawExtras(GuiGraphics graphics, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
         if (isValid) {
-            super.drawExtras(stack, book, category, entry, guiLeft, guiTop, mouseX, mouseY, guiBase, fontRendererObj);
-            iRecipeRenderer.drawExtras(stack, book, category, entry, guiLeft, guiTop, mouseX, mouseY, guiBase, fontRendererObj);
+            super.drawExtras(graphics, book, category, entry, guiLeft, guiTop, mouseX, mouseY, guiBase, fontRendererObj);
+            iRecipeRenderer.drawExtras(graphics, book, category, entry, guiLeft, guiTop, mouseX, mouseY, guiBase, fontRendererObj);
         }
     }
 

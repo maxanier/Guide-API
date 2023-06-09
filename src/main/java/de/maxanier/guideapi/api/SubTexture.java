@@ -1,8 +1,12 @@
 package de.maxanier.guideapi.api;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import de.maxanier.guideapi.GuideMod;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -52,8 +56,8 @@ public class SubTexture {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public void draw(PoseStack stack, int drawX, int drawY, float zLevel) {
-        Matrix4f matrix = stack.last().pose();
+    public void draw(GuiGraphics graphics, int drawX, int drawY, float zLevel) {
+        Matrix4f matrix = graphics.pose().last().pose();
         final float someMagicValueFromMojang = 0.00390625F;
 
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
@@ -70,8 +74,8 @@ public class SubTexture {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public void draw(PoseStack stack, int drawX, int drawY) {
-        draw(stack, drawX, drawY, 0.1f);
+    public void draw(GuiGraphics graphics, int drawX, int drawY) {
+        draw(graphics, drawX, drawY, 0.1f);
     }
 
     public int getDrawX() {

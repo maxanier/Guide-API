@@ -3,11 +3,10 @@ package de.maxanier.guideapi.api.impl.abstraction;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.maxanier.guideapi.api.impl.Book;
 import de.maxanier.guideapi.gui.BaseScreen;
 import de.maxanier.guideapi.gui.HomeScreen;
-import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -17,6 +16,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public abstract class CategoryAbstract {
 
@@ -65,10 +65,10 @@ public abstract class CategoryAbstract {
     public abstract boolean canSee(Player player, ItemStack bookStack);
 
     @OnlyIn(Dist.CLIENT)
-    public abstract void draw(PoseStack stack, Book book, int categoryX, int categoryY, int categoryWidth, int categoryHeight, int mouseX, int mouseY, BaseScreen guiBase, boolean drawOnLeft, ItemRenderer renderItem);
+    public abstract void draw(GuiGraphics graphics, Book book, int categoryX, int categoryY, int categoryWidth, int categoryHeight, int mouseX, int mouseY, BaseScreen guiBase, boolean drawOnLeft);
 
     @OnlyIn(Dist.CLIENT)
-    public abstract void drawExtras(PoseStack stack, Book book, int categoryX, int categoryY, int categoryWidth, int categoryHeight, int mouseX, int mouseY, BaseScreen guiBase, boolean drawOnLeft, ItemRenderer renderItem);
+    public abstract void drawExtras(GuiGraphics graphics, Book book, int categoryX, int categoryY, int categoryWidth, int categoryHeight, int mouseX, int mouseY, BaseScreen guiBase, boolean drawOnLeft);
 
     @Override
     public boolean equals(Object o) {
@@ -76,8 +76,8 @@ public abstract class CategoryAbstract {
         if (o == null || getClass() != o.getClass()) return false;
 
         CategoryAbstract that = (CategoryAbstract) o;
-        if (entries != null ? !entries.equals(that.entries) : that.entries != null) return false;
-        return name != null ? name.equals(that.name) : that.name == null;
+        if (!Objects.equals(entries, that.entries)) return false;
+        return Objects.equals(name, that.name);
     }
 
     /**

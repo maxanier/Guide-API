@@ -1,6 +1,5 @@
 package de.maxanier.guideapi.page;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.maxanier.guideapi.api.impl.Book;
 import de.maxanier.guideapi.api.impl.Page;
 import de.maxanier.guideapi.api.impl.abstraction.CategoryAbstract;
@@ -8,6 +7,7 @@ import de.maxanier.guideapi.api.impl.abstraction.EntryAbstract;
 import de.maxanier.guideapi.api.util.PageHelper;
 import de.maxanier.guideapi.gui.BaseScreen;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraftforge.api.distmarker.Dist;
@@ -36,8 +36,8 @@ public class PageText extends Page {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void draw(PoseStack stack, RegistryAccess registryAccess, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
-        PageHelper.drawFormattedText(stack, guiLeft + 44, guiTop + 12 + yOffset, guiBase, draw);
+    public void draw(GuiGraphics graphics, RegistryAccess registryAccess, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
+        PageHelper.drawFormattedText(graphics, guiLeft + 44, guiTop + 12 + yOffset, guiBase, draw);
     }
 
     @Override

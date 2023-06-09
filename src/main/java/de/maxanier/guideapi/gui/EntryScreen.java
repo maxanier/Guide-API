@@ -1,7 +1,5 @@
 package de.maxanier.guideapi.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.maxanier.guideapi.api.IPage;
 import de.maxanier.guideapi.api.impl.Book;
 import de.maxanier.guideapi.api.impl.abstraction.CategoryAbstract;
@@ -14,11 +12,12 @@ import de.maxanier.guideapi.network.PacketHandler;
 import de.maxanier.guideapi.network.PacketSyncEntry;
 import de.maxanier.guideapi.wrapper.PageWrapper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
@@ -165,32 +164,28 @@ public class EntryScreen extends BaseScreen {
     }
 
     @Override
-    public void render(PoseStack stack, int mouseX, int mouseY, float renderPartialTicks) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, pageTexture);
-        blit(stack, guiLeft, guiTop, 0, 0, xSize, ySize);
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, outlineTexture);
-        drawTexturedModalRectWithColor(stack, guiLeft, guiTop, 0, 0, xSize, ySize, book.getColor());
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float renderPartialTicks) {
+        graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+        graphics.blit(pageTexture, guiLeft, guiTop, 0, 0, xSize, ySize);
+        graphics.setColor((float) book.getColor().getRed() / 255F, (float) book.getColor().getGreen() / 255F, (float) book.getColor().getBlue() / 255F, 1f);
+        graphics.blit(outlineTexture, guiLeft, guiTop, 0, 0, xSize, ySize);
+        graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
 
         pageNumber = Mth.clamp(pageNumber, 0, pageWrapperList.size() - 1);
 
         if (pageNumber < pageWrapperList.size()) {
             if (pageWrapperList.get(pageNumber).canPlayerSee()) {
-                pageWrapperList.get(pageNumber).draw(stack, Minecraft.getInstance().level.registryAccess(), mouseX, mouseY, this);
-                pageWrapperList.get(pageNumber).drawExtras(stack, mouseX, mouseY, this);
+                pageWrapperList.get(pageNumber).draw(graphics, Minecraft.getInstance().level.registryAccess(), mouseX, mouseY, this);
+                pageWrapperList.get(pageNumber).drawExtras(graphics, mouseX, mouseY, this);
             }
         }
 
-        drawCenteredStringWithoutShadow(stack, font, String.format("%d/%d", pageNumber + 1, pageWrapperList.size()), guiLeft + xSize / 2, guiTop + 5 * ySize / 6, 0);
-        drawCenteredString(stack, font, entry.getName(), guiLeft + xSize / 2, guiTop - 10, Color.WHITE.getRGB());
+        drawCenteredStringWithoutShadow(graphics, font, String.format("%d/%d", pageNumber + 1, pageWrapperList.size()), guiLeft + xSize / 2, guiTop + 5 * ySize / 6, 0);
+        graphics.drawCenteredString(font, entry.getName(), guiLeft + xSize / 2, guiTop - 10, Color.WHITE.getRGB());
 
         buttonPrev.visible = pageNumber != 0;
         buttonNext.visible = pageNumber != pageWrapperList.size() - 1 && !pageWrapperList.isEmpty();
 
-        super.render(stack, mouseX, mouseY, renderPartialTicks);
+        super.render(graphics, mouseX, mouseY, renderPartialTicks);
     }
 }

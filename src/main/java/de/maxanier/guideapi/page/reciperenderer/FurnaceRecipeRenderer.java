@@ -1,6 +1,5 @@
 package de.maxanier.guideapi.page.reciperenderer;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.maxanier.guideapi.api.IRecipeRenderer;
 import de.maxanier.guideapi.api.SubTexture;
 import de.maxanier.guideapi.api.impl.Book;
@@ -10,6 +9,7 @@ import de.maxanier.guideapi.api.util.GuiHelper;
 import de.maxanier.guideapi.api.util.IngredientCycler;
 import de.maxanier.guideapi.gui.BaseScreen;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -27,17 +27,17 @@ public class FurnaceRecipeRenderer extends IRecipeRenderer.RecipeRendererBase<Sm
     }
 
     @Override
-    public void draw(PoseStack stack, RegistryAccess registryAccess, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj, IngredientCycler cycler) {
-        SubTexture.FURNACE_GRID.draw(stack, guiLeft + 90, guiTop + 71);
+    public void draw(GuiGraphics graphics, RegistryAccess registryAccess, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj, IngredientCycler cycler) {
+        SubTexture.FURNACE_GRID.draw(graphics, guiLeft + 90, guiTop + 71);
 
-        guiBase.drawCenteredStringWithoutShadow(stack, fontRendererObj, title, guiLeft + guiBase.xSize / 2, guiTop + 12, 0);
+        guiBase.drawCenteredStringWithoutShadow(graphics, fontRendererObj, title, guiLeft + guiBase.xSize / 2, guiTop + 12, 0);
 
         int x = guiLeft + 92;
         int y = guiTop + 77;
 
         Ingredient input = recipe.getIngredients().get(0);
         cycler.getCycledIngredientStack(input, 0).ifPresent(s -> {
-            GuiHelper.drawItemStack(stack, s, x, y);
+            GuiHelper.drawItemStack(graphics, s, x, y);
 
             List<Component> tooltip = null;
             if (GuiHelper.isMouseBetween(mouseX, mouseY, x, y, 15, 15))
@@ -48,7 +48,7 @@ public class FurnaceRecipeRenderer extends IRecipeRenderer.RecipeRendererBase<Sm
         ItemStack output = recipe.getResultItem(registryAccess);
 
         int x2 = guiLeft + 135;
-        GuiHelper.drawItemStack(stack, output, x2, y);
+        GuiHelper.drawItemStack(graphics, output, x2, y);
         if (GuiHelper.isMouseBetween(mouseX, mouseY, x2, y, 15, 15))
             tooltips = GuiHelper.getTooltip(output);
 

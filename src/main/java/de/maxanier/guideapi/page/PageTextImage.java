@@ -1,7 +1,6 @@
 package de.maxanier.guideapi.page;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.maxanier.guideapi.api.impl.Book;
 import de.maxanier.guideapi.api.impl.Page;
 import de.maxanier.guideapi.api.impl.abstraction.CategoryAbstract;
@@ -9,6 +8,7 @@ import de.maxanier.guideapi.api.impl.abstraction.EntryAbstract;
 import de.maxanier.guideapi.api.util.GuiHelper;
 import de.maxanier.guideapi.gui.BaseScreen;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.FormattedText;
@@ -37,13 +37,13 @@ public class PageTextImage extends Page {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void draw(PoseStack stack, RegistryAccess registryAccess, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
+    public void draw(GuiGraphics graphics, RegistryAccess registryAccess, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, image);
-        GuiHelper.drawSizedIconWithoutColor(stack, guiLeft + 60, guiTop + (drawAtTop ? 60 : 12), guiBase.xSize, guiBase.ySize, 0);
+        GuiHelper.drawSizedIconWithoutColor(graphics, guiLeft + 60, guiTop + (drawAtTop ? 60 : 12), guiBase.xSize, guiBase.ySize, 0);
 
-        pageText.draw(stack, registryAccess, book, category, entry, guiLeft, guiTop, mouseX, mouseY, guiBase, fontRendererObj);
+        pageText.draw(graphics, registryAccess, book, category, entry, guiLeft, guiTop, mouseX, mouseY, guiBase, fontRendererObj);
     }
 
     @Override

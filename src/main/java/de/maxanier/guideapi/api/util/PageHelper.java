@@ -1,12 +1,12 @@
 package de.maxanier.guideapi.api.util;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.maxanier.guideapi.api.IPage;
 import de.maxanier.guideapi.gui.BaseScreen;
 import de.maxanier.guideapi.page.PageItemStack;
 import de.maxanier.guideapi.page.PageText;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
@@ -78,12 +78,12 @@ public class PageHelper {
     }
 
 
-    public static void drawFormattedText(PoseStack stack, int x, int y, BaseScreen guiBase, FormattedText toDraw) {
+    public static void drawFormattedText(GuiGraphics graphics, int x, int y, BaseScreen guiBase, FormattedText toDraw) {
         Font fontRenderer = Minecraft.getInstance().font;
 
         List<FormattedCharSequence> cutLines = fontRenderer.split(toDraw, 170);
         for (FormattedCharSequence cut : cutLines) {
-            fontRenderer.draw(stack, cut, x, y, 0);
+            graphics.drawString(fontRenderer, cut, x, y, 0, false);
             y += 10;
         }
 
@@ -125,7 +125,7 @@ public class PageHelper {
         if (recipe1 == recipe2) return true;
         if (recipe1 == null || recipe2 == null || recipe1.getClass() != recipe2.getClass()) return false;
         if (recipe1.equals(recipe2)) return true;
-        return recipe1.getResultItem(registryAccess).sameItem(recipe2.getResultItem(registryAccess));
+        return ItemStack.isSameItem(recipe1.getResultItem(registryAccess), (recipe2.getResultItem(registryAccess)));
 //        if (recipe1.getRecipeSize() != recipe2.getRecipeSize()) return false;//FN was removed, there is no size now
     }
 

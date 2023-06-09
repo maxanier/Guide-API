@@ -1,6 +1,5 @@
 package de.maxanier.guideapi.wrapper;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.maxanier.guideapi.api.IPage;
 import de.maxanier.guideapi.api.impl.Book;
 import de.maxanier.guideapi.api.impl.abstraction.CategoryAbstract;
@@ -9,6 +8,7 @@ import de.maxanier.guideapi.gui.BaseScreen;
 import de.maxanier.guideapi.gui.EntryScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -44,13 +44,13 @@ public class PageWrapper extends AbstractWrapper {
     }
 
     @Override
-    public void draw(PoseStack stack, RegistryAccess registryAccess, int mouseX, int mouseY, BaseScreen gui) {
-        page.draw(stack, registryAccess, book, category, entry, guiLeft, guiTop, mouseX, mouseY, gui, Minecraft.getInstance().font);
+    public void draw(GuiGraphics graphics, RegistryAccess registryAccess, int mouseX, int mouseY, BaseScreen gui) {
+        page.draw(graphics, registryAccess, book, category, entry, guiLeft, guiTop, mouseX, mouseY, gui, Minecraft.getInstance().font);
     }
 
     @Override
-    public void drawExtras(PoseStack stack, int mouseX, int mouseY, BaseScreen gui) {
-        page.drawExtras(stack, book, category, entry, guiLeft, guiTop, mouseX, mouseY, gui, Minecraft.getInstance().font);
+    public void drawExtras(GuiGraphics graphics, int mouseX, int mouseY, BaseScreen gui) {
+        page.drawExtras(graphics, book, category, entry, guiLeft, guiTop, mouseX, mouseY, gui, Minecraft.getInstance().font);
     }
 
     @Override
