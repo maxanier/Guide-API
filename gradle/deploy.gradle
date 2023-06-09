@@ -51,14 +51,10 @@ publishing {
             }
 
             // Adds the sources as an artifact.
-            artifact sourcesJar {
-                classifier 'sources'
-            }
+            artifact sourcesJar
 
             // Adds the deobfuscated jar as an artifact.
-            artifact deobfJar {
-                classifier 'deobf'
-            }
+            artifact deobfJar
 
         }
     }
