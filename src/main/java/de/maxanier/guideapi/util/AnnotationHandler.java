@@ -5,9 +5,9 @@ import de.maxanier.guideapi.api.GuideAPI;
 import de.maxanier.guideapi.api.GuideBook;
 import de.maxanier.guideapi.api.IGuideBook;
 import de.maxanier.guideapi.api.impl.Book;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.forgespi.language.ModFileScanData;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.fml.ModList;
+import net.neoforged.neoforgespi.language.ModFileScanData;
 import org.apache.commons.lang3.tuple.Pair;
 import org.objectweb.asm.Type;
 
@@ -27,7 +27,7 @@ public class AnnotationHandler {
                 .map(ModFileScanData::getAnnotations)
                 .flatMap(Collection::stream)
                 .filter(a -> GUIDE.equals(a.annotationType()))
-                .collect(Collectors.toList());
+                .toList();
 
 
         for (EventPriority priority : EventPriority.values())

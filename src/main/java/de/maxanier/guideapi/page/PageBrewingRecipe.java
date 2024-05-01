@@ -17,9 +17,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.brewing.BrewingRecipe;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.common.brewing.BrewingRecipe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +35,6 @@ public class PageBrewingRecipe extends Page {
     /**
      * Your brewing recipe - what you pass to BrewingRecipeRegistry.addRecipe
      *
-     * @param recipe
      */
     public PageBrewingRecipe(BrewingRecipe recipe) {
         this.recipe = recipe;

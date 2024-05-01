@@ -22,9 +22,9 @@ public class ShapedRecipesRenderer extends CraftingRecipeRenderer<ShapedRecipe> 
     @Override
     public void draw(GuiGraphics graphics, RegistryAccess registryAccess, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj, IngredientCycler cycler) {
         super.draw(graphics, registryAccess, book, category, entry, guiLeft, guiTop, mouseX, mouseY, guiBase, fontRendererObj, cycler);
-        for (int y = 0; y < recipe.getRecipeHeight(); y++) {
-            for (int x = 0; x < recipe.getRecipeWidth(); x++) {
-                int i = y * recipe.getRecipeWidth() + x;
+        for (int y = 0; y < recipe.getHeight(); y++) {
+            for (int x = 0; x < recipe.getWidth(); x++) {
+                int i = y * recipe.getWidth() + x;
                 int stackX = (x + 1) * 17 + (guiLeft + 53) + x;
                 int stackY = (y + 1) * 17 + (guiTop + 38) + y;
 

@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraftforge.common.brewing.BrewingRecipe;
+import net.neoforged.neoforge.common.brewing.BrewingRecipe;
 import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nonnull;
@@ -75,9 +75,8 @@ public class ItemInfoBuilder {
      * Builds the entry and adds it to the given map
      */
     public void build(Map<ResourceLocation, EntryAbstract> entries) {
-        ArrayList<IPage> pages = new ArrayList<>();
         String base = bookHelper.getBaseKey() + (block ? ".blocks" : ".items") + "." + name;
-        pages.addAll(PageHelper.pagesForLongText(bookHelper.localize(base + ".text", formats), ingredient));
+        ArrayList<IPage> pages = new ArrayList<>(PageHelper.pagesForLongText(bookHelper.localize(base + ".text", formats), ingredient));
         for (ResourceLocation id : recipes) {
             pages.add(bookHelper.getRecipePage(id));
         }

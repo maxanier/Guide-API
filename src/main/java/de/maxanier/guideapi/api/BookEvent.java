@@ -5,8 +5,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.bus.api.Event;
+import net.neoforged.bus.api.ICancellableEvent;
 
 import javax.annotation.Nonnull;
 
@@ -46,8 +46,7 @@ public class BookEvent extends Event {
      * <p>
      * {@link #canceledText} is a status message sent to the player when the book fails to open.
      */
-    @Cancelable
-    public static class Open extends BookEvent {
+    public static class Open extends BookEvent implements ICancellableEvent {
 
         private static final Component DEFAULT_CANCEL = Component.translatable("text.open.failed").withStyle(ChatFormatting.RED);
 

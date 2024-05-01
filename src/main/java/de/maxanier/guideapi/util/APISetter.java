@@ -7,7 +7,7 @@ import de.maxanier.guideapi.api.GuideAPI;
 import de.maxanier.guideapi.api.impl.Book;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fml.ModLoadingContext;
+import net.neoforged.fml.ModLoadingContext;
 
 import java.lang.reflect.Field;
 import java.util.List;

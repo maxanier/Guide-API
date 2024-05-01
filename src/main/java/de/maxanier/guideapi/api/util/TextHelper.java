@@ -1,10 +1,11 @@
 package de.maxanier.guideapi.api.util;
 
-import net.minecraftforge.common.ForgeI18n;
+import net.neoforged.neoforge.common.I18nExtension;
 import org.apache.commons.lang3.text.WordUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class TextHelper {
 
@@ -13,7 +14,7 @@ public class TextHelper {
     }
 
     public static String localize(String input, Object... format) {
-        return ForgeI18n.parseMessage(input, format);
+        return I18nExtension.parseMessage(input, format);
     }
 
     public static String localizeEffect(String input, Object... format) {

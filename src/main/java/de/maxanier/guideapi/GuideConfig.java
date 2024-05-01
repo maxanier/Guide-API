@@ -3,10 +3,11 @@ package de.maxanier.guideapi;
 
 import de.maxanier.guideapi.api.GuideAPI;
 import de.maxanier.guideapi.api.impl.Book;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.HashMap;
@@ -20,23 +21,22 @@ public class GuideConfig {
      */
     public static Common COMMON;
 
-    public static void buildConfiguration() {
-        final Pair<Common, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Common::new);
-        ForgeConfigSpec commonSpec = specPair.getRight();
+    public static void buildConfiguration(IEventBus modBus) {
+        final Pair<Common, ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(Common::new);
+        ModConfigSpec commonSpec = specPair.getRight();
         COMMON = specPair.getLeft();
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, commonSpec);
-        FMLJavaModLoadingContext.get().getModEventBus().register(GuideConfig.class);
+        ModLoadingContext.get().getActiveContainer().registerConfig(ModConfig.Type.COMMON, commonSpec);
     }
 
     public static class Common {
 
-        public final ForgeConfigSpec.BooleanValue canSpawnWithBook;
+        public final ModConfigSpec.BooleanValue canSpawnWithBook;
 
-        public final ForgeConfigSpec.BooleanValue enableLogging;
-        public final Map<Book, ForgeConfigSpec.BooleanValue> SPAWN_BOOKS = new HashMap<>();
+        public final ModConfigSpec.BooleanValue enableLogging;
+        public final Map<Book, ModConfigSpec.BooleanValue> SPAWN_BOOKS = new HashMap<>();
 
 
-        Common(ForgeConfigSpec.Builder builder) {
+        Common(ModConfigSpec.Builder builder) {
             builder.comment("Common configurations settings").push("common");
             enableLogging = builder.comment("Enables extra information being printed to the console.").define("enableLogging", true);
             canSpawnWithBook = builder.comment("Allows books to spawn with new players.\nThis is a global override for all books if set to false.").define("canSpawnWithBook", true);

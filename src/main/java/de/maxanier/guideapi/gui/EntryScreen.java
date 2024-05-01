@@ -1,5 +1,6 @@
 package de.maxanier.guideapi.gui;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import de.maxanier.guideapi.api.IPage;
 import de.maxanier.guideapi.api.impl.Book;
 import de.maxanier.guideapi.api.impl.abstraction.CategoryAbstract;
@@ -8,15 +9,17 @@ import de.maxanier.guideapi.button.ButtonBack;
 import de.maxanier.guideapi.button.ButtonNext;
 import de.maxanier.guideapi.button.ButtonPrev;
 import de.maxanier.guideapi.button.ButtonSearch;
-import de.maxanier.guideapi.network.PacketHandler;
-import de.maxanier.guideapi.network.PacketSyncEntry;
+import de.maxanier.guideapi.network.ReadingStatePayload;
 import de.maxanier.guideapi.wrapper.PageWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Renderable;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
@@ -24,6 +27,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class EntryScreen extends BaseScreen {
 
@@ -126,15 +130,15 @@ public class EntryScreen extends BaseScreen {
     }
 
     @Override
-    public boolean mouseScrolled(double p_mouseScrolled_1_, double p_mouseScrolled_3_, double movement) {
+    public boolean mouseScrolled(double pMouseX, double pMouseY, double pScrollX, double pScrollY) {
 
-        if (movement < 0)
+        if (pScrollY < 0)
             nextPage();
-        else if (movement > 0)
+        else if (pScrollY > 0)
             prevPage();
 
 
-        return movement != 0 || super.mouseScrolled(p_mouseScrolled_1_, p_mouseScrolled_3_, movement);
+        return pScrollY != 0 || super.mouseScrolled(pMouseX, pMouseY, pScrollX, pScrollY);
 
     }
 
@@ -155,7 +159,7 @@ public class EntryScreen extends BaseScreen {
                 key = mapEntry.getKey();
 
         if (key != null)
-            PacketHandler.INSTANCE.sendToServer(new PacketSyncEntry(book.getCategoryList().indexOf(category), key, pageNumber));
+            PacketDistributor.sendToServer(new ReadingStatePayload(pageNumber, Optional.of(book.getCategoryList().indexOf(category)), Optional.of(key)));
     }
 
     public void prevPage() {
@@ -164,12 +168,20 @@ public class EntryScreen extends BaseScreen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float renderPartialTicks) {
+    public void renderBackground(GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
+        super.renderBackground(graphics, pMouseX, pMouseY, pPartialTick);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
         graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
         graphics.blit(pageTexture, guiLeft, guiTop, 0, 0, xSize, ySize);
         graphics.setColor((float) book.getColor().getRed() / 255F, (float) book.getColor().getGreen() / 255F, (float) book.getColor().getBlue() / 255F, 1f);
         graphics.blit(outlineTexture, guiLeft, guiTop, 0, 0, xSize, ySize);
         graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+    }
+
+    @Override
+    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float renderPartialTicks) {
+        super.render(graphics, mouseX, mouseY, renderPartialTicks);
+
 
         pageNumber = Mth.clamp(pageNumber, 0, pageWrapperList.size() - 1);
 
@@ -186,6 +198,5 @@ public class EntryScreen extends BaseScreen {
         buttonPrev.visible = pageNumber != 0;
         buttonNext.visible = pageNumber != pageWrapperList.size() - 1 && !pageWrapperList.isEmpty();
 
-        super.render(graphics, mouseX, mouseY, renderPartialTicks);
     }
 }

@@ -2,6 +2,7 @@ package de.maxanier.guideapi.api.util;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import de.maxanier.guideapi.GuideMod;
 import de.maxanier.guideapi.api.IPage;
 import de.maxanier.guideapi.api.IRecipeRenderer;
 import de.maxanier.guideapi.api.impl.abstraction.CategoryAbstract;
@@ -9,21 +10,25 @@ import de.maxanier.guideapi.api.impl.abstraction.EntryAbstract;
 import de.maxanier.guideapi.page.PageHolderWithLinks;
 import de.maxanier.guideapi.page.PageIRecipe;
 import de.maxanier.guideapi.page.PageJsonRecipe;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.common.brewing.BrewingRecipe;
-import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.CommonHooks;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.brewing.BrewingRecipe;
+import net.neoforged.neoforge.common.brewing.BrewingRecipeRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -72,20 +77,23 @@ public class BookHelper {
         }
 
         for (Object l : links) {
-            if (l instanceof ResourceLocation) {
-                for (PageHolderWithLinks p : linkPages) {
-                    p.addLink((ResourceLocation) l);
+            switch (l) {
+                case ResourceLocation resourceLocation -> {
+                    for (PageHolderWithLinks p : linkPages) {
+                        p.addLink(resourceLocation);
+                    }
                 }
-            } else if (l instanceof EntryAbstract) {
-                for (PageHolderWithLinks p : linkPages) {
-                    p.addLink((EntryAbstract) l);
+                case EntryAbstract entryAbstract -> {
+                    for (PageHolderWithLinks p : linkPages) {
+                        p.addLink(entryAbstract);
+                    }
                 }
-            } else if (l instanceof PageHolderWithLinks.URLLink) {
-                for (PageHolderWithLinks p : linkPages) {
-                    p.addLink((PageHolderWithLinks.URLLink) l);
+                case PageHolderWithLinks.URLLink urlLink -> {
+                    for (PageHolderWithLinks p : linkPages) {
+                        p.addLink(urlLink);
+                    }
                 }
-            } else {
-                LOGGER.warn("Given link object cannot be linked {}", l);
+                case null, default -> LOGGER.warn("Given link object cannot be linked {}", l);
             }
         }
         pages.clear();
@@ -100,7 +108,7 @@ public class BookHelper {
      */
     @Nullable
     public BrewingRecipe getBrewingRecipe(ItemStack stack) {
-        return (BrewingRecipe) BrewingRecipeRegistry.getRecipes().stream().filter(iBrewingRecipe -> iBrewingRecipe instanceof BrewingRecipe && ItemStack.matches(((BrewingRecipe) iBrewingRecipe).getOutput(), stack)).findFirst().orElse(null);
+        return (BrewingRecipe) GuideMod.PROXY.getPotionBrewing().map(PotionBrewing::getRecipes).map(Collection::stream).flatMap(s -> s.filter(iBrewingRecipe -> iBrewingRecipe instanceof BrewingRecipe && ItemStack.matches(((BrewingRecipe) iBrewingRecipe).getOutput(), stack)).findFirst()).orElse(null);
     }
 
     @Nullable
@@ -192,8 +200,8 @@ public class BookHelper {
         private String baseKey;
         private Function<Recipe<?>, IRecipeRenderer> recipeRendererSupplier = PageIRecipe::getRenderer;
         private BiFunction<String, Object[], Component> localizer = Component::translatable;
-        private Function<Block, String> blockNameMapper = (block -> ForgeRegistries.BLOCKS.getKey(block).getPath());
-        private Function<Item, String> itemNameMapper = (item -> ForgeRegistries.ITEMS.getKey(item).getPath());
+        private Function<Block, String> blockNameMapper = (block -> BuiltInRegistries.BLOCK.getKey(block).getPath());
+        private Function<Item, String> itemNameMapper = (item -> BuiltInRegistries.ITEM.getKey(item).getPath());
 
         public Builder(String modid) {
             this.modid = modid;

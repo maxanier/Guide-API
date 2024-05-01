@@ -12,8 +12,8 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.Objects;
 
@@ -34,7 +34,7 @@ public class PageImage extends Page {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, image);
-        GuiHelper.drawSizedIconWithoutColor(graphics, guiLeft + 60, guiTop + 34, guiBase.xSize, guiBase.ySize, 1F);
+        GuiHelper.drawSizedIconWithoutColor(graphics, guiLeft + 60, guiTop + 34, guiBase.xSize / 2, guiBase.ySize / 2, 1F);
     }
 
     @Override

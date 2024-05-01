@@ -1,5 +1,5 @@
 # Guide-API - Village and Pillage [![](https://cf.way2muchnoise.eu/versions/380771.svg)](https://www.curseforge.com/minecraft/mc-mods/guide-api-village-and-pillage)
-
+**Now for NeoForge**  
 Library mod for easy creation of guide books.
 
 Fork by maxanier of Guide-API for Minecraft 1.14+ (Village and Pillage)  
@@ -23,7 +23,7 @@ What else?
 
 
 ## Useful Links
-* [CurseForge](http://minecraft.curseforge.com/mc-mods/228832-guide-api)
+* [CurseForge](https://www.curseforge.com/minecraft/mc-mods/guide-api-village-and-pillage)
 * [Modrinth](https://modrinth.com/mod/guide-api)
 
 ## Original Links - Mostly still correct
@@ -62,7 +62,7 @@ You should be able to include it with the following in your `build.gradle`:
 repositories {
     //Maven repo for Guide-API
     maven {
-        url = "https://maven.maxanier.de"
+        url = "https://maven.maxanier.de/releases"
     }
 }
 dependencies {

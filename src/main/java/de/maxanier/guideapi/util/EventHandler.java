@@ -26,20 +26,22 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderGuiOverlayEvent;
-import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.items.ItemHandlerHelper;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
+import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
+
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 
-@Mod.EventBusSubscriber(modid = GuideMod.ID)
+@EventBusSubscriber(modid = GuideMod.ID)
 public class EventHandler {
 
     @SubscribeEvent
@@ -48,7 +50,7 @@ public class EventHandler {
             CompoundTag tag = getModTag(player, GuideMod.ID);
             if (GuideConfig.COMMON.canSpawnWithBook.get()) {
                 for (Book book : GuideAPI.getBooks().values()) {
-                    ForgeConfigSpec.BooleanValue bookSpawnConfig = GuideConfig.COMMON.SPAWN_BOOKS.get(book);
+                    ModConfigSpec.BooleanValue bookSpawnConfig = GuideConfig.COMMON.SPAWN_BOOKS.get(book);
                     if ((bookSpawnConfig == null || bookSpawnConfig.get()) && !tag.getBoolean("hasInitial" + book.getRegistryName().toString())) {
                         ItemHandlerHelper.giveItemToPlayer(player, GuideAPI.getStackFromBook(book));
                         tag.putBoolean("hasInitial" + book.getRegistryName().toString(), true);
@@ -60,8 +62,8 @@ public class EventHandler {
 
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
-    public static void renderOverlay(RenderGuiOverlayEvent.Pre event) {
-        if (event.getOverlay() != VanillaGuiOverlay.CROSSHAIR.type())
+    public static void renderOverlay(RenderGuiLayerEvent.Pre event) {
+        if (event.getLayer() != VanillaGuiLayers.CROSSHAIR)
             return;
 
         HitResult rayTrace = Minecraft.getInstance().hitResult;

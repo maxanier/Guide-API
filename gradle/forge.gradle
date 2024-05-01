@@ -1,135 +1,60 @@
 repositories {
     maven {
-        url "https://dvs1.progwml6.com/files/maven"
-    }
-    maven {
-        // location of a maven mirror for JEI files, as a fallback
+        // location of a maven mirror for JEI files
         name = "ModMaven"
-        url = "https://modmaven.k-4u.nl"
+        url = "https://modmaven.dev/"
+        content {
+            includeGroup "mezz.jei"
+        }
     }
     maven {
         //Local repo for custom forge builds.
         //Is not required to exist
         name = "LocalForge"
-        url = "../../MinecraftForge/repo/"
+        url = "../../NeoForge/repo/"
     }
     mavenCentral()
     mavenLocal()
 }
 
 
+
 dependencies {
-    minecraft([
-            group: "net.minecraftforge",
-            name: "forge",
-            version: "${project.minecraft_version}-${project.forge_version}"
-    ])
+    implementation "net.neoforged:neoforge:${forge_version}"
+
     //Don't export dependencies to pom as their deobfuscated version would be used which cannot be found in dependent projects
-    //compileOnly fg.deobf("mezz.jei:jei-${project.jei_version}:api") //API for compile
-    //runtimeOnly fg.deobf("mezz.jei:jei-${project.jei_version}") //Full for runtime
-
-}
-
-minecraft {
-    mappings channel: "${project.mcp_channel}".toString(), version: "${project.mcp_mappings}".toString()
-    //accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-    copyIdeResources = true
-
-    runs {
-        client {
-            taskName 'runClient1'
-            property 'forge.logging.console.level', 'info'
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'guideapi.target','dev_client'
-            workingDirectory project.file('run/client1').canonicalPath
-            jvmArg '-ea:de.maxanier...'
-            
-            mods {
-                guideapivp {
-                    source sourceSets.main
-
-                }
-            }
-
-        }
-        server = {
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'info'
-            property 'guideapi.target','dev_server'
-            workingDirectory project.file('run/server').canonicalPath
-            jvmArg '-ea:de.maxanier...'
-
-            mods {
-                guideapivp {
-                    source sourceSets.main
-
-                }
-
-
-            }
-        }
+    if (include_jei.toBoolean()) {
+        runtimeOnly "mezz.jei:jei-${jei_mc_version}-neoforge:${project.jei_version}" //Full for runtime
     }
-
 }
 
 
+runs {
+    configureEach {
+        systemProperty 'forge.logging.console.level', 'debug'
 
-//Replace strings in IDEA folders as well
-def resourceTargets = ['META-INF/mods.toml', 'pack.mcmeta']
-def intoTargets = ["$rootDir/out/production/resources/", "$rootDir/out/production/${project.name}.main/", "$rootDir/bin/main/"]
-def replaceProperties = ['version': project.mod_version, 'mcversion': minecraft_version, 'forge_version': forge_version]
-processResources {
-    inputs.properties replaceProperties
-    replaceProperties.put 'project', project
-
-    filesMatching(resourceTargets) {
-        expand replaceProperties
+        modSources = [project.sourceSets.main]
+    }
+    client {
+        systemProperty 'guideapi_target', 'dev'
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
     }
 
-    intoTargets.each { target ->
-        if (file(target).exists()) {
-            copy {
-                from(sourceSets.main.resources) {
-                    include resourceTargets
-                    expand replaceProperties
-                }
-                into target
-            }
-        }
+    server {
+        systemProperty 'guideapi_target', 'dev'
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+        programArgument '--nogui'
     }
-    exclude '**/Thumbs.db'
 
+    gameTestServer {
+        systemProperty 'guideapi_target', 'dev'
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+    }
 }
 
-
-
-
-jar {
-    finalizedBy('reobfJar')
-
-    //Keep the jar as clean as possible
-    includeEmptyDirs = false
-
-    from sourceSets.main.output.classesDirs
-    from sourceSets.main.output.resourcesDir
-
-
-
-
-    manifest {
-        attributes([
-                "FMLAT": "accesstransformer.cfg",
-                "Specification-Title": "guideapi-vp",
-                "Specification-Vendor": "maxanier",
-                "Specification-Version": "1", // We are version 1 of ourselves
-                "Implementation-Title": project.name,
-                "Implementation-Version": "${mod_version}",
-                "Implementation-Vendor" :"maxanier",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-        ])
+subsystems {
+    parchment {
+        minecraftVersion = project.parchment_minecraft_version
+        mappingsVersion = project.parchment_mappings_version
     }
-
-    exclude 'de/maxanier/guideapi/test/**/*'
-
-    finalizedBy 'reobfJar'
 }

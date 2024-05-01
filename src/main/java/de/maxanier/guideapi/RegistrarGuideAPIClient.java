@@ -6,18 +6,18 @@ import de.maxanier.guideapi.api.impl.Book;
 import de.maxanier.guideapi.util.AnnotationHandler;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.ModelEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ModelEvent;
 import org.apache.commons.lang3.tuple.Pair;
 
 
-@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = GuideMod.ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(value = Dist.CLIENT, modid = GuideMod.ID, bus = EventBusSubscriber.Bus.MOD)
 public class RegistrarGuideAPIClient {
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
@@ -38,7 +38,7 @@ public class RegistrarGuideAPIClient {
             if (loc != null) {
                 ModelResourceLocation newMrl = new ModelResourceLocation(loc, "inventory");
                 Item bookItem = GuideAPI.getStackFromBook(guide.getLeft()).getItem();
-                ModelResourceLocation oldMrl = new ModelResourceLocation(ForgeRegistries.ITEMS.getKey(bookItem), "inventory");
+                ModelResourceLocation oldMrl = new ModelResourceLocation(BuiltInRegistries.ITEM.getKey(bookItem), "inventory");
                 BakedModel model = event.getModels().get(newMrl);
 
                 event.getModels().put(oldMrl, model);

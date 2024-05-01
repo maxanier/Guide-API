@@ -11,8 +11,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 import java.util.function.Function;
@@ -39,7 +40,7 @@ public class PageJsonRecipe extends PageIRecipe {
     public void onInit(Book book, CategoryAbstract category, EntryAbstract entry, Player player, ItemStack bookStack, EntryScreen guiEntry) {
         super.onInit(book, category, entry, player, bookStack, guiEntry);
         if (recipe == null) {
-            this.recipe = Minecraft.getInstance().getConnection() == null ? null : Minecraft.getInstance().getConnection().getRecipeManager().byKey(recipeId).orElse(null);
+            this.recipe = Minecraft.getInstance().getConnection() == null ? null : Minecraft.getInstance().getConnection().getRecipeManager().byKey(recipeId).map(RecipeHolder::value).orElse(null);
             if (recipe == null) {
                 LogHelper.error("Cannot find recipe " + recipeId);
             } else {

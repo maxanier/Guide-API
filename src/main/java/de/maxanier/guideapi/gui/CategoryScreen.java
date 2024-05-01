@@ -10,8 +10,7 @@ import de.maxanier.guideapi.button.ButtonBack;
 import de.maxanier.guideapi.button.ButtonNext;
 import de.maxanier.guideapi.button.ButtonPrev;
 import de.maxanier.guideapi.button.ButtonSearch;
-import de.maxanier.guideapi.network.PacketHandler;
-import de.maxanier.guideapi.network.PacketSyncCategory;
+import de.maxanier.guideapi.network.ReadingStatePayload;
 import de.maxanier.guideapi.wrapper.EntryWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -20,12 +19,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.List;
+import java.util.Optional;
 
 public class CategoryScreen extends BaseScreen {
 
@@ -133,13 +134,13 @@ public class CategoryScreen extends BaseScreen {
     }
 
     @Override
-    public boolean mouseScrolled(double p_mouseScrolled_1_, double p_mouseScrolled_3_, double movement) {
-        if (movement < 0)
+    public boolean mouseScrolled(double pMouseX, double pMouseY, double pScrollX, double pScrollY) {
+        if (pScrollY < 0)
             nextPage();
-        else if (movement > 0)
+        else if (pScrollY > 0)
             prevPage();
 
-        return movement != 0 || super.mouseScrolled(p_mouseScrolled_1_, p_mouseScrolled_3_, movement);
+        return pScrollY != 0 || super.mouseScrolled(pMouseX, pMouseY, pScrollX, pScrollY);
     }
 
     public void nextPage() {
@@ -152,8 +153,7 @@ public class CategoryScreen extends BaseScreen {
     @Override
     public void onClose() {
         super.onClose();
-
-        PacketHandler.INSTANCE.sendToServer(new PacketSyncCategory(book.getCategoryList().indexOf(category), entryPage));
+        PacketDistributor.sendToServer(new ReadingStatePayload(entryPage, Optional.of(book.getCategoryList().indexOf(category)), Optional.empty()));
     }
 
     public void prevPage() {
@@ -164,13 +164,19 @@ public class CategoryScreen extends BaseScreen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float renderPartialTicks) {
+    public void renderBackground(GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
+        super.renderBackground(graphics, pMouseX, pMouseY, pPartialTick);
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         graphics.setColor(1.0F, 1.0F, 1.0F, 1f);
         graphics.blit(pageTexture, guiLeft, guiTop, 0, 0, xSize, ySize);
         graphics.setColor((float) book.getColor().getRed() / 255F, (float) book.getColor().getGreen() / 255F, (float) book.getColor().getBlue() / 255F, 1f);
         graphics.blit(outlineTexture, guiLeft, guiTop, 0, 0, xSize, ySize);
         graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+    }
+
+    @Override
+    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float renderPartialTicks) {
+        super.render(graphics, mouseX, mouseY, renderPartialTicks);
 
         entryPage = Mth.clamp(entryPage, 0, entryWrapperMap.size() - 1);
 
@@ -190,6 +196,5 @@ public class CategoryScreen extends BaseScreen {
         buttonPrev.visible = entryPage != 0;
         buttonNext.visible = entryPage != entryWrapperMap.asMap().size() - 1 && !entryWrapperMap.asMap().isEmpty();
 
-        super.render(graphics, mouseX, mouseY, renderPartialTicks);
     }
 }

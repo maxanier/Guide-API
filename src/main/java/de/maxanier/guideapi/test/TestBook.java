@@ -28,12 +28,14 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraft.world.item.crafting.ShapedRecipePattern;
 import net.minecraft.world.level.block.Blocks;
 
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @GuideBook
 public class TestBook implements IGuideBook {
@@ -62,8 +64,7 @@ public class TestBook implements IGuideBook {
         pages.add(new PageJsonRecipe(new ResourceLocation("minecraft", "charcoal")));
 
         pages.add(new PageJsonRecipe(new ResourceLocation("minecraft", "stick"), recipe -> recipe instanceof ShapedRecipe ? new ShapedRecipesRenderer((ShapedRecipe) recipe) : null)); //Probably want to use your own method as render supplier and print proper logs
-
-        pages.add(new PageIRecipe(new ShapedRecipe(new ResourceLocation(GuideMod.ID, "test11"), "test", CraftingBookCategory.EQUIPMENT, 1, 1, NonNullList.of(Ingredient.EMPTY, Ingredient.of(new ItemStack(Items.PUMPKIN))), new ItemStack(Blocks.OAK_LOG))));
+        pages.add(new PageIRecipe(new ShapedRecipe("test", CraftingBookCategory.EQUIPMENT, new ShapedRecipePattern(1,1,NonNullList.of(Ingredient.EMPTY, Ingredient.of(new ItemStack(Items.PUMPKIN))), Optional.empty()), new ItemStack(Blocks.OAK_LOG))));
         pages.add(new PageJsonRecipe(new ResourceLocation("minecraft", "acacia_fence")));
         pages.add(new PageItemStack(Component.literal("These are all logs"), Ingredient.of(ItemTags.LOGS)));
         pages.add(new PageTextImage(Component.translatable("guideapi.test.string"), new ResourceLocation(GuideMod.ID, "textures/gui/testimage.png"), true));

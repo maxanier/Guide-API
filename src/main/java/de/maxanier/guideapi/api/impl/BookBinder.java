@@ -4,10 +4,9 @@ import de.maxanier.guideapi.GuideMod;
 import de.maxanier.guideapi.api.impl.abstraction.CategoryAbstract;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.forgespi.language.IModInfo;
-
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
+import net.neoforged.neoforgespi.language.IModInfo;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;

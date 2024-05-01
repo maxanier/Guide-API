@@ -1,57 +1,80 @@
-buildscript {
-    repositories {
-        mavenCentral()
-        maven {
-            name = "forge"
-            url = "https://files.minecraftforge.net/maven"
-        }
-    }
-
-
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '[6.0,6.2)'
-    }
-}
-
-
 plugins {
+    id 'net.neoforged.gradle.userdev' version '7.0.109'
     id 'com.matthewprenger.cursegradle' version '1.4.0'
-    id 'de.undercouch.download' version '3.3.0'
     id "com.modrinth.minotaur" version "2.4.5"
+    id 'de.undercouch.download' version '3.3.0'
+    id 'idea'
+    id 'eclipse'
+    id "me.modmuss50.mod-publish-plugin" version "0.4.2"
 }
 
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'idea'
-apply plugin: 'eclipse'
-//apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
-//apply from: 'https://raw.githubusercontent.com/SizableShrimp/ForgeUpdatesRemapper/main/remapper.gradle'
+group = mod_group_id
+version = mod_version
 
-configurations {
-    optionalRuntime
-    runtime.extendsFrom optionalRuntime // optionalRuntime dependencies are downloaded but not exported to POM
+base {
+    archivesName = mod_name
 }
 
-group = "de.maxanier.guideapi"
-archivesBaseName = "Guide-API-VP"
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
-
-//These will be overridden in gradle/versioning.gradle, but have to be defined here
-ext.mod_version = "Test"
-ext.type = "test"
-ext.classification = "test"
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 
-apply from: 'gradle/versioning.gradle'
 apply from: 'gradle/forge.gradle'
+apply from: 'gradle/versioning.gradle'
 apply from: 'gradle/artifacts.gradle'
 apply from: 'gradle/deploy.gradle'
 
-
 idea {
     module {
-        for (String excludeDirName in ["run", "out", "logs", "gradle"]) {
+        for (String excludeDirName in ["run", "out", "logs", "runs"]) {
             File excludeDir = new File(projectDir, excludeDirName)
             excludeDirs.add(excludeDir)
         }
+        downloadSources = true
     }
 }
+
+tasks.named('processResources', ProcessResources).configure {
+    var replaceProperties = [
+            minecraft_version: minecraft_version, minecraft_version_range: minecraft_version_range,
+            forge_version: forge_version, forge_version_range: forge_version_range,
+            loader_version_range: loader_version_range,
+            mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
+            mod_authors: mod_authors, mod_description: mod_description,
+            mod_url: mod_url,
+            mod_issue_tracker: mod_issue_tracker,
+            pack_format_number: pack_format_number,
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/neoforge.mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties + [project: project]
+    }
+}
+
+tasks.named('jar', Jar).configure {
+    from sourceSets.main.output.classesDirs
+    from sourceSets.main.output.resourcesDir
+
+
+    manifest {
+        attributes([
+                'Specification-Title'     : mod_id,
+                'Specification-Vendor'    : mod_authors,
+                'Specification-Version'   : '1', // We are version 1 of ourselves
+                'Implementation-Title'    : project.name,
+                'Implementation-Version'  : project.jar.archiveVersion,
+                'Implementation-Vendor'   : mod_authors,
+                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                "FMLAT"                   : "accesstransformer.cfg",
+        ])
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
+configurations.configureEach {
+    print(it.name + "\n")
+}
+

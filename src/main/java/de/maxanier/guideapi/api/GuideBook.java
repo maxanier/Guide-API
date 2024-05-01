@@ -1,7 +1,8 @@
 package de.maxanier.guideapi.api;
 
 
-import net.minecraftforge.eventbus.api.EventPriority;
+
+import net.neoforged.bus.api.EventPriority;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

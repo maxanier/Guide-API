@@ -1,4 +1,3 @@
-
 apply plugin: 'maven-publish'
 tasks.withType(GenerateModuleMetadata) {
     enabled = false
@@ -18,8 +17,7 @@ publishing {
                 asNode().dependencies.dependency.each { dep ->
 
                     // Check if the dependency has been mapped with MCP
-                    if (dep.version.last().value().last().contains('_mapped_snapshot_') || dep.version.last().value().last().contains('_mapped_stable_') || dep.version.last().value().last().contains('_mapped_official_')) {
-
+                    if (dep.version.last().value().last().contains('_mapped_snapshot_') || dep.version.last().value().last().contains('_mapped_stable_') || dep.version.last().value().last().contains('_mapped_official_') || dep.version.last().value().last().contains('_mapped_parchment_')) {
                         // Remove the MCP mapped artifact from the dependency list.
                         println 'Surpressing MCP mapped artifact ' + dep.artifactId.last().value().last() + ' from maven dependencies.'
                         assert dep.parent().remove(dep)
@@ -50,11 +48,8 @@ publishing {
                 }
             }
 
-            // Adds the sources as an artifact.
             artifact sourcesJar
-
-            // Adds the deobfuscated jar as an artifact.
-            artifact deobfJar
+            artifact javadocJar
 
         }
     }
@@ -73,58 +68,7 @@ publishing {
     }
 }
 
-curseforge {
-    if (project.hasProperty("CURSEFORGE_API")) {
-        apiKey = project.CURSEFORGE_API
-    } else {
-        apiKey = "DUMMY"
-    }
-    project {
-        id = project.curse_id
-
-        if (project.type == "beta") {
-            releaseType = 'beta'
-            //changelog = new File("resources/changelog/${project.version}.txt").text
-        } else if (project.type == "release") {
-            releaseType = 'release'
-        } else {
-            releaseType = 'alpha'
-            changelog = "This version should not be used in your 'productive' world. It contains the latest features, but also the latest bugs.\n Probably not all features are finished.\n To see what might have changed visit our Github page and browse the latest commits."
-        }
-        addGameVersion project.minecraft_version
-
-        mainArtifact(jar) {
-            displayName = "Guide-API-VP-${project.minecraft_version}-${project.mod_version}"
-        }
-
-    }
-
-
-}
-
-// Make sure it runs after build!
-modrinth{
-    if (project.type == "beta") {
-        versionType = 'beta'
-        //changelog = new File("resources/changelog/${project.version}.txt").text
-    } else if (project.type == "release") {
-        versionType = 'release'
-    } else {
-        versionType = 'alpha'
-        changelog = "This version should not be used in your 'productive' world. It contains the latest features, but also the latest bugs.\n Probably not all features are finished.\n To see what might have changed visit our Github page and browse the latest commits."
-    }
-    token = findProperty("MODRINTH_API") ?: "DUMMY"
-    projectId = project.modrinth_id
-    versionName = "Guide-API-VP-${project.minecraft_version}-${project.mod_version}"
-    versionNumber = "${project.minecraft_version}-${project.mod_version}"
-    uploadFile = jar
-    gameVersions = [project.minecraft_version]
-    loaders = ["forge"]
-}
-
-
-
-task checkIfPublicVersion{
+tasks.register('checkIfPublicVersion') {
     doFirst {
         if (project.classification != "public") {
             throw new PublishException("Trying to publish a version that is not intended for public release")
@@ -132,6 +76,34 @@ task checkIfPublicVersion{
     }
 }
 
-tasks.curseforge.dependsOn(checkIfPublicVersion)
-tasks.modrinth.dependsOn(checkIfPublicVersion)
-tasks.publish.dependsOn(checkIfPublicVersion)
+tasks.register('publishAll') {
+    dependsOn('build')
+    dependsOn('checkIfPublicVersion')
+    dependsOn('publish')
+    dependsOn('publishMods')
+}
+
+tasks.publishMods.dependsOn(checkIfPublicVersion)
+
+publishMods {
+    type = project.type == "beta" ? BETA: project.type == "release" ? STABLE : ALPHA
+    changelog = !(findProperty("CHANGELOG") ?: "").toString().isEmpty() ? getProperty("CHANGELOG") : type != ALPHA ? "" : "This version should not be used in your 'productive' world. It contains the latest features, but also the latest bugs.\n Probably not all features are finished.\n To see what might have changed browse the latest commits."
+    file = jar.archiveFile
+    modLoaders.add("neoforge")
+    version = "${project.minecraft_version}-${project.mod_version}"
+    displayName = "Vampirism-${project.minecraft_version}-${project.mod_version}"
+    dryRun = !(project.hasProperty("MODRINTH_API") && project.hasProperty("CURSEFORGE_API"))
+
+    modrinth {
+        accessToken = findProperty("MODRINTH_API") ?: "DUMMY"
+        projectId = project.modrinth_id
+        minecraftVersions.add(project.minecraft_version)
+    }
+
+    curseforge {
+        accessToken = findProperty("CURSEFORGE_API") ?: "DUMMY"
+        projectId = project.curseforge_id
+        minecraftVersions.add(project.minecraft_version)
+        projectSlug = project.curseforge_slug
+    }
+}

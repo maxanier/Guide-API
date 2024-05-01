@@ -161,13 +161,13 @@ public class SearchScreen extends BaseScreen {
     }
 
     @Override
-    public boolean mouseScrolled(double p_mouseScrolled_1_, double p_mouseScrolled_3_, double movement) {
-        if (movement < 0 && buttonNext.visible && currentPage <= searchResults.size())
+    public boolean mouseScrolled(double pMouseX, double pMouseY, double pScrollX, double pScrollY) {
+        if (pScrollY < 0 && buttonNext.visible && currentPage <= searchResults.size())
             currentPage++;
-        else if (movement > 0 && buttonPrev.visible && currentPage > 0)
+        else if (pScrollY > 0 && buttonPrev.visible && currentPage > 0)
             currentPage--;
 
-        return movement != 0 || super.mouseScrolled(p_mouseScrolled_1_, p_mouseScrolled_3_, movement);
+        return pScrollY != 0 || super.mouseScrolled(pMouseX, pMouseY, pScrollX, pScrollY);
 
     }
 

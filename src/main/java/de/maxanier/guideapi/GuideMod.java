@@ -4,20 +4,24 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import de.maxanier.guideapi.api.GuideAPI;
 import de.maxanier.guideapi.api.IGuideBook;
 import de.maxanier.guideapi.api.impl.Book;
-import de.maxanier.guideapi.network.PacketHandler;
+import de.maxanier.guideapi.item.ItemGuideBookDataComponents;
+import de.maxanier.guideapi.network.ReadingStatePayload;
 import de.maxanier.guideapi.proxy.ClientProxy;
 import de.maxanier.guideapi.proxy.CommonProxy;
 import de.maxanier.guideapi.util.AnnotationHandler;
 import de.maxanier.guideapi.util.ReloadCommand;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import org.apache.commons.lang3.tuple.Pair;
+import net.neoforged.fml.common.Mod;
 
 @Mod(value = GuideMod.ID)
 public class GuideMod {
@@ -28,15 +32,19 @@ public class GuideMod {
 
     public static GuideMod INSTANCE;
 
-    public static CommonProxy PROXY = DistExecutor.runForDist(() -> ClientProxy::new, () -> CommonProxy::new);
+    public static final CommonProxy PROXY =  FMLEnvironment.dist == Dist.CLIENT ? new ClientProxy() : new CommonProxy();
+    public final IEventBus modBus;
 
-    public GuideMod() {
+    public GuideMod(IEventBus modBus) {
         INSTANCE = this;
+        this.modBus = modBus;
         checkDevEnv();
         GuideAPI.initialize();
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::loadComplete);
-        MinecraftForge.EVENT_BUS.addListener(this::onRegisterCommands);
+        modBus.addListener(this::setup);
+        modBus.addListener(this::loadComplete);
+        modBus.addListener(this::registerPackets);
+        ItemGuideBookDataComponents.register(modBus);
+        NeoForge.EVENT_BUS.addListener(this::onRegisterCommands);
     }
 
     private void checkDevEnv() {
@@ -63,10 +71,14 @@ public class GuideMod {
         if (GuideConfig.COMMON == null) {
             throw new IllegalStateException("Did not build configuration, before configuration load. Make sure to call GuideConfig#buildConfiguration during one of the registry events");
         }
-        PacketHandler.registerPackets();
         for (Pair<Book, IGuideBook> pair : AnnotationHandler.BOOK_CLASSES) {
             IGuideBook guide = pair.getRight();
             guide.registerInfoRenderer(pair.getLeft());
         }
+    }
+
+    private void registerPackets(RegisterPayloadHandlersEvent event) {
+        PayloadRegistrar registrar = event.registrar("1");
+        registrar.playToServer(ReadingStatePayload.TYPE, ReadingStatePayload.STREAM_CODEC, ReadingStatePayload::handle);
     }
 }

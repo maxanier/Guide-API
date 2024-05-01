@@ -1,24 +1,27 @@
 package de.maxanier.guideapi.gui;
 
 import com.google.common.collect.HashMultimap;
+import com.mojang.blaze3d.systems.RenderSystem;
 import de.maxanier.guideapi.api.impl.Book;
 import de.maxanier.guideapi.api.impl.abstraction.CategoryAbstract;
 import de.maxanier.guideapi.button.ButtonNext;
 import de.maxanier.guideapi.button.ButtonPrev;
 import de.maxanier.guideapi.button.ButtonSearch;
-import de.maxanier.guideapi.network.PacketHandler;
-import de.maxanier.guideapi.network.PacketSyncHome;
+import de.maxanier.guideapi.network.ReadingStatePayload;
 import de.maxanier.guideapi.wrapper.CategoryWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
+import java.util.Optional;
 
 public class HomeScreen extends BaseScreen {
 
@@ -115,14 +118,14 @@ public class HomeScreen extends BaseScreen {
     }
 
     @Override
-    public boolean mouseScrolled(double p_mouseScrolled_1_, double p_mouseScrolled_3_, double movement) {
+    public boolean mouseScrolled(double pMouseX, double pMouseY, double pScrollX, double pScrollY) {
 
-        if (movement < 0)
+        if (pScrollY < 0)
             nextPage();
-        else if (movement > 0)
+        else if (pScrollY > 0)
             prevPage();
 
-        return movement != 0 || super.mouseScrolled(p_mouseScrolled_1_, p_mouseScrolled_3_, movement);
+        return pScrollY != 0 || super.mouseScrolled(pMouseX, pMouseY, pScrollX, pScrollY);
     }
 
     public void nextPage() {
@@ -133,8 +136,7 @@ public class HomeScreen extends BaseScreen {
     @Override
     public void onClose() {
         super.onClose();
-
-        PacketHandler.INSTANCE.sendToServer(new PacketSyncHome(categoryPage));
+        PacketDistributor.sendToServer(new ReadingStatePayload(categoryPage, Optional.empty(), Optional.empty()));
     }
 
     public void prevPage() {
@@ -143,12 +145,19 @@ public class HomeScreen extends BaseScreen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float renderPartialTicks) {
+    public void renderBackground(GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
+        super.renderBackground(graphics, pMouseX, pMouseY, pPartialTick);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
         graphics.blit(pageTexture, guiLeft, guiTop, 0, 0, xSize, ySize);
         graphics.setColor((float) book.getColor().getRed() / 255F, (float) book.getColor().getGreen() / 255F, (float) book.getColor().getBlue() / 255F, 1f);
         graphics.blit(outlineTexture, guiLeft, guiTop, 0, 0, xSize, ySize);
         graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+    }
 
+    @Override
+    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float renderPartialTicks) {
+        super.render(graphics, mouseX, mouseY, renderPartialTicks);
 
         drawCenteredStringWithoutShadow(graphics, font, book.getHeader().getVisualOrderText(), guiLeft + xSize / 2 + 1, guiTop + 15, 0);
 
@@ -168,6 +177,5 @@ public class HomeScreen extends BaseScreen {
         buttonPrev.visible = categoryPage != 0;
         buttonNext.visible = categoryPage != categoryWrapperMap.asMap().size() - 1 && !categoryWrapperMap.asMap().isEmpty();
 
-        super.render(graphics, mouseX, mouseY, renderPartialTicks);
     }
 }

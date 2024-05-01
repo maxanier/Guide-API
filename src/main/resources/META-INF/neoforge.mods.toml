@@ -1,0 +1,25 @@
+modLoader = "javafml"
+loaderVersion = "${loader_version_range}"
+issueTrackerURL = "${mod_issue_tracker}"
+license = "${mod_license}"
+
+[[mods]]
+modId="${mod_id}"
+namespace="guideapi_vp"
+version="${mod_version}"
+displayName="${mod_name}"
+authors="${mod_authors}"
+credits='''\n
+     - maxanier
+     - Tombenpotter
+     - TehNut'''
+description='''${mod_description}'''
+displayURL="${mod_url}"
+logoFile="logo.png"
+updateJSONURL="https://api.modrinth.com/updates/guide-api/forge_updates.json"
+[[dependencies.${mod_id}]]
+modId="neoforge"
+type="required"
+versionRange="${forge_version_range}"
+ordering="NONE"
+side="BOTH"

@@ -1,5 +1,6 @@
 package de.maxanier.guideapi.item;
 
+import com.mojang.serialization.Codec;
 import de.maxanier.guideapi.GuideMod;
 import de.maxanier.guideapi.api.BookEvent;
 import de.maxanier.guideapi.api.IGuideItem;
@@ -7,8 +8,12 @@ import de.maxanier.guideapi.api.IGuideLinked;
 import de.maxanier.guideapi.api.impl.Book;
 import de.maxanier.guideapi.api.impl.abstraction.CategoryAbstract;
 import net.minecraft.Util;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -20,8 +25,7 @@ import net.minecraft.world.item.TooltipFlag.Default;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.NeoForge;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -41,8 +45,9 @@ public class ItemGuideBook extends Item implements IGuideItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Level playerIn, List<Component> tooltip, TooltipFlag advanced) {
-        if (book.getAuthor() != null) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext p_339594_, List<Component> tooltip, TooltipFlag advanced) {
+
+            if (book.getAuthor() != null) {
             tooltip.add(book.getAuthor());
             if (advanced == Default.ADVANCED) {
                 tooltip.add(Component.literal(book.getRegistryName().toString()));
@@ -78,7 +83,8 @@ public class ItemGuideBook extends Item implements IGuideItem {
 
 
         BookEvent.Open event = new BookEvent.Open(book, heldStack, player);
-        if (MinecraftForge.EVENT_BUS.post(event)) {
+        NeoForge.EVENT_BUS.post(event);
+        if (event.isCanceled()) {
             player.displayClientMessage(event.getCanceledText(), true);
             return InteractionResultHolder.fail(heldStack);
         }
@@ -115,7 +121,7 @@ public class ItemGuideBook extends Item implements IGuideItem {
     @Override
     protected String getOrCreateDescriptionId() {
         if (this.translation_key == null) {
-            this.translation_key = Util.makeDescriptionId("item", ForgeRegistries.ITEMS.getKey(this));
+            this.translation_key = Util.makeDescriptionId("item", BuiltInRegistries.ITEM.getKey(this));
         }
 
         return this.translation_key;

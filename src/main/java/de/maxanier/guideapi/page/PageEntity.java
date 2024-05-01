@@ -52,7 +52,7 @@ public class PageEntity extends Page {
     @Override
     public void draw(GuiGraphics graphics, RegistryAccess registryAccess, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
         if (e != null)
-            InventoryScreen.renderEntityInInventoryFollowsMouse(graphics, guiLeft + 120, guiTop + 130, 50, (float) (guiLeft + 120) - mouseX, (float) (guiTop + 130) - mouseY, this.e);
+            InventoryScreen.renderEntityInInventoryFollowsMouse(graphics, guiLeft + guiBase.xSize/2 - 60, guiTop + guiBase.ySize/2 - 80 , guiLeft + guiBase.xSize/2 +60 , guiTop + guiBase.ySize/2 + 40, 50,0.0625f, mouseX, mouseY, this.e);
 
     }
 
