@@ -9,6 +9,7 @@ import de.maxanier.guideapi.api.impl.abstraction.CategoryAbstract;
 import de.maxanier.guideapi.api.util.PageHelper;
 import de.maxanier.guideapi.category.CategoryItemStack;
 import de.maxanier.guideapi.entry.EntryItemStack;
+import de.maxanier.guideapi.entry.EntryResourceLocation;
 import de.maxanier.guideapi.page.PageBrewingRecipe;
 import de.maxanier.guideapi.page.PageJsonRecipe;
 import de.maxanier.guideapi.page.PageText;
@@ -45,6 +46,7 @@ public class TestBook2 implements IGuideBook {
     private void buildContent(List<CategoryAbstract> categories) {
         CategoryAbstract testCategory = new CategoryItemStack(Component.translatable("guideapi.test.category"), new ItemStack(Items.BLUE_BANNER)).withKeyBase("guideapi");
         testCategory.addEntry("entry", new EntryItemStack(Component.translatable("guideapi.test.entry"), new ItemStack(Items.POTATO)));
+        testCategory.addEntry("entry2", new EntryResourceLocation(Component.translatable("guideapi.test.entry"),new ResourceLocation(GuideMod.ID, "textures/item/book_base.png")));
         testCategory.getEntry("entry").addPage(new PageText(Component.literal("Hello, this is\nsome text")));
         //testCategory.getEntry("entry").addPage(new PageFurnaceRecipe(Blocks.COBBLESTONE));
         //testCategory.getEntry("entry").addPage(PageIRecipe.newShaped(new ItemStack(Items.ACACIA_BOAT), "X X", "XXX", 'X', new ItemStack(Blocks.ACACIA_PLANKS, 1, 4)));

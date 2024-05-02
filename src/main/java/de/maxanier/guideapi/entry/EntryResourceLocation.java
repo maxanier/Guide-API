@@ -38,7 +38,7 @@ public class EntryResourceLocation extends Entry {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, image);
-        GuiHelper.drawSizedIconWithoutColor(graphics, entryX + 2, entryY, 16, 16, 1F);
+        GuiHelper.drawSizedIconWithoutColor(graphics, entryX + 2, entryY, 8, 8, 1F);
 
         super.drawExtras(graphics, book, category, entryX, entryY, entryWidth, entryHeight, mouseX, mouseY, guiBase, fontRendererObj);
     }

@@ -55,6 +55,7 @@ tasks.named('jar', Jar).configure {
     from sourceSets.main.output.classesDirs
     from sourceSets.main.output.resourcesDir
 
+    exclude 'de/maxanier/guideapi/test/**/*'
 
     manifest {
         attributes([
