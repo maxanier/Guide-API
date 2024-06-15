@@ -2,6 +2,7 @@ package de.maxanier.guideapi.api.impl;
 
 import com.google.common.base.Joiner;
 import de.maxanier.guideapi.api.impl.abstraction.CategoryAbstract;
+import de.maxanier.guideapi.api.impl.abstraction.EntryAbstract;
 import de.maxanier.guideapi.util.LogHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -10,6 +11,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class Book {
@@ -108,6 +110,13 @@ public class Book {
         if (!isInitialized) {
             LogHelper.debug("Opening book " + registryName.toString() + " for the first time -> Initializing content");
             contentProvider.accept(categories);
+            for (CategoryAbstract category : categories) {
+                for (Map.Entry<ResourceLocation, EntryAbstract> resourceLocationEntryAbstractEntry : category.entries.entrySet()) {
+                    if(resourceLocationEntryAbstractEntry.getValue().pageList.isEmpty()){
+                        throw new IllegalStateException("Empty entry "+resourceLocationEntryAbstractEntry.getKey().toString()+" in category "+category.name.getString()+" in book "+registryName.toString());
+                    }
+                }
+            }
             isInitialized = true;
         }
     }

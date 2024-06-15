@@ -1,6 +1,6 @@
 package de.maxanier.guideapi.api.util;
 
-import net.neoforged.neoforge.common.I18nExtension;
+import net.minecraft.network.chat.Component;
 import org.apache.commons.lang3.text.WordUtils;
 
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ public class TextHelper {
     }
 
     public static String localize(String input, Object... format) {
-        return I18nExtension.parseMessage(input, format);
+        return Component.translatable(input, format).getString();
     }
 
     public static String localizeEffect(String input, Object... format) {

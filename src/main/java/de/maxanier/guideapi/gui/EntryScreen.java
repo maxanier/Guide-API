@@ -81,6 +81,9 @@ public class EntryScreen extends BaseScreen {
             this.minecraft.setScreen(new SearchScreen(book, player, bookStack, this));
         }, this));
 
+        if(this.entry.pageList.size() == 0){
+            throw new IllegalStateException("Empty book entry "+entry.name.toString());
+        }
         for (IPage page : this.entry.pageList) {
             page.onInit(book, category, entry, player, bookStack, this);
             pageWrapperList.add(new PageWrapper(this, book, category, entry, page, guiLeft, guiTop, player, this.font, bookStack));

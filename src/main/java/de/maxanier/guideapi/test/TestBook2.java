@@ -50,7 +50,7 @@ public class TestBook2 implements IGuideBook {
         testCategory.getEntry("entry").addPage(new PageText(Component.literal("Hello, this is\nsome text")));
         //testCategory.getEntry("entry").addPage(new PageFurnaceRecipe(Blocks.COBBLESTONE));
         //testCategory.getEntry("entry").addPage(PageIRecipe.newShaped(new ItemStack(Items.ACACIA_BOAT), "X X", "XXX", 'X', new ItemStack(Blocks.ACACIA_PLANKS, 1, 4)));
-        testCategory.getEntry("entry").addPage(new PageBrewingRecipe(new BrewingRecipe(Ingredient.of(PotionContents.createItemStack(Items.POTION, Potions.AWKWARD)), Ingredient.of(new ItemStack(Items.GLISTERING_MELON_SLICE)), PotionContents.createItemStack(Items.POTION, Potions.HEALING)))
+        testCategory.getEntry("entry2").addPage(new PageBrewingRecipe(new BrewingRecipe(Ingredient.of(PotionContents.createItemStack(Items.POTION, Potions.AWKWARD)), Ingredient.of(new ItemStack(Items.GLISTERING_MELON_SLICE)), PotionContents.createItemStack(Items.POTION, Potions.HEALING)))
         );
         testCategory.getEntry("entry").addPage(new PageJsonRecipe(new ResourceLocation("bread")));
         testCategory.getEntry("entry").addPage(new PageJsonRecipe(new ResourceLocation("redstone")));
