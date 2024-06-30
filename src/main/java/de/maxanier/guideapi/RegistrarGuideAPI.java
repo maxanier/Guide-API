@@ -29,7 +29,7 @@ public class RegistrarGuideAPI {
         //Don't build book content here as items/blocks are not available and translation is only possible in game
         GuideConfig.buildConfiguration(GuideMod.INSTANCE.modBus);//Build configuration now that we know all added books
         for (Book book : GuideAPI.getBooks().values()) {
-            ResourceLocation id = new ResourceLocation(GuideMod.ID, book.getRegistryName().toString().replace(":", "-"));
+            ResourceLocation id = ResourceLocation.fromNamespaceAndPath(GuideMod.ID, book.getRegistryName().toString().replace(":", "-"));
             event.register(Registries.ITEM,id, () -> new ItemGuideBook(book));
             APISetter.setBookForStack(book, () -> new ItemStack(BuiltInRegistries.ITEM.get(id)));
         }

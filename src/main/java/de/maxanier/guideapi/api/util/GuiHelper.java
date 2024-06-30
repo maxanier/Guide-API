@@ -1,10 +1,7 @@
 package de.maxanier.guideapi.api.util;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -99,13 +96,12 @@ public class GuiHelper {
         mStack.translate(x, y, zLevel);
         RenderSystem.applyModelViewMatrix();
         RenderSystem.enableDepthTest();
-        Tesselator tessellator = Tesselator.getInstance();
-        tessellator.getBuilder().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        tessellator.getBuilder().vertex(x, y + height, zLevel).uv(0f, 1f).endVertex();
-        tessellator.getBuilder().vertex(x + width, y + height, zLevel).uv(1f, 1).endVertex();
-        tessellator.getBuilder().vertex(x + width, y, zLevel).uv(1, 0).endVertex();
-        tessellator.getBuilder().vertex(x, y, zLevel).uv(0, 0).endVertex();
-        tessellator.end();
+        BufferBuilder bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        bufferBuilder.addVertex(x, y + height, zLevel).setUv(0f, 1f);
+        bufferBuilder.addVertex(x + width, y + height, zLevel).setUv(1f, 1);
+        bufferBuilder.addVertex(x + width, y, zLevel).setUv(1, 0);
+        bufferBuilder.addVertex(x, y, zLevel).setUv(0, 0);
+        BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
         mStack.popPose();
         RenderSystem.applyModelViewMatrix();
 
@@ -130,13 +126,12 @@ public class GuiHelper {
         mStack.translate(x, y, zLevel);
         RenderSystem.applyModelViewMatrix();
         RenderSystem.enableDepthTest();
-        Tesselator tessellator = Tesselator.getInstance();
-        tessellator.getBuilder().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        tessellator.getBuilder().vertex(x, y + height, zLevel).uv(0, 1).endVertex();
-        tessellator.getBuilder().vertex(x + width, y + height, zLevel).uv(1, 1).endVertex();
-        tessellator.getBuilder().vertex(x + width, y, zLevel).uv(1, 0).endVertex();
-        tessellator.getBuilder().vertex(x, y, zLevel).uv(0, 0).endVertex();
-        tessellator.end();
+        BufferBuilder bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        bufferBuilder.addVertex(x, y + height, zLevel).setUv(0f, 1f);
+        bufferBuilder.addVertex(x + width, y + height, zLevel).setUv(1f, 1);
+        bufferBuilder.addVertex(x + width, y, zLevel).setUv(1, 0);
+        bufferBuilder.addVertex(x, y, zLevel).setUv(0, 0);
+        BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
         mStack.pushPose();
         RenderSystem.applyModelViewMatrix();
     }

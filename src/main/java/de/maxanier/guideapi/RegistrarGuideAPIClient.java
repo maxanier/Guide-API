@@ -25,7 +25,7 @@ public class RegistrarGuideAPIClient {
         for (Pair<Book, IGuideBook> guide : AnnotationHandler.BOOK_CLASSES) {
             ResourceLocation loc = guide.getRight().getModel();
             if (loc != null) {
-                event.register(new ModelResourceLocation(loc, "inventory"));
+                event.register(new ModelResourceLocation(loc, "standalone"));
             }
         }
     }
@@ -36,7 +36,7 @@ public class RegistrarGuideAPIClient {
         for (Pair<Book, IGuideBook> guide : AnnotationHandler.BOOK_CLASSES) {
             ResourceLocation loc = guide.getRight().getModel();
             if (loc != null) {
-                ModelResourceLocation newMrl = new ModelResourceLocation(loc, "inventory");
+                ModelResourceLocation newMrl = new ModelResourceLocation(loc, "standalone");
                 Item bookItem = GuideAPI.getStackFromBook(guide.getLeft()).getItem();
                 ModelResourceLocation oldMrl = new ModelResourceLocation(BuiltInRegistries.ITEM.getKey(bookItem), "inventory");
                 BakedModel model = event.getModels().get(newMrl);

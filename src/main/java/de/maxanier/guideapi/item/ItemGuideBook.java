@@ -133,6 +133,6 @@ public class ItemGuideBook extends Item implements IGuideItem {
      * Set a custom translation key
      */
     protected void setTranslation_key(String name) {
-        this.translation_key = Util.makeDescriptionId("item", new ResourceLocation(GuideMod.ID, name));
+        this.translation_key = Util.makeDescriptionId("item", ResourceLocation.fromNamespaceAndPath(GuideMod.ID, name));
     }
 }

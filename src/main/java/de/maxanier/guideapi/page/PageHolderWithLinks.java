@@ -72,17 +72,6 @@ public class PageHolderWithLinks implements IPage {
         return this;
     }
 
-    /**
-     * Adds a resource location of an entry to be linked
-     *
-     * @return This
-     */
-    public PageHolderWithLinks addLink(String resourceLocation) {
-        addLink(new ResourceLocation(resourceLocation));
-        return this;
-    }
-
-
     @Override
     public boolean canSee(Book book, CategoryAbstract category, EntryAbstract entry, Player player, ItemStack bookStack, EntryScreen guiEntry) {
         return page.canSee(book, category, entry, player, bookStack, guiEntry);

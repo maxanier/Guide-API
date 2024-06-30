@@ -25,8 +25,8 @@ public class BookBinder {
     private Component itemName;
     @Nullable
     private Component author;
-    private ResourceLocation pageTexture = new ResourceLocation(GuideMod.ID, "textures/gui/book_colored.png");
-    private ResourceLocation outlineTexture = new ResourceLocation(GuideMod.ID, "textures/gui/book_greyscale.png");
+    private ResourceLocation pageTexture = ResourceLocation.fromNamespaceAndPath(GuideMod.ID, "textures/gui/book_colored.png");
+    private ResourceLocation outlineTexture = ResourceLocation.fromNamespaceAndPath(GuideMod.ID, "textures/gui/book_greyscale.png");
     private Color color = new Color(171, 70, 30);
     private boolean spawnWithBook;
 

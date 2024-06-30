@@ -173,6 +173,8 @@ public class SearchScreen extends BaseScreen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+        super.render(graphics, mouseX, mouseY, partialTicks);
+
         graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
         graphics.blit(pageTexture, guiLeft, guiTop, 0, 0, xSize, ySize);
         graphics.setColor((float) book.getColor().getRed() / 255F, (float) book.getColor().getGreen() / 255F, (float) book.getColor().getBlue() / 255F, 1f);
@@ -204,7 +206,6 @@ public class SearchScreen extends BaseScreen {
         buttonPrev.visible = currentPage != 0;
         buttonNext.visible = currentPage != searchResults.size() - 1 && !searchResults.isEmpty();
 
-        super.render(graphics, mouseX, mouseY, partialTicks);
     }
 
     private void updateSearch() {

@@ -38,7 +38,7 @@ public class TestBook3 implements IGuideBook {
     @Nullable
     @Override
     public Book buildBook() {
-        BookBinder binder = new BookBinder(new ResourceLocation(GuideMod.ID, "test_book3"));
+        BookBinder binder = new BookBinder(ResourceLocation.fromNamespaceAndPath(GuideMod.ID, "test_book3"));
         binder.setAuthor(Component.literal("Maxanier")).setColor(new Color(80, 50, 5)).setItemName(Component.literal("Display Name")).setHeader(Component.literal("Hello there")).setSpawnWithBook().setGuideTitle(Component.literal("Title message")).setContentProvider(this::buildContent);
         book = binder.build();
         return book;
@@ -54,14 +54,14 @@ public class TestBook3 implements IGuideBook {
 
         CategoryAbstract blocks = new CategoryItemStack(Component.literal("Blocks"), new ItemStack(Blocks.STONE)).withKeyBase(GuideMod.ID);
         Map<ResourceLocation, EntryAbstract> blockEntries = new LinkedHashMap<>();
-        helper.info(Blocks.COAL_BLOCK, Blocks.IRON_BLOCK, Blocks.GOLD_BLOCK).recipes(new ResourceLocation("minecraft", "coal_block"), new ResourceLocation("iron_block"), new ResourceLocation("gold_block")).useCustomEntryName().setKeyName("compressed_blocks").setLinks(new ResourceLocation("guideapi.test.items.ingots")).setFormats(9).build(blockEntries);
+        helper.info(Blocks.COAL_BLOCK, Blocks.IRON_BLOCK, Blocks.GOLD_BLOCK).recipes(ResourceLocation.fromNamespaceAndPath("minecraft", "coal_block"), ResourceLocation.withDefaultNamespace("iron_block"), ResourceLocation.withDefaultNamespace("gold_block")).useCustomEntryName().setKeyName("compressed_blocks").setLinks(ResourceLocation.withDefaultNamespace("guideapi.test.items.ingots")).setFormats(9).build(blockEntries);
         blocks.addEntries(blockEntries);
         categories.add(blocks);
 
         CategoryAbstract items = new CategoryItemStack(Component.literal("Items"), new ItemStack(Items.IRON_AXE)).withKeyBase(GuideMod.ID);
         Map<ResourceLocation, EntryAbstract> itemEntries = new LinkedHashMap<>();
         helper.info(Items.APPLE).build(itemEntries);
-        helper.info(false, Ingredient.of(Tags.Items.INGOTS), new ItemStack(Items.IRON_INGOT)).useCustomEntryName().recipes(new ResourceLocation("minecraft", "iron_ingot_from_nuggets"), new ResourceLocation("gold_ingot_from_nuggets")).setKeyName("ingots").setLinks(new ResourceLocation("guideapi.test.blocks.compressed_blocks")).build(itemEntries);
+        helper.info(false, Ingredient.of(Tags.Items.INGOTS), new ItemStack(Items.IRON_INGOT)).useCustomEntryName().recipes(ResourceLocation.withDefaultNamespace("iron_ingot_from_nuggets"), ResourceLocation.withDefaultNamespace("gold_ingot_from_nuggets")).setKeyName("ingots").setLinks(ResourceLocation.withDefaultNamespace("guideapi.test.blocks.compressed_blocks")).build(itemEntries);
         items.addEntries(itemEntries);
         categories.add(items);
 

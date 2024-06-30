@@ -16,7 +16,7 @@ import java.util.Optional;
 
 public class ButtonNext extends ButtonGuideAPI {
 
-    public static final ResourceLocation TEXTURE = new ResourceLocation(GuideMod.ID, "textures/gui/book_colored.png");
+    public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(GuideMod.ID, "textures/gui/book_colored.png");
 
     public ButtonNext(int widthIn, int heightIn, Button.OnPress onPress, BaseScreen guiBase) {
         super(widthIn, heightIn, 18, 10, Component.translatable("guideapi.button.next"), onPress, guiBase);

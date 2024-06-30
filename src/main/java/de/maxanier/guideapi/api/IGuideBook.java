@@ -28,7 +28,7 @@ public interface IGuideBook {
     @Nullable
     @OnlyIn(Dist.CLIENT)
     default ResourceLocation getModel() {
-        return new ResourceLocation(GuideMod.ID, "guidebook");
+        return ResourceLocation.fromNamespaceAndPath(GuideMod.ID, "guidebook");
     }
 
     /**

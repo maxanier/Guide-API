@@ -1,10 +1,7 @@
 package de.maxanier.guideapi.api;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.*;
 import de.maxanier.guideapi.GuideMod;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
@@ -15,7 +12,7 @@ import org.joml.Matrix4f;
 
 public class SubTexture {
 
-    private static final ResourceLocation RECIPE_ELEMENTS = new ResourceLocation(GuideMod.ID, "textures/gui/recipe_elements.png");
+    private static final ResourceLocation RECIPE_ELEMENTS = ResourceLocation.fromNamespaceAndPath(GuideMod.ID, "textures/gui/recipe_elements.png");
     // Grids
     public static final SubTexture CRAFTING_GRID = new SubTexture(RECIPE_ELEMENTS, 0, 48, 102, 56);
     public static final SubTexture FURNACE_GRID = new SubTexture(RECIPE_ELEMENTS, 0, 104, 68, 28);
@@ -39,7 +36,7 @@ public class SubTexture {
     public static final SubTexture SMALL_BUTTON_POTION = new SubTexture(RECIPE_ELEMENTS, 30, 0, 10, 10);
     public static final SubTexture SMALL_BUTTON_POTION_HOVER = new SubTexture(RECIPE_ELEMENTS, 70, 0, 10, 10);
     public static final SubTexture SMALL_BUTTON_POTION_PRESS = new SubTexture(RECIPE_ELEMENTS, 110, 0, 10, 10);
-    private static final ResourceLocation OTHER_ELEMENTS = new ResourceLocation(GuideMod.ID, "textures/gui/book_colored.png");
+    private static final ResourceLocation OTHER_ELEMENTS = ResourceLocation.fromNamespaceAndPath(GuideMod.ID, "textures/gui/book_colored.png");
     public static final SubTexture MAGNIFYING_GLASS = new SubTexture(OTHER_ELEMENTS, 0, 241, 15, 15);
     private final ResourceLocation textureLocation;
     private final int xPos;
@@ -63,14 +60,12 @@ public class SubTexture {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, textureLocation);
-        Tesselator tessellator = Tesselator.getInstance();
-        BufferBuilder vertexbuffer = tessellator.getBuilder();
-        vertexbuffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        vertexbuffer.vertex(matrix, drawX, drawY + height, zLevel).uv((float) xPos * someMagicValueFromMojang, (float) (yPos + height) * someMagicValueFromMojang).endVertex();
-        vertexbuffer.vertex(drawX + width, drawY + height, zLevel).uv((float) (xPos + width) * someMagicValueFromMojang, (float) (yPos + height) * someMagicValueFromMojang).endVertex();
-        vertexbuffer.vertex(drawX + width, drawY, zLevel).uv((float) (xPos + width) * someMagicValueFromMojang, (float) yPos * someMagicValueFromMojang).endVertex();
-        vertexbuffer.vertex(drawX, drawY, zLevel).uv((float) xPos * someMagicValueFromMojang, (float) yPos * someMagicValueFromMojang).endVertex();
-        tessellator.end();
+        BufferBuilder bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        bufferBuilder.addVertex(drawX, drawY + height, zLevel).setUv((float) xPos * someMagicValueFromMojang, (float) (yPos + height) * someMagicValueFromMojang);
+        bufferBuilder.addVertex(drawX + width, drawY + height, zLevel).setUv((float) (xPos + width) * someMagicValueFromMojang, (float) (yPos + height) * someMagicValueFromMojang);
+        bufferBuilder.addVertex(drawX + width, drawY, zLevel).setUv((float) (xPos + width) * someMagicValueFromMojang, (float) yPos * someMagicValueFromMojang);
+        bufferBuilder.addVertex(drawX, drawY, zLevel).setUv((float) xPos * someMagicValueFromMojang, (float) yPos * someMagicValueFromMojang);
+        BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
     }
 
     @OnlyIn(Dist.CLIENT)

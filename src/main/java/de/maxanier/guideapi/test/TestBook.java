@@ -45,7 +45,7 @@ public class TestBook implements IGuideBook {
     @Nullable
     @Override
     public Book buildBook() {
-        BookBinder binder = new BookBinder(new ResourceLocation(GuideMod.ID, "test_book"));
+        BookBinder binder = new BookBinder(ResourceLocation.fromNamespaceAndPath(GuideMod.ID, "test_book"));
         binder.setAuthor(Component.literal("TehNut")).setColor(Color.PINK).setItemName(Component.literal("Display Name")).setHeader(Component.literal("Hello there")).setGuideTitle(Component.literal("Title message")).setSpawnWithBook().setContentProvider(this::buildContent);
         return (book = binder.build());
     }
@@ -60,16 +60,16 @@ public class TestBook implements IGuideBook {
         pages.addAll(PageHelper.pagesForLongText(Component.literal("Hello, this is some text. It is very long so it should be split across multiple pages. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.")));
         pages.addAll(PageHelper.pagesForLongText(Component.literal("Hello, this is some text. It is very long so it should be split across multiple pages. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."), Items.COAL_BLOCK));
 
-        pages.add(new PageJsonRecipe(new ResourceLocation("minecraft", "stone")));
-        pages.add(new PageJsonRecipe(new ResourceLocation("minecraft", "charcoal")));
+        pages.add(new PageJsonRecipe(ResourceLocation.withDefaultNamespace( "stone")));
+        pages.add(new PageJsonRecipe(ResourceLocation.withDefaultNamespace("charcoal")));
 
-        pages.add(new PageJsonRecipe(new ResourceLocation("minecraft", "stick"), recipe -> recipe instanceof ShapedRecipe ? new ShapedRecipesRenderer((ShapedRecipe) recipe) : null)); //Probably want to use your own method as render supplier and print proper logs
+        pages.add(new PageJsonRecipe(ResourceLocation.withDefaultNamespace("stick"), recipe -> recipe instanceof ShapedRecipe ? new ShapedRecipesRenderer((ShapedRecipe) recipe) : null)); //Probably want to use your own method as render supplier and print proper logs
         pages.add(new PageIRecipe(new ShapedRecipe("test", CraftingBookCategory.EQUIPMENT, new ShapedRecipePattern(1,1,NonNullList.of(Ingredient.EMPTY, Ingredient.of(new ItemStack(Items.PUMPKIN))), Optional.empty()), new ItemStack(Blocks.OAK_LOG))));
-        pages.add(new PageJsonRecipe(new ResourceLocation("minecraft", "acacia_fence")));
+        pages.add(new PageJsonRecipe(ResourceLocation.withDefaultNamespace( "acacia_fence")));
         pages.add(new PageItemStack(Component.literal("These are all logs"), Ingredient.of(ItemTags.LOGS)));
-        pages.add(new PageTextImage(Component.translatable("guideapi.test.string"), new ResourceLocation(GuideMod.ID, "textures/gui/testimage.png"), true));
-        pages.add(new PageTextImage(Component.translatable("guideapi.test.string"), new ResourceLocation(GuideMod.ID, "textures/gui/testimage.png"), false));
-        pages.add(new PageImage(new ResourceLocation(GuideMod.ID, "textures/gui/testimage.png")));
+        pages.add(new PageTextImage(Component.translatable("guideapi.test.string"), ResourceLocation.fromNamespaceAndPath(GuideMod.ID, "textures/gui/testimage.png"), true));
+        pages.add(new PageTextImage(Component.translatable("guideapi.test.string"),  ResourceLocation.fromNamespaceAndPath(GuideMod.ID, "textures/gui/testimage.png"), false));
+        pages.add(new PageImage(ResourceLocation.fromNamespaceAndPath(GuideMod.ID, "textures/gui/testimage.png")));
         pages.add(new PageEntity(EntityType.BLAZE));
         pages.add(new PageEntity((world) -> {
             Zombie z = EntityType.ZOMBIE.create(world);
@@ -79,7 +79,7 @@ public class TestBook implements IGuideBook {
 
 
         Entry entry = new EntryItemStack(pages, Component.translatable("guideapi.test.entry"), new ItemStack(Items.POTATO));
-        entries.put(new ResourceLocation(GuideMod.ID, "entry"), entry);
+        entries.put(ResourceLocation.fromNamespaceAndPath(GuideMod.ID, "entry"), entry);
         categories.add(new CategoryItemStack(entries, Component.translatable("guideapi.test.category"), new ItemStack(Items.ACACIA_DOOR)));
         categories.add(new CategoryItemStack(entries, Component.translatable("guideapi.test.category"), new ItemStack(Items.PUMPKIN)));
         categories.add(new CategoryItemStack(entries, Component.translatable("guideapi.test.category"), new ItemStack(Items.WOODEN_AXE)));

@@ -92,7 +92,7 @@ public class ItemInfoBuilder {
         }
         pages.addAll(this.additionalPages);
         if (links != null) bookHelper.addLinks(pages, links);
-        entries.put(new ResourceLocation(base), new EntryItemStack(pages, Component.translatable(customName ? base : mainStack.getDescriptionId()), mainStack));
+        entries.put(ResourceLocation.parse(base), new EntryItemStack(pages, Component.translatable(customName ? base : mainStack.getDescriptionId()), mainStack));
     }
 
     /**
@@ -111,7 +111,7 @@ public class ItemInfoBuilder {
      * @return this
      */
     public ItemInfoBuilder recipes(String... modIDs) {
-        this.recipes = Arrays.stream(modIDs).map(id -> new ResourceLocation(bookHelper.getModid(), id)).collect(Collectors.toList());
+        this.recipes = Arrays.stream(modIDs).map(id -> ResourceLocation.fromNamespaceAndPath(bookHelper.getModid(), id)).collect(Collectors.toList());
         return this;
     }
 

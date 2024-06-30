@@ -33,7 +33,8 @@ runs {
     configureEach {
         systemProperty 'forge.logging.console.level', 'debug'
 
-        modSources = [project.sourceSets.main]
+        modSource project.sourceSets.main
+
     }
     client {
         systemProperty 'guideapi_target', 'dev'

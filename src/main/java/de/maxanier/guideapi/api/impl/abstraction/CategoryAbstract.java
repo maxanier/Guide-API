@@ -60,7 +60,7 @@ public abstract class CategoryAbstract {
         if (Strings.isNullOrEmpty(keyBase))
             throw new RuntimeException("keyBase in category with name '" + name + "' must be set.");
 
-        addEntry(new ResourceLocation(keyBase, key), entry);
+        addEntry(ResourceLocation.fromNamespaceAndPath(keyBase, key), entry);
     }
 
     public abstract boolean canSee(Player player, ItemStack bookStack);
@@ -113,7 +113,7 @@ public abstract class CategoryAbstract {
         if (Strings.isNullOrEmpty(keyBase))
             throw new RuntimeException("keyBase in category with name '" + name.getString() + "' must be set.");
 
-        return getEntry(new ResourceLocation(keyBase, key));
+        return getEntry(ResourceLocation.fromNamespaceAndPath(keyBase, key));
     }
 
     /**

@@ -17,7 +17,7 @@ import java.util.Optional;
 
 public class ButtonPrev extends ButtonGuideAPI {
 
-    public static final ResourceLocation TEXTURE = new ResourceLocation(GuideMod.ID, "textures/gui/book_colored.png");
+    public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(GuideMod.ID, "textures/gui/book_colored.png");
 
     public ButtonPrev(int widthIn, int heightIn, Button.OnPress onPress, BaseScreen guiBase) {
         super(widthIn, heightIn, 18, 10, Component.translatable("guideapi.button.prev"), onPress, guiBase);

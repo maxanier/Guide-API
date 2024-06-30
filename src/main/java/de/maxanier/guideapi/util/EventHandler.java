@@ -63,7 +63,7 @@ public class EventHandler {
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public static void renderOverlay(RenderGuiLayerEvent.Pre event) {
-        if (event.getLayer() != VanillaGuiLayers.CROSSHAIR)
+        if (event.getName() != VanillaGuiLayers.CROSSHAIR)
             return;
 
         HitResult rayTrace = Minecraft.getInstance().hitResult;

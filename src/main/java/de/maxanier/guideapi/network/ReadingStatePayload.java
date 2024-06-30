@@ -19,7 +19,7 @@ import java.util.Optional;
  * When closing the GuideBook on client-side, this payload informs the server about where the book was last opened. That information is written to the itemstacks DataComponents.
  */
 public record ReadingStatePayload(int page, Optional<Integer> category, Optional<ResourceLocation> entry) implements CustomPacketPayload {
-    public static final Type<ReadingStatePayload> TYPE = new Type<>(new ResourceLocation(GuideMod.ID, "reading_state"));
+    public static final Type<ReadingStatePayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(GuideMod.ID, "reading_state"));
 
     @Override
     public Type<? extends CustomPacketPayload> type() {

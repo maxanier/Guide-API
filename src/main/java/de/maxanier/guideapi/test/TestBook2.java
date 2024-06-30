@@ -36,7 +36,7 @@ public class TestBook2 implements IGuideBook {
     @Nullable
     @Override
     public Book buildBook() {
-        BookBinder binder = new BookBinder(new ResourceLocation(GuideMod.ID, "test_book2"));
+        BookBinder binder = new BookBinder(ResourceLocation.fromNamespaceAndPath(GuideMod.ID, "test_book2"));
         binder.setAuthor(Component.literal("TehNut")).setColor(new Color(80, 50, 5)).setItemName(Component.literal("Display Name")).setHeader(Component.literal("Hello there")).setSpawnWithBook().setGuideTitle(Component.literal("Title message")).setContentProvider(this::buildContent);
 
 
@@ -46,14 +46,14 @@ public class TestBook2 implements IGuideBook {
     private void buildContent(List<CategoryAbstract> categories) {
         CategoryAbstract testCategory = new CategoryItemStack(Component.translatable("guideapi.test.category"), new ItemStack(Items.BLUE_BANNER)).withKeyBase("guideapi");
         testCategory.addEntry("entry", new EntryItemStack(Component.translatable("guideapi.test.entry"), new ItemStack(Items.POTATO)));
-        testCategory.addEntry("entry2", new EntryResourceLocation(Component.translatable("guideapi.test.entry"),new ResourceLocation(GuideMod.ID, "textures/item/book_base.png")));
+        testCategory.addEntry("entry2", new EntryResourceLocation(Component.translatable("guideapi.test.entry"),ResourceLocation.fromNamespaceAndPath(GuideMod.ID, "textures/item/book_base.png")));
         testCategory.getEntry("entry").addPage(new PageText(Component.literal("Hello, this is\nsome text")));
         //testCategory.getEntry("entry").addPage(new PageFurnaceRecipe(Blocks.COBBLESTONE));
         //testCategory.getEntry("entry").addPage(PageIRecipe.newShaped(new ItemStack(Items.ACACIA_BOAT), "X X", "XXX", 'X', new ItemStack(Blocks.ACACIA_PLANKS, 1, 4)));
         testCategory.getEntry("entry2").addPage(new PageBrewingRecipe(new BrewingRecipe(Ingredient.of(PotionContents.createItemStack(Items.POTION, Potions.AWKWARD)), Ingredient.of(new ItemStack(Items.GLISTERING_MELON_SLICE)), PotionContents.createItemStack(Items.POTION, Potions.HEALING)))
         );
-        testCategory.getEntry("entry").addPage(new PageJsonRecipe(new ResourceLocation("bread")));
-        testCategory.getEntry("entry").addPage(new PageJsonRecipe(new ResourceLocation("redstone")));
+        testCategory.getEntry("entry").addPage(new PageJsonRecipe(ResourceLocation.withDefaultNamespace("bread")));
+        testCategory.getEntry("entry").addPage(new PageJsonRecipe(ResourceLocation.withDefaultNamespace("redstone")));
         testCategory.getEntry("entry").addPageList(PageHelper.pagesForLongText(Component.translatable("guideapi.test.format")));
         testCategory.addEntry("unicode", new EntryItemStack(Component.literal("Творческая книга"), new ItemStack(Items.BEEF)));
         testCategory.getEntry("unicode").addPage(new PageText(Component.literal("Творческая книга \u0F06")));
