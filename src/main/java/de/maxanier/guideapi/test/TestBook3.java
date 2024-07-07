@@ -54,14 +54,14 @@ public class TestBook3 implements IGuideBook {
 
         CategoryAbstract blocks = new CategoryItemStack(Component.literal("Blocks"), new ItemStack(Blocks.STONE)).withKeyBase(GuideMod.ID);
         Map<ResourceLocation, EntryAbstract> blockEntries = new LinkedHashMap<>();
-        helper.info(Blocks.COAL_BLOCK, Blocks.IRON_BLOCK, Blocks.GOLD_BLOCK).recipes(ResourceLocation.fromNamespaceAndPath("minecraft", "coal_block"), ResourceLocation.withDefaultNamespace("iron_block"), ResourceLocation.withDefaultNamespace("gold_block")).useCustomEntryName().setKeyName("compressed_blocks").setLinks(ResourceLocation.withDefaultNamespace("guideapi.test.items.ingots")).setFormats(9).build(blockEntries);
+        helper.info(Blocks.COAL_BLOCK, Blocks.IRON_BLOCK, Blocks.GOLD_BLOCK).recipes(ResourceLocation.fromNamespaceAndPath("minecraft", "coal_block"), ResourceLocation.withDefaultNamespace("iron_block"), ResourceLocation.withDefaultNamespace("gold_block")).useCustomEntryName().setKeyName("compressed_blocks").setLinks(ResourceLocation.fromNamespaceAndPath(GuideMod.ID, "guideapi.test.items.ingots")).setFormats(9).build(blockEntries);
         blocks.addEntries(blockEntries);
         categories.add(blocks);
 
         CategoryAbstract items = new CategoryItemStack(Component.literal("Items"), new ItemStack(Items.IRON_AXE)).withKeyBase(GuideMod.ID);
         Map<ResourceLocation, EntryAbstract> itemEntries = new LinkedHashMap<>();
         helper.info(Items.APPLE).build(itemEntries);
-        helper.info(false, Ingredient.of(Tags.Items.INGOTS), new ItemStack(Items.IRON_INGOT)).useCustomEntryName().recipes(ResourceLocation.withDefaultNamespace("iron_ingot_from_nuggets"), ResourceLocation.withDefaultNamespace("gold_ingot_from_nuggets")).setKeyName("ingots").setLinks(ResourceLocation.withDefaultNamespace("guideapi.test.blocks.compressed_blocks")).build(itemEntries);
+        helper.info(false, Ingredient.of(Tags.Items.INGOTS), new ItemStack(Items.IRON_INGOT)).useCustomEntryName().recipes(ResourceLocation.withDefaultNamespace("iron_ingot_from_nuggets"), ResourceLocation.withDefaultNamespace("gold_ingot_from_nuggets")).setKeyName("ingots").setLinks(ResourceLocation.fromNamespaceAndPath(GuideMod.ID, "guideapi.test.blocks.compressed_blocks")).build(itemEntries);
         items.addEntries(itemEntries);
         categories.add(items);
 

@@ -14,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
 
+
 /**
  * Command to be able to reload the book content ingame for debugging purposes.
  * Only registered in dev environment and only works in single player
@@ -35,6 +36,7 @@ public class ReloadCommand {
                         throw BOOK_NOT_FOUND.create(id.toString());
                     }
                     b.forceInitializeContent();
+                    context.getSource().sendSuccess(() -> Component.literal("Reloaded!"), true);
                     return 0;
                 }));
 
