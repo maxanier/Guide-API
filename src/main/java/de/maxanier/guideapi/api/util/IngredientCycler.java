@@ -2,10 +2,13 @@ package de.maxanier.guideapi.api.util;
 
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.Holder;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -20,26 +23,44 @@ public class IngredientCycler {
     private int cycleIdx = 0;
 
     /**
-     * Retrieves a itemstack that matches the ingredient.
+     * Retrieves an itemstack that matches the ingredient.
      * Cycles though all matching stacks.
-     * Must call {@link IngredientCycler#tick(Minecraft)} before (e.g. once per onDraw)
+     * Must call {@link IngredientCycler#tick(long)} before (e.g. once per onDraw)
      *
      * @param ingredient The ingredient
      * @param index      An "unique" id for this ingredient, so multiple ingredients can be cycled independently
      * @return Optional. Can be empty if ingredient is invalid and has no matching stacks
      */
     public Optional<ItemStack> getCycledIngredientStack(@Nonnull Ingredient ingredient, int index) {
-        ItemStack[] itemStacks = ingredient.getItems();
+        Holder<Item>[] itemStacks = ingredient.items().toArray(Holder[]::new);
         if (itemStacks.length > 0) {
             rand.setSeed(index);
             int id = (index + rand.nextInt(itemStacks.length) + cycleIdx) % itemStacks.length;
-            return Optional.of(itemStacks[id]);
+            return Optional.of(new ItemStack(itemStacks[id].value()));
         }
         return Optional.empty();
     }
 
-    public void tick(@Nonnull Minecraft mc) {
-        long time = mc.level != null ? mc.level.getGameTime() : 0;
+    /**
+     * Cycles though all matching stacks.
+     * Must call {@link IngredientCycler#tick(long)} before (e.g. once per onDraw)
+     *
+     * @param index An "unique" id for this ingredient, so multiple ingredients can be cycled independently
+     * @return Optional. Can be empty if ingredient is invalid and has no matching stacks
+     */
+    public ItemStack getCycledIngredientStack(List<ItemStack> stacks, int index) {
+        if (!stacks.isEmpty()) {
+            rand.setSeed(index);
+            int id = (index + rand.nextInt(stacks.size()) + cycleIdx) % stacks.size();
+            return stacks.get(id);
+        }
+        return ItemStack.EMPTY;
+    }
+
+    /**
+     * @param time Minecraft game time
+     */
+    public void tick(long time) {
         if (lastCycle < 0 || lastCycle < time - 20) {
             if (lastCycle > 0) {
                 cycleIdx++;

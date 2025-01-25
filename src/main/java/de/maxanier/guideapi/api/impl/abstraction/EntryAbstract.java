@@ -42,10 +42,8 @@ public abstract class EntryAbstract {
 
     public abstract boolean canSee(Player player, ItemStack bookStack);
 
-    @OnlyIn(Dist.CLIENT)
     public abstract void draw(GuiGraphics graphics, RegistryAccess registryAccess, Book book, CategoryAbstract category, int entryX, int entryY, int entryWidth, int entryHeight, int mouseX, int mouseY, BaseScreen guiBase, Font renderer);
 
-    @OnlyIn(Dist.CLIENT)
     public abstract void drawExtras(GuiGraphics graphics, Book book, CategoryAbstract category, int entryX, int entryY, int entryWidth, int entryHeight, int mouseX, int mouseY, BaseScreen guiBase, Font renderer);
 
     @Override
@@ -69,13 +67,10 @@ public abstract class EntryAbstract {
         return result;
     }
 
-    @OnlyIn(Dist.CLIENT)
     public abstract void onInit(Book book, CategoryAbstract category, CategoryScreen guiCategory, Player player, ItemStack bookStack);
 
-    @OnlyIn(Dist.CLIENT)
     public abstract void onLeftClicked(Book book, CategoryAbstract category, double mouseX, double mouseY, Player player, CategoryScreen guiCategory);
 
-    @OnlyIn(Dist.CLIENT)
     public abstract void onRightClicked(Book book, CategoryAbstract category, double mouseX, double mouseY, Player player, CategoryScreen guiCategory);
 
     public void removePage(IPage page) {

@@ -5,7 +5,9 @@ import com.google.common.base.Throwables;
 import de.maxanier.guideapi.GuideMod;
 import de.maxanier.guideapi.api.GuideAPI;
 import de.maxanier.guideapi.api.impl.Book;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.ModLoadingContext;
 
@@ -30,14 +32,14 @@ public class APISetter {
         try {
             Field books = GuideAPI.class.getDeclaredField("BOOKS");
             books.setAccessible(true);
-            Map<ResourceLocation, Book> BOOKS = (Map<ResourceLocation, Book>) books.get(null);
+            Map<Identifier, Book> BOOKS = (Map<Identifier, Book>) books.get(null);
             BOOKS.put(book.getRegistryName(), book);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void setBookForStack(Book book, Supplier<ItemStack> stack) {
+    public static void setBookForStack(Book book, Holder<Item> stack) {
         try {
             sanityCheck();
         } catch (IllegalAccessException e) {
@@ -46,9 +48,9 @@ public class APISetter {
         }
 
         try {
-            Field stacks = GuideAPI.class.getDeclaredField("BOOK_TO_STACK");
+            Field stacks = GuideAPI.class.getDeclaredField("BOOK_TO_ITEM");
             stacks.setAccessible(true);
-            Map<Book, Supplier<ItemStack>> BOOK_TO_STACK = (Map<Book, Supplier<ItemStack>>) stacks.get(null);
+            Map<Book, Holder<Item>> BOOK_TO_STACK = (Map<Book, Holder<Item>>) stacks.get(null);
             BOOK_TO_STACK.put(book, stack);
         } catch (Exception e) {
             e.printStackTrace();

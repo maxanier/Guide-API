@@ -2,29 +2,31 @@ package de.maxanier.guideapi.api;
 
 import com.google.common.collect.*;
 import de.maxanier.guideapi.api.impl.Book;
-import net.minecraft.resources.ResourceLocation;
+import de.maxanier.guideapi.util.BlockIdentifier;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.Identifier;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
+import javax.annotation.Nullable;
+import java.util.*;
 
 public class GuideAPI {
 
-    private static final Map<ResourceLocation, Book> BOOKS = Maps.newHashMap();
-    private static final Map<Book, Supplier<ItemStack>> BOOK_TO_STACK = Maps.newHashMap();
-    private static final Map<Book, Multimap<Block, IInfoRenderer>> INFO_RENDERERS = Maps.newHashMap();
+    private static final Map<Identifier, Book> BOOKS = Maps.newHashMap();
+    private static final Map<Book, Holder<Item>> BOOK_TO_ITEM = Maps.newHashMap();
+    private static final Map<Book, List<Pair<BlockIdentifier, IInfoRenderer>>> INFO_RENDERERS = Maps.newHashMap();
     private static final List<Book> indexedBooks = Lists.newArrayList();
 
     /**
-     * Obtains a new ItemStack associated with the provided book.
-     *
-     * @param book - The book to get an ItemStack for.
-     * @return - The ItemStack associated with the provided book.
+     * @return A holder of the book's item
      */
-    public static ItemStack getStackFromBook(Book book) {
-        return BOOK_TO_STACK.get(book) == null ? ItemStack.EMPTY : BOOK_TO_STACK.get(book).get();
+    public static Holder<Item> getItemForBook(Book book) {
+        return BOOK_TO_ITEM.get(book);
     }
 
     /**
@@ -34,30 +36,53 @@ public class GuideAPI {
      * @param blocks       - The blocks that this should draw for
      */
     public static void registerInfoRenderer(Book book, IInfoRenderer infoRenderer, Block... blocks) {
-        if (!INFO_RENDERERS.containsKey(book))
-            INFO_RENDERERS.put(book, ArrayListMultimap.create());
+        registerInfoRenderer(book, infoRenderer, new BlockIdentifier(blocks));
+    }
 
-        for (Block block : blocks)
-            INFO_RENDERERS.get(book).put(block, infoRenderer);
+    public static void registerInfoRenderer(Book book, IInfoRenderer infoRenderer, TagKey<Block> blocks) {
+        registerInfoRenderer(book, infoRenderer, new BlockIdentifier(blocks));
+    }
+
+    public static void registerInfoRenderer(Book book, IInfoRenderer infoRenderer, Holder<Block> block) {
+        registerInfoRenderer(book, infoRenderer, new BlockIdentifier(block));
+    }
+
+    private static void registerInfoRenderer(Book book, IInfoRenderer infoRenderer, BlockIdentifier... blocks) {
+        if (!INFO_RENDERERS.containsKey(book))
+            INFO_RENDERERS.put(book, new ArrayList<>());
+
+        for (BlockIdentifier block : blocks)
+            INFO_RENDERERS.get(book).add(Pair.of(block, infoRenderer));
     }
 
     public static void initialize() {
         // No-op. Just here to initialize fields.
     }
 
-    public static Map<ResourceLocation, Book> getBooks() {
+    public static Map<Identifier, Book> getBooks() {
         return ImmutableMap.copyOf(BOOKS);
     }
 
-    public static Map<Book, Supplier<ItemStack>> getBookToStack() {
-        return ImmutableMap.copyOf(BOOK_TO_STACK);
-    }
-
-    public static Map<Book, Multimap<Block, IInfoRenderer>> getInfoRenderers() {
-        return ImmutableMap.copyOf(INFO_RENDERERS);
+    public static Map<Book, Holder<Item>> getBookToItem() {
+        return ImmutableMap.copyOf(BOOK_TO_ITEM);
     }
 
     public static List<Book> getIndexedBooks() {
         return ImmutableList.copyOf(indexedBooks);
     }
+
+    @Nullable
+    public static IInfoRenderer getInfoRendererForBlock(Book book, Block block) {
+        List<Pair<BlockIdentifier, IInfoRenderer>> bookRenderers = INFO_RENDERERS.get(book);
+        if (bookRenderers == null)
+            return null;
+        List<IInfoRenderer> renderers = new ArrayList<>();
+        for (Pair<BlockIdentifier, IInfoRenderer> bookRenderer : bookRenderers) {
+            if (bookRenderer.getLeft().matches(block)) {
+                return bookRenderer.getRight();
+            }
+        }
+        return null;
+    }
+
 }

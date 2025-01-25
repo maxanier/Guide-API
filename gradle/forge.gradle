@@ -32,24 +32,26 @@ dependencies {
 runs {
     configureEach {
         systemProperty 'forge.logging.console.level', 'debug'
-
+        workingDirectory project.layout.projectDirectory.dir('runs').dir(name)
         modSource project.sourceSets.main
 
     }
     client {
-        systemProperty 'guideapi_target', 'dev'
         systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
     }
 
     server {
-        systemProperty 'guideapi_target', 'dev'
         systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
         programArgument '--nogui'
     }
 
     gameTestServer {
-        systemProperty 'guideapi_target', 'dev'
         systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+    }
+
+    clientData {
+        // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
+        arguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
     }
 }
 

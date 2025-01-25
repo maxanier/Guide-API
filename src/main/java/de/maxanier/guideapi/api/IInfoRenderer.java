@@ -5,6 +5,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 
@@ -15,7 +16,7 @@ import javax.annotation.Nullable;
  * Used to render information on screen about a block while a player is looking at and holding the guide. This is only
  * called on the client.
  * <p>
- * Use {@link GuideAPI#registerInfoRenderer(Book, IInfoRenderer, net.minecraft.block.Block...)} to register your
+ * Use {@link GuideAPI#registerInfoRenderer(Book, IInfoRenderer, net.minecraft.world.level.block.Block...)} to register your
  * handler. You can also implement {@link Block} on a block.
  * <p>
  * Some example usages can be found in {@link de.maxanier.guideapi.info}
@@ -50,7 +51,7 @@ public interface IInfoRenderer {
         /**
          * Gets an IInfoRenderer for a block. Make sure that the book is yours.
          *
-         * @param book     - The book this instance belongs to
+         * @param book     - The book that is held
          * @param world    - The current world
          * @param pos      - The position of the block being looked at
          * @param state    - The current state of the block

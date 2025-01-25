@@ -9,20 +9,19 @@ import de.maxanier.guideapi.api.impl.abstraction.CategoryAbstract;
 import de.maxanier.guideapi.api.util.PageHelper;
 import de.maxanier.guideapi.category.CategoryItemStack;
 import de.maxanier.guideapi.entry.EntryItemStack;
-import de.maxanier.guideapi.entry.EntryResourceLocation;
 import de.maxanier.guideapi.page.PageBrewingRecipe;
-import de.maxanier.guideapi.page.PageJsonRecipe;
+import de.maxanier.guideapi.page.PageRecipe;
 import de.maxanier.guideapi.page.PageText;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.common.brewing.BrewingRecipe;
-import net.minecraft.world.item.alchemy.PotionContents;
-
-
 
 import javax.annotation.Nullable;
 import java.awt.*;
@@ -32,28 +31,29 @@ import java.util.List;
 public class TestBook2 implements IGuideBook {
 
     public static Book book;
+    public final static Identifier ID = Identifier.fromNamespaceAndPath(GuideMod.ID, "test_book2");
+
 
     @Nullable
     @Override
     public Book buildBook() {
-        BookBinder binder = new BookBinder(ResourceLocation.fromNamespaceAndPath(GuideMod.ID, "test_book2"));
-        binder.setAuthor(Component.literal("TehNut")).setColor(new Color(80, 50, 5)).setItemName(Component.literal("Display Name")).setHeader(Component.literal("Hello there")).setSpawnWithBook().setGuideTitle(Component.literal("Title message")).setContentProvider(this::buildContent);
+        BookBinder binder = new BookBinder(ID);
+        binder.setAuthor(Component.literal("TehNut")).setThemeColor(ARGB.color(80, 50, 5)).setTextColor(ARGB.color(50, 0, 0), ARGB.color(60, 60, 60)).setItemName(Component.literal("Display Name")).setHeader(Component.literal("Hello there")).setSpawnWithBook().setGuideTitle(Component.literal("Title message")).setContentProvider(this::buildContent);
 
 
         return (book = binder.build());
     }
 
-    private void buildContent(List<CategoryAbstract> categories) {
+    private void buildContent(RegistryAccess registryAccess, List<CategoryAbstract> categories) {
         CategoryAbstract testCategory = new CategoryItemStack(Component.translatable("guideapi.test.category"), new ItemStack(Items.BLUE_BANNER)).withKeyBase("guideapi");
         testCategory.addEntry("entry", new EntryItemStack(Component.translatable("guideapi.test.entry"), new ItemStack(Items.POTATO)));
-        testCategory.addEntry("entry2", new EntryResourceLocation(Component.translatable("guideapi.test.entry"),ResourceLocation.fromNamespaceAndPath(GuideMod.ID, "textures/item/book_base.png")));
         testCategory.getEntry("entry").addPage(new PageText(Component.literal("Hello, this is\nsome text")));
         //testCategory.getEntry("entry").addPage(new PageFurnaceRecipe(Blocks.COBBLESTONE));
         //testCategory.getEntry("entry").addPage(PageIRecipe.newShaped(new ItemStack(Items.ACACIA_BOAT), "X X", "XXX", 'X', new ItemStack(Blocks.ACACIA_PLANKS, 1, 4)));
-        testCategory.getEntry("entry2").addPage(new PageBrewingRecipe(new BrewingRecipe(Ingredient.of(PotionContents.createItemStack(Items.POTION, Potions.AWKWARD)), Ingredient.of(new ItemStack(Items.GLISTERING_MELON_SLICE)), PotionContents.createItemStack(Items.POTION, Potions.HEALING)))
-        );
-        testCategory.getEntry("entry").addPage(new PageJsonRecipe(ResourceLocation.withDefaultNamespace("bread")));
-        testCategory.getEntry("entry").addPage(new PageJsonRecipe(ResourceLocation.withDefaultNamespace("redstone")));
+        testCategory.getEntry("entry2").addPage(new PageText(Component.literal("Hello, this is\nsome text")));
+        testCategory.getEntry("entry2").addPage(new PageBrewingRecipe(new BrewingRecipe(Ingredient.of(Items.POTION), Ingredient.of(Items.GLISTERING_MELON_SLICE), PotionContents.createItemStack(Items.POTION, Potions.HEALING))));
+        testCategory.getEntry("entry").addPage(new PageRecipe(Identifier.withDefaultNamespace("bread")));
+        testCategory.getEntry("entry").addPage(new PageRecipe(Identifier.withDefaultNamespace("redstone")));
         testCategory.getEntry("entry").addPageList(PageHelper.pagesForLongText(Component.translatable("guideapi.test.format")));
         testCategory.addEntry("unicode", new EntryItemStack(Component.literal("Творческая книга"), new ItemStack(Items.BEEF)));
         testCategory.getEntry("unicode").addPage(new PageText(Component.literal("Творческая книга \u0F06")));

@@ -21,12 +21,10 @@ public class Page implements IPage {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void draw(GuiGraphics graphics, RegistryAccess registryAccess, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void drawExtras(GuiGraphics graphics, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
     }
 
@@ -38,17 +36,14 @@ public class Page implements IPage {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void onInit(Book book, CategoryAbstract category, EntryAbstract entry, Player player, ItemStack bookStack, EntryScreen guiEntry) {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void onLeftClicked(Book book, CategoryAbstract category, EntryAbstract entry, double mouseX, double mouseY, Player player, EntryScreen guiEntry) {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void onRightClicked(Book book, CategoryAbstract category, EntryAbstract entry, double mouseX, double mouseY, Player player, EntryScreen guiEntry) {
     }
 }

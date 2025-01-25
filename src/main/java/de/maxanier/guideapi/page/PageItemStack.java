@@ -10,7 +10,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.api.distmarker.Dist;
@@ -29,20 +28,14 @@ public class PageItemStack extends PageText {
         this.ingredient = ingredient;
     }
 
-    /**
-     * @param draw       - Unlocalized text to draw
-     * @param ingredient - ItemStack to render
-     */
-    public PageItemStack(FormattedText draw, ItemStack ingredient) {
-        this(draw, Ingredient.of(ingredient));
-    }
+
 
     /**
      * @param draw - Unlocalized text to draw
      * @param item - Item to render
      */
     public PageItemStack(FormattedText draw, Item item) {
-        this(draw, new ItemStack(item));
+        this(draw, Ingredient.of(item));
     }
 
     /**
@@ -50,14 +43,13 @@ public class PageItemStack extends PageText {
      * @param block - Block to render
      */
     public PageItemStack(FormattedText draw, Block block) {
-        this(draw, new ItemStack(block));
+        this(draw, Ingredient.of(block));
     }
 
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void drawExtras(GuiGraphics graphics, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
-        ingredientCycler.tick(guiBase.getMinecraft());
+        ingredientCycler.tick(guiBase.getMinecraft().level.getGameTime());
         ingredientCycler.getCycledIngredientStack(ingredient, 0).ifPresent(s -> {
             GuiHelper.drawScaledItemStack(graphics, s, guiLeft + 101, guiTop + 20, 3);
         });

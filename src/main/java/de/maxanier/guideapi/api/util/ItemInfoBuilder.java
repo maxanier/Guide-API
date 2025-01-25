@@ -5,7 +5,7 @@ import de.maxanier.guideapi.api.impl.abstraction.EntryAbstract;
 import de.maxanier.guideapi.entry.EntryItemStack;
 import de.maxanier.guideapi.page.PageBrewingRecipe;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -34,7 +34,7 @@ public class ItemInfoBuilder {
     private Object[] links = null;
     private boolean customName;
     @Nonnull
-    private List<ResourceLocation> recipes = Collections.emptyList();
+    private List<Identifier> recipes = Collections.emptyList();
     @Nullable
     private ItemStack[] brewingStacks;
 
@@ -74,10 +74,10 @@ public class ItemInfoBuilder {
     /**
      * Builds the entry and adds it to the given map
      */
-    public void build(Map<ResourceLocation, EntryAbstract> entries) {
+    public void build(Map<Identifier, EntryAbstract> entries) {
         String base = bookHelper.getBaseKey() + (block ? ".blocks" : ".items") + "." + name;
         ArrayList<IPage> pages = new ArrayList<>(PageHelper.pagesForLongText(bookHelper.localize(base + ".text", formats), ingredient));
-        for (ResourceLocation id : recipes) {
+        for (Identifier id : recipes) {
             pages.add(bookHelper.getRecipePage(id));
         }
         if (brewingStacks != null) {
@@ -92,7 +92,7 @@ public class ItemInfoBuilder {
         }
         pages.addAll(this.additionalPages);
         if (links != null) bookHelper.addLinks(pages, links);
-        entries.put(ResourceLocation.fromNamespaceAndPath(this.bookHelper.getModid(), base), new EntryItemStack(pages, Component.translatable(customName ? base : mainStack.getDescriptionId()), mainStack));
+        entries.put(Identifier.fromNamespaceAndPath(this.bookHelper.getModid(), base), new EntryItemStack(pages,customName ?  Component.translatable(base) : mainStack.getItemName(), mainStack));
     }
 
     /**
@@ -111,7 +111,7 @@ public class ItemInfoBuilder {
      * @return this
      */
     public ItemInfoBuilder recipes(String... modIDs) {
-        this.recipes = Arrays.stream(modIDs).map(id -> ResourceLocation.fromNamespaceAndPath(bookHelper.getModid(), id)).collect(Collectors.toList());
+        this.recipes = Arrays.stream(modIDs).map(id -> Identifier.fromNamespaceAndPath(bookHelper.getModid(), id)).collect(Collectors.toList());
         return this;
     }
 
@@ -120,7 +120,7 @@ public class ItemInfoBuilder {
      *
      * @param ids the ids of the recipes to be displayeed
      */
-    public ItemInfoBuilder recipes(ResourceLocation... ids) {
+    public ItemInfoBuilder recipes(Identifier... ids) {
         this.recipes = Arrays.asList(ids);
         return this;
     }

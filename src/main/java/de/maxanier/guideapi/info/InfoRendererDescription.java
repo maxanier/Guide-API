@@ -33,24 +33,23 @@ public class InfoRendererDescription implements IInfoRenderer {
     @Override
     public void drawInformation(GuiGraphics graphics, Book book, Level world, BlockPos pos, BlockState state, HitResult rayTrace, Player player) {
         if (tiny) {
-            graphics.pose().pushPose();
-            graphics.pose().scale(0.5F, 0.5F, 0.5F);
+            graphics.pose().pushMatrix();
+            graphics.pose().scale(0.5F, 0.5F);
         }
         Font fontRenderer = Minecraft.getInstance().font;
         int scaleMulti = tiny ? 2 : 1;
 
-        GuiHelper.drawItemStack(graphics, itemStack, (Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 55) * scaleMulti, ((Minecraft.getInstance().getWindow().getGuiScaledHeight() / 2 - (tiny ? 20 : 30)) + yOffset) * scaleMulti);
+        int x = (Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 20);
+        int iconY = ((Minecraft.getInstance().getWindow().getGuiScaledHeight() / 2 - (tiny ? 20 : 30)) + yOffset);
 
-        int y = 0;
+        GuiHelper.drawItemStack(graphics, itemStack, x * scaleMulti, iconY * scaleMulti);
 
-        List<FormattedCharSequence> cutLines = fontRenderer.split(description, 100 * scaleMulti); //trimStringToWidth //Split at new line somehow
-        for (FormattedCharSequence cut : cutLines) {
-            graphics.drawString(fontRenderer, cut, (Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 20) * scaleMulti, (((Minecraft.getInstance().getWindow().getGuiScaledHeight() / 2 - 10) - y) * scaleMulti) + yOffset, Color.WHITE.getRGB(), true);
-            y -= 10 / scaleMulti;
-        }
+        int y = Minecraft.getInstance().getWindow().getGuiScaledHeight() / 2 - 10;
+
+        graphics.drawWordWrap(fontRenderer, description, x * scaleMulti, y * scaleMulti, 100 * scaleMulti, -1);
 
         if (tiny)
-            graphics.pose().popPose();
+            graphics.pose().popMatrix();
     }
 
     public InfoRendererDescription setOffsetY(int yOffset) {

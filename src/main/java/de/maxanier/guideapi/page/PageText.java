@@ -35,9 +35,8 @@ public class PageText extends Page {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void draw(GuiGraphics graphics, RegistryAccess registryAccess, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
-        PageHelper.drawFormattedText(graphics, guiLeft + 44, guiTop + 12 + yOffset, guiBase, draw);
+        PageHelper.drawFormattedText(graphics, guiLeft + 44, guiTop + 12 + yOffset, guiBase, draw, book.getTextColor());
     }
 
     @Override

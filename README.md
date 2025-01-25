@@ -1,5 +1,7 @@
 # Guide-API - Village and Pillage [![](https://cf.way2muchnoise.eu/versions/380771.svg)](https://www.curseforge.com/minecraft/mc-mods/guide-api-village-and-pillage)
-**Now for NeoForge**  
+
+**WIP branch for 1.21.11+ - Everything may still change**
+
 Library mod for easy creation of guide books.
 
 Fork by maxanier of Guide-API for Minecraft 1.14+ (Village and Pillage)  
@@ -54,8 +56,7 @@ The fork is still very similar.
 
 If you need any assistance adding your own guide book, or if you are missing a feature, create an issue here.
 
-
-## Setup
+### Setup
 #### Setup Gradle build script
 You should be able to include it with the following in your `build.gradle`:
 ```gradle
@@ -88,10 +89,18 @@ Please run the commands that you used to setup your development environment agai
 E.g. `gradlew` or `gradlew --refresh-dependencies`
 Refresh/Restart your IDE afterwards.
 
-#### Examples
+### How to create your book
 Checkout the test books [here](https://github.com/maxanier/Guide-API/tree/1.14.4_latest/src/main/java/de/maxanier/guideapi/test)  
 
 Checkout Vampirism which adds an extensive guide book [here](https://github.com/TeamLapen/Vampirism/blob/1.14/src/main/java/de/teamlapen/vampirism/modcompat/guide/GuideBook.java)
+
+#### Model
+
+To render the book in game, you will have to generate a model for it.
+
+In the `GatherDataEvent.Client` you can generate models for your guidebooks using the `util/ModelHelper` methods (see
+`test/TestModDataProvider`) or create the models otherwise.
+Keep in mind that at least the item state file must be in the `guideapi_vp/items` assets folder.
 
 #### Crafting recipe
 Add a crafting recipe for your book like this

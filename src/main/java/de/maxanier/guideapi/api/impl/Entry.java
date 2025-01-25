@@ -21,11 +21,10 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
-import java.awt.*;
 import java.util.List;
+import java.util.Optional;
 
 public class Entry extends EntryAbstract {
-
 
     public Entry(List<IPage> pageList, Component name) {
         super(pageList, name);
@@ -59,17 +58,16 @@ public class Entry extends EntryAbstract {
 
         FormattedCharSequence entryNameRe = Language.getInstance().getVisualOrder(entryName);
         if (GuiHelper.isMouseBetween(mouseX, mouseY, entryX, entryY, entryWidth, entryHeight)) {
-            graphics.drawString(fontRendererObj, entryNameRe, entryX + 12, entryY + 1, new Color(206, 206, 206).getRGB(), false);
+            graphics.drawString(fontRendererObj, entryNameRe, entryX + 12, entryY + 1, book.getTextColorHighlighted(), false);
             graphics.drawString(fontRendererObj, entryNameRe, entryX + 12, entryY, 0x423EBC, false);
         } else {
-            graphics.drawString(fontRendererObj, entryNameRe, entryX + 12, entryY, 0, false);
+            graphics.drawString(fontRendererObj, entryNameRe, entryX + 12, entryY, book.getTextColor(), false);
         }
 
 
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void drawExtras(GuiGraphics graphics, Book book, CategoryAbstract category, int entryX, int entryY, int entryWidth, int entryHeight, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
 
 
@@ -78,25 +76,28 @@ public class Entry extends EntryAbstract {
         boolean cutString = strWidth > guiBase.xSize - 80 && strWidth > fontRendererObj.width("...");
 
         if (GuiHelper.isMouseBetween(mouseX, mouseY, entryX, entryY, entryWidth, entryHeight) && cutString) {
-            graphics.renderComponentTooltip(fontRendererObj, Lists.newArrayList(getName()), entryX, entryY + 12);
+            graphics.setTooltipForNextFrame(Minecraft.getInstance().font,
+                    Lists.newArrayList(getName()),
+                    Optional.empty(),
+                    entryX,
+                    entryY + 12,
+                    null
+            );
         }
 
 
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void onInit(Book book, CategoryAbstract category, CategoryScreen guiCategory, Player player, ItemStack bookStack) {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void onLeftClicked(Book book, CategoryAbstract category, double mouseX, double mouseY, Player player, CategoryScreen guiCategory) {
         Minecraft.getInstance().setScreen(new EntryScreen(book, category, this, player, guiCategory.bookStack));
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void onRightClicked(Book book, CategoryAbstract category, double mouseX, double mouseY, Player player, CategoryScreen guiCategory) {
     }
 }

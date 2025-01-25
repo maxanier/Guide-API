@@ -7,7 +7,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -18,15 +18,15 @@ import java.util.Optional;
 /**
  * When closing the GuideBook on client-side, this payload informs the server about where the book was last opened. That information is written to the itemstacks DataComponents.
  */
-public record ReadingStatePayload(int page, Optional<Integer> category, Optional<ResourceLocation> entry) implements CustomPacketPayload {
-    public static final Type<ReadingStatePayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(GuideMod.ID, "reading_state"));
+public record ReadingStatePayload(int page, Optional<Integer> category, Optional<Identifier> entry) implements CustomPacketPayload {
+    public static final Type<ReadingStatePayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(GuideMod.ID, "reading_state"));
 
     @Override
     public Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 
-    public static final StreamCodec<ByteBuf, ReadingStatePayload> STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.VAR_INT, ReadingStatePayload::page, ByteBufCodecs.VAR_INT.apply(ByteBufCodecs::optional), ReadingStatePayload::category, ResourceLocation.STREAM_CODEC.apply(ByteBufCodecs::optional), ReadingStatePayload::entry, ReadingStatePayload::new);
+    public static final StreamCodec<ByteBuf, ReadingStatePayload> STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.VAR_INT, ReadingStatePayload::page, ByteBufCodecs.VAR_INT.apply(ByteBufCodecs::optional), ReadingStatePayload::category, Identifier.STREAM_CODEC.apply(ByteBufCodecs::optional), ReadingStatePayload::entry, ReadingStatePayload::new);
 
     public static void handle(ReadingStatePayload msg, IPayloadContext context){
         Player player = context.player();

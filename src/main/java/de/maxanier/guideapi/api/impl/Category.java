@@ -8,7 +8,7 @@ import de.maxanier.guideapi.gui.HomeScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class Category extends CategoryAbstract {
 
-    public Category(Map<ResourceLocation, EntryAbstract> entryList, Component name) {
+    public Category(Map<Identifier, EntryAbstract> entryList, Component name) {
         super(entryList, name);
     }
 
@@ -32,28 +32,23 @@ public class Category extends CategoryAbstract {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void draw(GuiGraphics graphics, Book book, int categoryX, int categoryY, int categoryWidth, int categoryHeight, int mouseX, int mouseY, BaseScreen guiBase, boolean drawOnLeft) {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void drawExtras(GuiGraphics graphics, Book book, int categoryX, int categoryY, int categoryWidth, int categoryHeight, int mouseX, int mouseY, BaseScreen guiBase, boolean drawOnLeft) {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void onInit(Book book, HomeScreen guiHome, Player player, ItemStack bookStack) {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void onLeftClicked(Book book, double mouseX, double mouseY, Player player, ItemStack bookStack) {
         Minecraft.getInstance().setScreen(new CategoryScreen(book, this, player, bookStack, null));
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void onRightClicked(Book book, double mouseX, double mouseY, Player player, ItemStack bookStack) {
     }
 }

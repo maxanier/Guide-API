@@ -10,13 +10,29 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.util.context.ContextMap;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
+import net.minecraft.world.item.crafting.display.ShapelessCraftingRecipeDisplay;
+import net.minecraft.world.item.crafting.display.SlotDisplayContext;
 
-public class ShapelessRecipesRenderer extends CraftingRecipeRenderer<ShapelessRecipe> {
+import java.util.List;
 
-    public ShapelessRecipesRenderer(ShapelessRecipe recipe) {
-        super(recipe, Component.translatable("guideapi.text.crafting.shapeless"));
+public class ShapelessRecipesRenderer extends CraftingRecipeRenderer<ShapelessRecipe, ShapelessCraftingRecipeDisplay> {
+
+    protected List<List<ItemStack>> inputs;
+
+
+    public ShapelessRecipesRenderer(RecipeHolder<ShapelessRecipe> recipe) {
+        super(recipe, ShapelessCraftingRecipeDisplay.class, Component.translatable("guideapi.text.crafting.shapeless"));
+    }
+
+    @Override
+    public void init(ContextMap context) {
+        super.init(context);
+        inputs = display().map(d -> d.ingredients().stream().map(sd -> sd.resolveForStacks(context)).toList()).orElse(List.of());
     }
 
     @Override
@@ -25,18 +41,18 @@ public class ShapelessRecipesRenderer extends CraftingRecipeRenderer<ShapelessRe
         for (int y = 0; y < 3; y++) {
             for (int x = 0; x < 3; x++) {
                 int i = 3 * y + x;
-                int stackX = (x + 1) * 17 + (guiLeft + 53) + x;
-                int stackY = (y + 1) * 17 + (guiTop + 38) + y;
-                if (i < recipe.getIngredients().size()) {
-                    Ingredient ingredient = recipe.getIngredients().get(i);
-                    cycler.getCycledIngredientStack(ingredient, i).ifPresent(s -> {
-                        GuiHelper.drawItemStack(graphics, s, stackX, stackY);
-                        if (GuiHelper.isMouseBetween(mouseX, mouseY, stackX, stackY, 15, 15))
-                            tooltips = GuiHelper.getTooltip(s);
-                    });
+                if (i < inputs.size()) {
+                    int stackX = (x + 1) * 17 + (guiLeft + 53) + x;
+                    int stackY = (y + 1) * 17 + (guiTop + 38) + y;
+                    ItemStack s = cycler.getCycledIngredientStack(inputs.get(i), i);
+
+                    GuiHelper.drawItemStack(graphics, s, stackX, stackY);
+                    if (GuiHelper.isMouseBetween(mouseX, mouseY, stackX, stackY, 15, 15))
+                        tooltips = GuiHelper.getTooltip(s);
                 }
             }
         }
+
     }
 
 }

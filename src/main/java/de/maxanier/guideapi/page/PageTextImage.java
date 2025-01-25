@@ -1,47 +1,55 @@
 package de.maxanier.guideapi.page;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import de.maxanier.guideapi.api.impl.Book;
 import de.maxanier.guideapi.api.impl.Page;
 import de.maxanier.guideapi.api.impl.abstraction.CategoryAbstract;
 import de.maxanier.guideapi.api.impl.abstraction.EntryAbstract;
-import de.maxanier.guideapi.api.util.GuiHelper;
 import de.maxanier.guideapi.gui.BaseScreen;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.FormattedText;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
 
 import java.util.Objects;
 
 public class PageTextImage extends Page {
 
     public PageText pageText;
-    public ResourceLocation image;
+    public Identifier image;
     public boolean drawAtTop;
+    protected int textureWidth, textureHeight;
 
     /**
      * @param draw      - Localized text to draw
      * @param image     - Image to draw
      * @param drawAtTop - Draw Image at top and text at bottom. False reverses this.
+     * @param textureWidth Width of the image file
+     * @param textureHeight Height of the image file
      */
-    public PageTextImage(FormattedText draw, ResourceLocation image, boolean drawAtTop) {
+    public PageTextImage(FormattedText draw, Identifier image, boolean drawAtTop, int textureWidth, int textureHeight) {
         this.pageText = new PageText(draw, drawAtTop ? 0 : 100);
         this.image = image;
         this.drawAtTop = drawAtTop;
+        this.textureWidth = textureWidth;
+        this.textureHeight = textureHeight;
+    }
+
+
+    /**
+     * @param draw      Text to render
+     * @param image     Location of a 64x64 image
+     * @param drawAtTop Whether the text should be at the top of the page
+     */
+    public PageTextImage(FormattedText draw, Identifier image, boolean drawAtTop) {
+        this(draw, image, drawAtTop, 64, 64);
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void draw(GuiGraphics graphics, RegistryAccess registryAccess, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, image);
-        GuiHelper.drawSizedIconWithoutColor(graphics, guiLeft + 60 , guiTop + (drawAtTop ? 60 : 12), guiBase.xSize / 2 , guiBase.ySize / 2, 0);
+        int x = guiLeft + (guiBase.xSize - textureWidth) / 2;
+        graphics.blit(RenderPipelines.GUI_TEXTURED, image, x, guiTop + (drawAtTop ? 60 : 12), 0, 0, textureWidth, textureHeight, textureWidth, textureHeight);
 
         pageText.draw(graphics, registryAccess, book, category, entry, guiLeft, guiTop, mouseX, mouseY, guiBase, fontRendererObj);
     }

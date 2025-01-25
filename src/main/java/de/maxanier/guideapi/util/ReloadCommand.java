@@ -8,9 +8,9 @@ import de.maxanier.guideapi.api.GuideAPI;
 import de.maxanier.guideapi.api.impl.Book;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.arguments.ResourceLocationArgument;
+import net.minecraft.commands.arguments.IdentifierArgument;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
 
@@ -26,16 +26,16 @@ public class ReloadCommand {
 
     public static ArgumentBuilder<CommandSourceStack, ?> register() {
         return Commands.literal("reload")
-                .then(Commands.argument("bookid", ResourceLocationArgument.id()).executes((context) -> {
-                    if (FMLEnvironment.dist != Dist.CLIENT) {
+                .then(Commands.argument("bookid", IdentifierArgument.id()).executes((context) -> {
+                    if (FMLEnvironment.getDist() != Dist.CLIENT) {
                         throw NOT_CLIENT.create();
                     }
-                    ResourceLocation id = ResourceLocationArgument.getId(context, "bookid");
+                    Identifier id = IdentifierArgument.getId(context, "bookid");
                     Book b = GuideAPI.getBooks().get(id);
                     if (b == null) {
                         throw BOOK_NOT_FOUND.create(id.toString());
                     }
-                    b.forceInitializeContent();
+                    b.forceInitializeContent(context.getSource().registryAccess());
                     context.getSource().sendSuccess(() -> Component.literal("Reloaded!"), true);
                     return 0;
                 }));

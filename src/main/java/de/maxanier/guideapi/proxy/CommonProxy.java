@@ -8,16 +8,13 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionBrewing;
+import net.minecraft.world.item.crafting.RecipeMap;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 import java.util.Optional;
 
 public class CommonProxy {
-
-
-    public void initColors() {
-    }
 
     public void openEntry(Book book, CategoryAbstract categoryAbstract, EntryAbstract entryAbstract, Player player, ItemStack stack) {
     }
@@ -34,5 +31,9 @@ public class CommonProxy {
             return Optional.of(server.potionBrewing());
         }
         return Optional.empty();
+    }
+
+    public RecipeMap getClientSyncedRecipes() {
+        return RecipeMap.EMPTY;
     }
 }

@@ -1,35 +1,59 @@
 package de.maxanier.guideapi.info;
 
+import com.mojang.blaze3d.platform.Window;
 import de.maxanier.guideapi.api.IInfoRenderer;
 import de.maxanier.guideapi.api.impl.Book;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 
-public class InfoRendererImage implements IInfoRenderer {
+/**
+ * @param imageX        The x position of the desired snippet
+ * @param imageY        The y position of the desired snippet
+ * @param imageWidth    The width of the desired snippet
+ * @param imageHeight   The height of the desired snippet
+ * @param textureWidth  Width of texture file
+ * @param textureHeight Height of texture file
+ */
+public record InfoRendererImage(
+        Identifier image,
+        int imageX,
+        int imageY,
+        int imageWidth,
+        int imageHeight,
+        int textureWidth,
+        int textureHeight
+) implements IInfoRenderer {
 
-    private final ResourceLocation image;
-    private final int imageX;
-    private final int imageY;
-    private final int imageWidth;
-    private final int imageHeight;
+    /***
+     * @param image       A 256x256 texture
+     */
+    public InfoRendererImage(Identifier image, int imageX, int imageY, int imageWidth,
+                             int imageHeight) {
+        this(image, imageX, imageY, imageWidth, imageHeight, 256, 256);
+    }
 
-    public InfoRendererImage(ResourceLocation image, int imageX, int imageY, int imageWidth, int imageHeight) {
-        this.image = image;
-        this.imageX = imageX;
-        this.imageY = imageY;
-        this.imageWidth = imageWidth;
-        this.imageHeight = imageHeight;
+    /**
+     *
+     * @param image              A texture that should be rendered in its entirety
+     * @param imageTextureWidth  Width of the texture
+     * @param imageTextureHeight Height of the texture
+     */
+    public InfoRendererImage(Identifier image, int imageTextureWidth, int imageTextureHeight) {
+        this(image, 0, 0, imageTextureWidth, imageTextureHeight, imageTextureWidth, imageTextureHeight);
     }
 
     @Override
     public void drawInformation(GuiGraphics graphics, Book book, Level world, BlockPos pos, BlockState state, HitResult rayTrace, Player player) {
-        graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-        graphics.blit(image, Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 20, Minecraft.getInstance().getWindow().getGuiScaledHeight() / 2 - imageHeight / 2, imageX, imageY, imageWidth, imageHeight, imageWidth, imageHeight);
+        Window w = Minecraft.getInstance().getWindow();
+        int x = w.getGuiScaledWidth() / 2 + 20;
+        int y = w.getGuiScaledHeight() / 2 - imageHeight / 2;
+        graphics.blit(RenderPipelines.GUI_TEXTURED, this.image, x, y, imageX, imageY, imageWidth, imageHeight, textureWidth, textureHeight);
     }
 }

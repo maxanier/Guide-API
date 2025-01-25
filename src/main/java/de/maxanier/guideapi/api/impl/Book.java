@@ -4,33 +4,35 @@ import com.google.common.base.Joiner;
 import de.maxanier.guideapi.api.impl.abstraction.CategoryAbstract;
 import de.maxanier.guideapi.api.impl.abstraction.EntryAbstract;
 import de.maxanier.guideapi.util.LogHelper;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 public class Book {
 
     private final List<CategoryAbstract> categories = new ArrayList<>();
-    private final Consumer<List<CategoryAbstract>> contentProvider;
+    private final BiConsumer<RegistryAccess,List<CategoryAbstract>> contentProvider;
     private final Component title;
     private final Component header;
     private final Component itemName;
     private final Component author;
-    private final ResourceLocation pageTexture;
-    private final ResourceLocation outlineTexture;
-    private final Color color;
+    private final Identifier pageTexture;
+    private final Identifier outlineTexture;
+    private final int theme_color;
+    private final int color_text;
+    private final int color_text_highlight;
     private final boolean spawnWithBook;
-    private final ResourceLocation registryName;
+    private final Identifier registryName;
     private boolean isInitialized;
 
 
-    protected Book(Consumer<List<CategoryAbstract>> contentProvider, Component title, Component header, Component displayName, Component author, ResourceLocation pageTexture, ResourceLocation outlineTexture, Color color, boolean spawnWithBook, ResourceLocation registryName) {
+    protected Book(BiConsumer<RegistryAccess, List<CategoryAbstract>> contentProvider, Component title, Component header, Component displayName, Component author, Identifier pageTexture, Identifier outlineTexture, boolean spawnWithBook, Identifier registryName, int themeColor, int colorText, int colorTextHighlight) {
         this.contentProvider = contentProvider;
         this.title = title;
         this.header = header;
@@ -38,10 +40,13 @@ public class Book {
         this.author = author;
         this.pageTexture = pageTexture;
         this.outlineTexture = outlineTexture;
-        this.color = color;
+        this.theme_color = themeColor;
+        this.color_text = colorText;
+        this.color_text_highlight = colorTextHighlight;
         this.spawnWithBook = spawnWithBook;
         this.registryName = registryName;
     }
+
 
     @Override
     public boolean equals(Object o) {
@@ -55,14 +60,14 @@ public class Book {
     }
 
     /**
-     * Can be used to force content initialisation independent of first use regardless of if it was initialized previously.
+     * Can be used to force content initialization independent of first use regardless of if it was initialized previously.
      * Use at own risk. Might cause crashes if the book is currently open.
      */
-    public void forceInitializeContent() {
+    public void forceInitializeContent(RegistryAccess access) {
         LogHelper.info("Force initializing book content " + registryName.toString());
         categories.clear();
         isInitialized = false;
-        initializeContent();
+        initializeContent(access);
     }
 
     public Component getAuthor() {
@@ -73,8 +78,16 @@ public class Book {
         return this.categories;
     }
 
-    public Color getColor() {
-        return this.color;
+    public int getThemeColor() {
+        return this.theme_color;
+    }
+
+    public int getTextColor() {
+        return color_text;
+    }
+
+    public int getTextColorHighlighted() {
+        return color_text_highlight;
     }
 
     public Component getHeader() {
@@ -85,15 +98,15 @@ public class Book {
         return this.itemName;
     }
 
-    public ResourceLocation getOutlineTexture() {
+    public Identifier getOutlineTexture() {
         return this.outlineTexture;
     }
 
-    public ResourceLocation getPageTexture() {
+    public Identifier getPageTexture() {
         return this.pageTexture;
     }
 
-    public ResourceLocation getRegistryName() {
+    public Identifier getRegistryName() {
         return this.registryName;
     }
 
@@ -106,14 +119,14 @@ public class Book {
         return getRegistryName().hashCode();
     }
 
-    public void initializeContent() {
+    public void initializeContent(RegistryAccess registryAccess) {
         if (!isInitialized) {
             LogHelper.debug("Opening book " + registryName.toString() + " for the first time -> Initializing content");
-            contentProvider.accept(categories);
+            contentProvider.accept(registryAccess, categories);
             for (CategoryAbstract category : categories) {
-                for (Map.Entry<ResourceLocation, EntryAbstract> resourceLocationEntryAbstractEntry : category.entries.entrySet()) {
+                for (Map.Entry<Identifier, EntryAbstract> resourceLocationEntryAbstractEntry : category.entries.entrySet()) {
                     if(resourceLocationEntryAbstractEntry.getValue().pageList.isEmpty()){
-                        throw new IllegalStateException("Empty entry "+resourceLocationEntryAbstractEntry.getKey().toString()+" in category "+category.name.getString()+" in book "+registryName.toString());
+                        throw new IllegalStateException("Empty entry " + resourceLocationEntryAbstractEntry.getKey().toString() + " in category " + category.name.getString() + " in book " + registryName);
                     }
                 }
             }
@@ -135,7 +148,7 @@ public class Book {
                 .append("author", author)
                 .append("pageTexture", pageTexture)
                 .append("outlineTexture", outlineTexture)
-                .append("color", color)
+                .append("themeColor", theme_color)
                 .append("spawnWithBook", spawnWithBook)
                 .append("registryName", registryName)
                 .toString();

@@ -12,7 +12,7 @@
   "guideapi.text.furnace.smelting": "Плавка",
   "guideapi.text.linked.open": "Шифт + ПКМ, чтобы открыть",
   "guideapi.text.brewing.brew": "зельеварение",
-  "guidepai.text.brewing.error": "&cОшибка в рецепте",
+  "guideapi.text.brewing.error": "&cОшибка в рецепте",
   "text.furnace.error": "&cОшибка в рецепте",
   "text.book.warning": "&c[ВНИМАНИЕ] Выкиньте этот предмет, у него нет связанной книги!",
   "text.book.creative": "Творческая книга",

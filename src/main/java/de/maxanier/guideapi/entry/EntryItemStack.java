@@ -32,7 +32,6 @@ public class EntryItemStack extends Entry {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void drawExtras(GuiGraphics graphics, Book book, CategoryAbstract category, int entryX, int entryY, int entryWidth, int entryHeight, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
         if (itemStack != null)
             GuiHelper.drawScaledItemStack(graphics, itemStack, entryX + 2, entryY, 0.5f);

@@ -1,0 +1,12 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "guideapi_vp:item/guideapi_vp-test_book",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -20561
+      }
+    ]
+  }
+}

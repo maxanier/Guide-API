@@ -14,6 +14,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.block.Block;
@@ -45,7 +46,7 @@ public class PageHelper {
         List<FormattedText> pageLines = lines.size() > firstCount ? lines.subList(0, firstCount) : lines;
         pages.add(combineWithNewLine(pageLines));
         pageLines.clear();
-        while (lines.size() > 0) {
+        while (!lines.isEmpty()) {
             pageLines = lines.size() > count ? lines.subList(0, count) : lines;
             pages.add(combineWithNewLine(pageLines));
             pageLines.clear();
@@ -78,12 +79,12 @@ public class PageHelper {
     }
 
 
-    public static void drawFormattedText(GuiGraphics graphics, int x, int y, BaseScreen guiBase, FormattedText toDraw) {
+    public static void drawFormattedText(GuiGraphics graphics, int x, int y, BaseScreen guiBase, FormattedText toDraw, int color) {
         Font fontRenderer = Minecraft.getInstance().font;
 
         List<FormattedCharSequence> cutLines = fontRenderer.split(toDraw, 170);
         for (FormattedCharSequence cut : cutLines) {
-            graphics.drawString(fontRenderer, cut, x, y, 0, false);
+            graphics.drawString(fontRenderer, cut, x, y, color, false);
             y += 10;
         }
 
@@ -95,7 +96,7 @@ public class PageHelper {
      * @return a list of IPages with the text cut to fit on page
      */
     public static List<IPage> pagesForLongText(FormattedText text, Item item) {
-        return pagesForLongText(text, new ItemStack(item));
+        return pagesForLongText(text, Ingredient.of(item));
     }
 
     /**
@@ -104,28 +105,22 @@ public class PageHelper {
      * @return a list of IPages with the text cut to fit on page
      */
     public static List<IPage> pagesForLongText(FormattedText text, Block block) {
-        return pagesForLongText(text, new ItemStack(block));
+        return pagesForLongText(text, Ingredient.of(block));
     }
 
-    /**
-     * @param text - Text
-     * @param item - The stack to put on the first page
-     * @return a list of IPages with the text cut to fit on page
-     */
-    public static List<IPage> pagesForLongText(FormattedText text, ItemStack item) {
-        return pagesForLongText(text, Ingredient.of(item));
-    }
+
 
     /**
      * @param recipe1 - The first IRecipe to compare
      * @param recipe2 - The second IRecipe to compare
      * @return whether or not the class, size and the output of the recipes are the same
      */
+    @Deprecated(forRemoval = true)
     public static boolean areIRecipesEqual(Recipe recipe1, Recipe recipe2, RegistryAccess registryAccess) {
         if (recipe1 == recipe2) return true;
         if (recipe1 == null || recipe2 == null || recipe1.getClass() != recipe2.getClass()) return false;
         if (recipe1.equals(recipe2)) return true;
-        return ItemStack.isSameItem(recipe1.getResultItem(registryAccess), (recipe2.getResultItem(registryAccess)));
+        return ItemStack.isSameItem(recipe1.assemble(CraftingInput.EMPTY,registryAccess), (recipe2.assemble(CraftingInput.EMPTY,registryAccess)));
 //        if (recipe1.getRecipeSize() != recipe2.getRecipeSize()) return false;//FN was removed, there is no size now
     }
 
@@ -141,7 +136,7 @@ public class PageHelper {
             copy.add(elements.get(i));
             copy.add(newLine);
         }
-        copy.add(elements.get(elements.size() - 1));
+        copy.add(elements.getLast());
         return FormattedText.composite(copy);
     }
 }

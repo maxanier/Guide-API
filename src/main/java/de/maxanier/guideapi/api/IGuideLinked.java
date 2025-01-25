@@ -1,7 +1,7 @@
 package de.maxanier.guideapi.api;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -22,5 +22,5 @@ public interface IGuideLinked {
      * @return the key of the entry to open or null if no entry should be opened
      */
     @Nullable
-    ResourceLocation getLinkedEntry(Level world, BlockPos pos, Player player, ItemStack stack);
+    Identifier getLinkedEntry(Level world, BlockPos pos, Player player, ItemStack stack);
 }

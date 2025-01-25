@@ -7,23 +7,27 @@ import de.maxanier.guideapi.api.impl.abstraction.CategoryAbstract;
 import de.maxanier.guideapi.api.impl.abstraction.EntryAbstract;
 import de.maxanier.guideapi.api.util.GuiHelper;
 import de.maxanier.guideapi.api.util.IngredientCycler;
-import de.maxanier.guideapi.api.util.TextHelper;
 import de.maxanier.guideapi.gui.BaseScreen;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.context.ContextMap;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.display.SlotDisplayContext;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.brewing.BrewingRecipe;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+/**
+ * TODO Untested
+ */
 public class PageBrewingRecipe extends Page {
 
     private final IngredientCycler cycler = new IngredientCycler();
@@ -55,19 +59,21 @@ public class PageBrewingRecipe extends Page {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void draw(GuiGraphics graphics, RegistryAccess registryAccess, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
-        cycler.tick(guiBase.getMinecraft());
+        cycler.tick(guiBase.getMinecraft().level.getGameTime());
 
         int xStart = guiLeft + 88;
         int yStart = guiTop + 52;
+
+        ContextMap contextmap = SlotDisplayContext.fromLevel(guiBase.getMinecraft().level);
+
 
         SubTexture.POTION_GRID.draw(graphics, xStart, yStart);
 
         List<Component> badTip = new ArrayList<>();
         badTip.add(Component.translatable("guideapi.text.brewing.error"));
 
-        guiBase.drawCenteredStringWithoutShadow(graphics, fontRendererObj, TextHelper.localizeEffect("guideapi.text.brewing.brew"), guiLeft + guiBase.xSize / 2, guiTop + 12, 0);
+        guiBase.drawCenteredStringWithoutShadow(graphics, fontRendererObj, Component.translatable("guideapi.text.brewing.brew"), guiLeft + guiBase.xSize / 2, guiTop + 12);
 
         //int xmiddle =  guiLeft + guiBase.xSize / 2 - 6;
         int x = xStart + 25;//since item stack is approx 16 wide
@@ -79,25 +85,27 @@ public class PageBrewingRecipe extends Page {
             GuiHelper.drawItemStack(graphics, s, finalX, finalY);
         });
 
+        ItemStack s = input.display().resolveForFirstStack(contextmap); //TODO check and cycle
+
         List<Component> tooltip = null;
         if (GuiHelper.isMouseBetween(mouseX, mouseY, x, y, 15, 15))
-            tooltip = GuiHelper.getTooltip(ingredient.getItems()[0]);
+            tooltip = GuiHelper.getTooltip(s);
 
         //the three bottles
         y += 39;
-        GuiHelper.drawItemStack(graphics, input.getItems()[0], x, y);
+        GuiHelper.drawItemStack(graphics, s, x, y);
         if (GuiHelper.isMouseBetween(mouseX, mouseY, x, y, 15, 15))
-            tooltip = GuiHelper.getTooltip(input.getItems()[0]);
+            tooltip = GuiHelper.getTooltip(s);
         int hSpacing = 24;
         x -= hSpacing;
         y -= 8;
-        GuiHelper.drawItemStack(graphics, input.getItems()[0], x, y);
+        GuiHelper.drawItemStack(graphics, s, x, y);
         if (GuiHelper.isMouseBetween(mouseX, mouseY, x, y, 15, 15))
-            tooltip = GuiHelper.getTooltip(input.getItems()[0]);
+            tooltip = GuiHelper.getTooltip(s);
         x += hSpacing * 2;
-        GuiHelper.drawItemStack(graphics, input.getItems()[0], x, y);
+        GuiHelper.drawItemStack(graphics, s, x, y);
         if (GuiHelper.isMouseBetween(mouseX, mouseY, x, y, 15, 15))
-            tooltip = GuiHelper.getTooltip(input.getItems()[0]);
+            tooltip = GuiHelper.getTooltip(s);
 
         if (output.isEmpty())
             output = new ItemStack(Blocks.BARRIER);
@@ -110,10 +118,17 @@ public class PageBrewingRecipe extends Page {
             tooltip = output.getItem() == Item.byBlock(Blocks.BARRIER) ? badTip : GuiHelper.getTooltip(output);
 
         if (output.getItem() == Item.byBlock(Blocks.BARRIER))
-            guiBase.drawCenteredStringWithoutShadow(graphics, fontRendererObj, TextHelper.localizeEffect("guideapi.text.brewing.error"), guiLeft + guiBase.xSize / 2, guiTop + 4 * guiBase.ySize / 6, 0xED073D);
+            guiBase.drawCenteredStringWithoutShadow(graphics, fontRendererObj, Component.translatable("guideapi.text.brewing.error"), guiLeft + guiBase.xSize / 2, guiTop + 4 * guiBase.ySize / 6, 0xED073D);
 
-        if (tooltip != null)
-            graphics.renderComponentTooltip(fontRendererObj, tooltip, mouseX, mouseY);
+        if (tooltip != null) {
+            graphics.setTooltipForNextFrame(Minecraft.getInstance().font,
+                    tooltip,
+                    Optional.empty(),
+                    mouseX,
+                    mouseY,
+                    null
+            );
+        }
     }
 
 

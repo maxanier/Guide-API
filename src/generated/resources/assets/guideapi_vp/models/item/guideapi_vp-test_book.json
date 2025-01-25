@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "guideapi_vp:item/book_base",
+    "layer1": "guideapi_vp:item/book_page"
+  }
+}

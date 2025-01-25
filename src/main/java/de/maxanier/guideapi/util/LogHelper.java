@@ -13,7 +13,7 @@ public class LogHelper {
      * @param info - String to log to the info level
      */
 
-    public static void info(Object info) {
+    public static void info(String info) {
         if (GuideConfig.COMMON.enableLogging.get())
             logger.info(info);
     }
@@ -22,16 +22,16 @@ public class LogHelper {
      * @param error - String to log to the error level
      */
 
-    public static void error(Object error) {
+    public static void error(String error, Object... args) {
         if (GuideConfig.COMMON.enableLogging.get())
-            logger.error(error);
+            logger.error(error, args);
     }
 
     /**
      * @param debug - String to log to the debug level
      */
 
-    public static void debug(Object debug) {
+    public static void debug(String debug) {
         if (GuideConfig.COMMON.enableLogging.get())
             logger.debug(debug);
     }

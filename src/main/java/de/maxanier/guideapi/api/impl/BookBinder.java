@@ -2,21 +2,24 @@ package de.maxanier.guideapi.api.impl;
 
 import de.maxanier.guideapi.GuideMod;
 import de.maxanier.guideapi.api.impl.abstraction.CategoryAbstract;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforgespi.language.IModInfo;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 public class BookBinder {
 
-    private final ResourceLocation registryName;
-    private Consumer<List<CategoryAbstract>> contentProvider;
+    private final Identifier registryName;
+    private BiConsumer<RegistryAccess,List<CategoryAbstract>> contentProvider;
     @Nonnull
     private Component guideTitle = Component.translatable("item.guideapi.book");
     @Nullable
@@ -25,17 +28,19 @@ public class BookBinder {
     private Component itemName;
     @Nullable
     private Component author;
-    private ResourceLocation pageTexture = ResourceLocation.fromNamespaceAndPath(GuideMod.ID, "textures/gui/book_colored.png");
-    private ResourceLocation outlineTexture = ResourceLocation.fromNamespaceAndPath(GuideMod.ID, "textures/gui/book_greyscale.png");
-    private Color color = new Color(171, 70, 30);
+    private Identifier pageTexture = Identifier.fromNamespaceAndPath(GuideMod.ID, "textures/gui/book_colored.png");
+    private Identifier outlineTexture = Identifier.fromNamespaceAndPath(GuideMod.ID, "textures/gui/book_greyscale.png");
     private boolean spawnWithBook;
+    private int themeColor = ARGB.color(171, 70, 30);
+    private int textColor = ARGB.color(0, 0, 0);
+    private int textColorHighlight = ARGB.color(206, 206, 206);
 
     /**
      * Creates a new {@link Book} builder which will provide a much more user-friendly interface for creating books.
      *
      * @param registryName The registry name for the book to build. Should use your modid as the domain.
      */
-    public BookBinder(ResourceLocation registryName) {
+    public BookBinder(Identifier registryName) {
         this.registryName = registryName;
     }
 
@@ -58,7 +63,7 @@ public class BookBinder {
             throw new IllegalStateException("Content supplier of book " + registryName.toString() + " must be provided");
         }
 
-        return new Book(contentProvider, guideTitle, header, itemName, author, pageTexture, outlineTexture, color, spawnWithBook, registryName);
+        return new Book(contentProvider, guideTitle, header, itemName, author, pageTexture, outlineTexture, spawnWithBook, registryName, themeColor, textColor, textColorHighlight);
     }
 
     /**
@@ -83,20 +88,15 @@ public class BookBinder {
      * @param color The color to overlay with.
      * @return the builder instance for chaining.
      */
-    public BookBinder setColor(Color color) {
-        this.color = color;
+    public BookBinder setThemeColor(int color) {
+        this.themeColor = color;
         return this;
     }
 
-    /**
-     * An overload that takes an RGB color instead of a {@link Color} instance.
-     *
-     * @param color The color to overlay with.
-     * @return the builder instance for chaining.
-     * @see #setColor(int)
-     */
-    public BookBinder setColor(int color) {
-        return setColor(new Color(color));
+    public BookBinder setTextColor(int color, int colorHighlighted) {
+        this.textColor = color;
+        this.textColorHighlight = colorHighlighted;
+        return this;
     }
 
     /**
@@ -106,7 +106,7 @@ public class BookBinder {
      * @param contentProvider The consumer. Categories are displayed in which they are added to the provided list
      * @return the builder instance for chaining.
      */
-    public BookBinder setContentProvider(Consumer<List<CategoryAbstract>> contentProvider) {
+    public BookBinder setContentProvider(BiConsumer<RegistryAccess,List<CategoryAbstract>> contentProvider) {
         this.contentProvider = contentProvider;
         return this;
     }
@@ -184,7 +184,7 @@ public class BookBinder {
     }
 
     /**
-     * The texture to use for the border of the book. These are colored with {@link #color}. The dimensions should remain
+     * The texture to use for the border of the book. These are colored with {@link #setThemeColor(int)}. The dimensions should remain
      * the same as the default texture.
      * <p>
      * By default, this uses a greyscale version of the outline of vanilla books.
@@ -192,7 +192,7 @@ public class BookBinder {
      * @param outlineTexture The outline texture to use for this guide.
      * @return the builder instance for chaining.
      */
-    public BookBinder setOutlineTexture(ResourceLocation outlineTexture) {
+    public BookBinder setOutlineTexture(Identifier outlineTexture) {
         this.outlineTexture = outlineTexture;
         return this;
     }
@@ -206,7 +206,7 @@ public class BookBinder {
      * @param pageTexture The page texture to use for this guide.
      * @return the builder instance for chaining.
      */
-    public BookBinder setPageTexture(ResourceLocation pageTexture) {
+    public BookBinder setPageTexture(Identifier pageTexture) {
         this.pageTexture = pageTexture;
         return this;
     }

@@ -8,11 +8,9 @@ import de.maxanier.guideapi.gui.BaseScreen;
 import de.maxanier.guideapi.gui.HomeScreen;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 
 import java.util.List;
@@ -21,11 +19,11 @@ import java.util.Objects;
 
 public abstract class CategoryAbstract {
 
-    public final Map<ResourceLocation, EntryAbstract> entries;
+    public final Map<Identifier, EntryAbstract> entries;
     public final Component name;
     private String keyBase;
 
-    public CategoryAbstract(Map<ResourceLocation, EntryAbstract> entries, Component name) {
+    public CategoryAbstract(Map<Identifier, EntryAbstract> entries, Component name) {
         this.entries = entries;
         this.name = name;
     }
@@ -34,7 +32,7 @@ public abstract class CategoryAbstract {
         this(Maps.newLinkedHashMap(), name);
     }
 
-    public void addEntries(Map<ResourceLocation, EntryAbstract> entries) {
+    public void addEntries(Map<Identifier, EntryAbstract> entries) {
         this.entries.putAll(entries);
     }
 
@@ -44,14 +42,14 @@ public abstract class CategoryAbstract {
      * @param key   - The key of the entry to add.
      * @param entry - The entry to add.
      */
-    public void addEntry(ResourceLocation key, EntryAbstract entry) {
+    public void addEntry(Identifier key, EntryAbstract entry) {
         entries.put(key, entry);
     }
 
     /**
      * Adds an entry to this category.
      * <p>
-     * Shorthand of {@link #addEntry(ResourceLocation, EntryAbstract)}. Requires {@link #withKeyBase(String)} to have been called.
+     * Shorthand of {@link #addEntry(Identifier, EntryAbstract)}. Requires {@link #withKeyBase(String)} to have been called.
      *
      * @param key   - The key of the entry to add.
      * @param entry - The entry to add.
@@ -60,15 +58,13 @@ public abstract class CategoryAbstract {
         if (Strings.isNullOrEmpty(keyBase))
             throw new RuntimeException("keyBase in category with name '" + name + "' must be set.");
 
-        addEntry(ResourceLocation.fromNamespaceAndPath(keyBase, key), entry);
+        addEntry(Identifier.fromNamespaceAndPath(keyBase, key), entry);
     }
 
     public abstract boolean canSee(Player player, ItemStack bookStack);
 
-    @OnlyIn(Dist.CLIENT)
     public abstract void draw(GuiGraphics graphics, Book book, int categoryX, int categoryY, int categoryWidth, int categoryHeight, int mouseX, int mouseY, BaseScreen guiBase, boolean drawOnLeft);
 
-    @OnlyIn(Dist.CLIENT)
     public abstract void drawExtras(GuiGraphics graphics, Book book, int categoryX, int categoryY, int categoryWidth, int categoryHeight, int mouseX, int mouseY, BaseScreen guiBase, boolean drawOnLeft);
 
     @Override
@@ -92,14 +88,14 @@ public abstract class CategoryAbstract {
      * @param key - The key of the entry to obtain.
      * @return the found entry.
      */
-    public EntryAbstract getEntry(ResourceLocation key) {
+    public EntryAbstract getEntry(Identifier key) {
         return entries.get(key);
     }
 
     /**
      * Obtains an entry from this category.
      * <p>
-     * Shorthand of {@link #getEntry(ResourceLocation)}. Requires {@link #withKeyBase(String)} to have been called.
+     * Shorthand of {@link #getEntry(Identifier)}. Requires {@link #withKeyBase(String)} to have been called.
      * <p>
      * This <i>can</i> be null, however it is not marked as nullable to avoid annoying IDE warnings. I am making the
      * assumption that this will only be called while creating the book and thus the caller knows it exists.
@@ -113,7 +109,7 @@ public abstract class CategoryAbstract {
         if (Strings.isNullOrEmpty(keyBase))
             throw new RuntimeException("keyBase in category with name '" + name.getString() + "' must be set.");
 
-        return getEntry(ResourceLocation.fromNamespaceAndPath(keyBase, key));
+        return getEntry(Identifier.fromNamespaceAndPath(keyBase, key));
     }
 
     /**
@@ -136,26 +132,24 @@ public abstract class CategoryAbstract {
         return result;
     }
 
-    @OnlyIn(Dist.CLIENT)
     public abstract void onInit(Book book, HomeScreen guiHome, Player player, ItemStack bookStack);
 
-    @OnlyIn(Dist.CLIENT)
     public abstract void onLeftClicked(Book book, double mouseX, double mouseY, Player player, ItemStack bookStack);
 
-    @OnlyIn(Dist.CLIENT)
+
     public abstract void onRightClicked(Book book, double mouseX, double mouseY, Player player, ItemStack bookStack);
 
-    public void removeEntries(List<ResourceLocation> keys) {
-        for (ResourceLocation key : keys)
+    public void removeEntries(List<Identifier> keys) {
+        for (Identifier key : keys)
             entries.remove(key);
     }
 
-    public void removeEntry(ResourceLocation key) {
+    public void removeEntry(Identifier key) {
         entries.remove(key);
     }
 
     /**
-     * Sets the domain to use for all ResourceLocation keys passed through {@link #getEntry(String)} and
+     * Sets the domain to use for all Identifier keys passed through {@link #getEntry(String)} and
      * {@link #addEntry(String, EntryAbstract)}
      * <p>
      * Required in order to use those.

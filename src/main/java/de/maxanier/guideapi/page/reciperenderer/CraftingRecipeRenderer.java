@@ -11,18 +11,26 @@ import de.maxanier.guideapi.gui.BaseScreen;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.util.context.ContextMap;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
+import net.minecraft.world.item.crafting.display.SlotDisplayContext;
 
-public abstract class CraftingRecipeRenderer<T extends Recipe<?>> extends IRecipeRenderer.RecipeRendererBase<T> {
+public abstract class CraftingRecipeRenderer<T extends Recipe<?>, Q extends RecipeDisplay> extends IRecipeRenderer.RecipeDisplayRenderer<T, Q> {
 
 
     private final Component title;
     private Component customDisplay;
 
-    public CraftingRecipeRenderer(T recipe, Component title) {
-        super(recipe);
+    public CraftingRecipeRenderer(RecipeHolder<T> recipe, Class<Q> recipeDisplayClass, Component title) {
+        super(recipe, recipeDisplayClass);
         this.title = title;
     }
 
@@ -32,23 +40,26 @@ public abstract class CraftingRecipeRenderer<T extends Recipe<?>> extends IRecip
         SubTexture.CRAFTING_GRID.draw(graphics, guiLeft + 68, guiTop + 53);
 
         Component recipeName = customDisplay == null ? title : customDisplay;
-        guiBase.drawCenteredStringWithoutShadow(graphics, fontRendererObj, recipeName, guiLeft + guiBase.xSize / 2, guiTop + 12, 0);
+        guiBase.drawCenteredStringWithoutShadow(graphics, fontRendererObj, recipeName, guiLeft + guiBase.xSize / 2, guiTop + 12);
+
+
+        int stationX = guiLeft + 125;
+        int stationY = guiTop + 55;
+
+        ItemStack c = cycler.getCycledIngredientStack(this.craftingStations, -2);
+        GuiHelper.drawItemStack(graphics, c, stationX, stationY);
+        if (GuiHelper.isMouseBetween(mouseX, mouseY, stationX, stationY, 15, 15))
+            tooltips = GuiHelper.getTooltip(c);
+
 
         int outputX = guiLeft + 148;
         int outputY = guiTop + 73;
-
-        ItemStack itemStack = recipe.getResultItem(registryAccess);
-
-        GuiHelper.drawItemStack(graphics, itemStack, outputX, outputY);
+        ItemStack s = cycler.getCycledIngredientStack(this.outputs, -1);
+        GuiHelper.drawItemStack(graphics, s, outputX, outputY);
         if (GuiHelper.isMouseBetween(mouseX, mouseY, outputX, outputY, 15, 15))
-            tooltips = GuiHelper.getTooltip(recipe.getResultItem(registryAccess));
-    }
+            tooltips = GuiHelper.getTooltip(s);
 
-//    protected ItemStack getNextItem(ItemStack stack, int position) {
-//        NonNullList<ItemStack> subItems = NonNullList.create();
-//        stack.getItem().fillItemGroup(ItemGroup.SEARCH, subItems);
-//        return subItems.get(getRandomizedCycle(position, subItems.size()));
-//    }
+    }
 
     public void setCustomTitle(Component customDisplay) {
         this.customDisplay = customDisplay;

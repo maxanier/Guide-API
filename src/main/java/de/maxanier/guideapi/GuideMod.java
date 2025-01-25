@@ -13,15 +13,17 @@ import de.maxanier.guideapi.util.ReloadCommand;
 import net.minecraft.commands.CommandSourceStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import org.apache.commons.lang3.tuple.Pair;
-import net.neoforged.fml.common.Mod;
 
 @Mod(value = GuideMod.ID)
 public class GuideMod {
@@ -32,7 +34,7 @@ public class GuideMod {
 
     public static GuideMod INSTANCE;
 
-    public static final CommonProxy PROXY =  FMLEnvironment.dist == Dist.CLIENT ? new ClientProxy() : new CommonProxy();
+    public static final CommonProxy PROXY =  FMLEnvironment.getDist() == Dist.CLIENT ? new ClientProxy() : new CommonProxy();
     public final IEventBus modBus;
 
     public GuideMod(IEventBus modBus) {
@@ -44,30 +46,21 @@ public class GuideMod {
         modBus.addListener(this::loadComplete);
         modBus.addListener(this::registerPackets);
         ItemGuideBookDataComponents.register(modBus);
-        NeoForge.EVENT_BUS.addListener(this::onRegisterCommands);
     }
 
     private void checkDevEnv() {
-        String launchTarget = System.getProperty("guideapi_target");
-        if (launchTarget != null && launchTarget.contains("dev")) {
-            inDev = true;
-        }
+        inDev = !FMLEnvironment.isProduction();
     }
 
     private void loadComplete(final FMLLoadCompleteEvent event) {
         PROXY.initColors();
 
         for (Pair<Book, IGuideBook> guide : AnnotationHandler.BOOK_CLASSES)
-            guide.getRight().handlePost(GuideAPI.getStackFromBook(guide.getLeft()));
+            guide.getRight().handlePost(GuideAPI.getItemForBook(guide.getLeft()));
     }
 
-    private void onRegisterCommands(RegisterCommandsEvent event) {
-        if (inDev) {
-            event.getDispatcher().register(LiteralArgumentBuilder.<CommandSourceStack>literal("guide-api-vp").then(ReloadCommand.register()));
-        }
-    }
 
-    private void setup(final FMLCommonSetupEvent event) {
+    private void setup(final FMLClientSetupEvent event) {
         if (GuideConfig.COMMON == null) {
             throw new IllegalStateException("Did not build configuration, before configuration load. Make sure to call GuideConfig#buildConfiguration during one of the registry events");
         }

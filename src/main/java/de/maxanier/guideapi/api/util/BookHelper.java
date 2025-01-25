@@ -8,22 +8,19 @@ import de.maxanier.guideapi.api.IRecipeRenderer;
 import de.maxanier.guideapi.api.impl.abstraction.CategoryAbstract;
 import de.maxanier.guideapi.api.impl.abstraction.EntryAbstract;
 import de.maxanier.guideapi.page.PageHolderWithLinks;
-import de.maxanier.guideapi.page.PageIRecipe;
-import de.maxanier.guideapi.page.PageJsonRecipe;
+import de.maxanier.guideapi.page.PageRecipe;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.common.CommonHooks;
-import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.brewing.BrewingRecipe;
-import net.neoforged.neoforge.common.brewing.BrewingRecipeRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -45,13 +42,13 @@ public class BookHelper {
     private final Logger LOGGER;
     private final String modid;
     private final String baseKey;
-    private final Function<Recipe<?>, IRecipeRenderer> recipeRendererSupplier;
+    private final Function<RecipeHolder<?>, IRecipeRenderer> recipeRendererSupplier;
     private final BiFunction<String, Object[], Component> localizer;
     private final Function<Block, String> blockNameMapper;
     private final Function<Item, String> itemNameMapper;
-    private final Map<ResourceLocation, EntryAbstract> links = Maps.newHashMap();
+    private final Map<Identifier, EntryAbstract> links = Maps.newHashMap();
 
-    private BookHelper(String modid, String baseKey, Function<Recipe<?>, IRecipeRenderer> recipeRendererSupplier, BiFunction<String, Object[], Component> localizer, Function<Block, String> blockNameMapper, Function<Item, String> itemNameMapper) {
+    private BookHelper(String modid, String baseKey, Function<RecipeHolder<?>, IRecipeRenderer> recipeRendererSupplier, BiFunction<String, Object[], Component> localizer, Function<Block, String> blockNameMapper, Function<Item, String> itemNameMapper) {
         LOGGER = LogManager.getLogger("BookHelper_" + modid);
         this.modid = modid;
         this.baseKey = baseKey;
@@ -64,7 +61,7 @@ public class BookHelper {
     /**
      * Converts the given pages to {@link PageHolderWithLinks} and adds the given links
      * Links can be
-     * - ResourceLocation: Link to an entry by its id. Entries have to be registered by {@link BookHelper#registerLinkablePages(List)}
+     * - Identifier: Link to an entry by its id. Entries have to be registered by {@link BookHelper#registerLinkablePages(List)}
      * - EntryAbstract: Link directly to an entry object
      * - {@link PageHolderWithLinks.URLLink}: Link to a web url
      *
@@ -78,7 +75,7 @@ public class BookHelper {
 
         for (Object l : links) {
             switch (l) {
-                case ResourceLocation resourceLocation -> {
+                case Identifier resourceLocation -> {
                     for (PageHolderWithLinks p : linkPages) {
                         p.addLink(resourceLocation);
                     }
@@ -112,12 +109,12 @@ public class BookHelper {
     }
 
     @Nullable
-    public EntryAbstract getLinkedEntry(ResourceLocation location) {
+    public EntryAbstract getLinkedEntry(Identifier location) {
         return links.get(location);
     }
 
-    public IPage getRecipePage(ResourceLocation id) {
-        return new PageJsonRecipe(id, recipeRendererSupplier);
+    public IPage getRecipePage(Identifier id) {
+        return new PageRecipe(id, recipeRendererSupplier);
     }
 
     /**
@@ -153,12 +150,11 @@ public class BookHelper {
      * @param block  Whether to use "block" or "item" translation keys
      * @return A ItemInfoBuilder for the given itemsstacks.
      */
-    public ItemInfoBuilder info(boolean block, ItemStack... stacks) {
+    public ItemInfoBuilder info(boolean block, Item... stacks) {
         assert stacks.length > 0;
-        ItemStack i0 = stacks[0];
-        Item item = i0.getItem();
+        Item item = stacks[0];
         String name = item instanceof BlockItem ? blockNameMapper.apply(((BlockItem) item).getBlock()) : itemNameMapper.apply(item);
-        return new ItemInfoBuilder(this, Ingredient.of(stacks), i0, name, block);
+        return new ItemInfoBuilder(this, Ingredient.of(stacks), new ItemStack(item), name, block);
     }
 
     /**
@@ -198,7 +194,7 @@ public class BookHelper {
     public static class Builder {
         private final String modid;
         private String baseKey;
-        private Function<Recipe<?>, IRecipeRenderer> recipeRendererSupplier = PageIRecipe::getRenderer;
+        private Function<RecipeHolder<?>, IRecipeRenderer> recipeRendererSupplier = PageRecipe::createRenderer;
         private BiFunction<String, Object[], Component> localizer = Component::translatable;
         private Function<Block, String> blockNameMapper = (block -> BuiltInRegistries.BLOCK.getKey(block).getPath());
         private Function<Item, String> itemNameMapper = (item -> BuiltInRegistries.ITEM.getKey(item).getPath());
@@ -249,7 +245,7 @@ public class BookHelper {
         }
 
         /**
-         * Set a custom method used to localize strings instead of {@link ForgeI18n#parseMessage(String, Object...)}
+         * Set a custom method used to localize strings instead of {@link Component::translatable}
          *
          * @param localizer Accept translation key and formats
          * @return this
@@ -265,7 +261,7 @@ public class BookHelper {
          * @param rendererSupplier Should provide a recipe renderer for any used recipe
          * @return this
          */
-        public BookHelper.Builder setRecipeRendererSupplier(Function<Recipe<?>, IRecipeRenderer> rendererSupplier) {
+        public BookHelper.Builder setRecipeRendererSupplier(Function<RecipeHolder<?>, IRecipeRenderer> rendererSupplier) {
             this.recipeRendererSupplier = rendererSupplier;
             return this;
         }

@@ -1,7 +1,7 @@
 package de.maxanier.guideapi.proxy;
 
+import de.maxanier.guideapi.RegistrarGuideAPIClient;
 import de.maxanier.guideapi.api.BookEvent;
-import de.maxanier.guideapi.api.GuideAPI;
 import de.maxanier.guideapi.api.IGuideItem;
 import de.maxanier.guideapi.api.impl.Book;
 import de.maxanier.guideapi.api.impl.abstraction.CategoryAbstract;
@@ -16,26 +16,13 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionBrewing;
+import net.minecraft.world.item.crafting.RecipeMap;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.Optional;
-import java.util.function.Supplier;
 
 public class ClientProxy extends CommonProxy {
-
-    @Override
-    public void initColors() {
-        for (Supplier<ItemStack> bookStack : GuideAPI.getBookToStack().values()) {
-            Minecraft.getInstance().getItemColors().register((stack, tintIndex) -> {
-                IGuideItem guideItem = (IGuideItem) stack.getItem();
-                if (guideItem.getBook(stack) != null && tintIndex == 0)
-                    return guideItem.getBook(stack).getColor().getRGB();
-
-                return -1;
-            }, bookStack.get().getItem());
-        }
-    }
 
     @Override
     public void openEntry(Book book, CategoryAbstract categoryAbstract, EntryAbstract entryAbstract, Player player, ItemStack stack) {
@@ -52,23 +39,22 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void openGuidebook(Player player, Level world, Book book, ItemStack bookStack) {
         if (!bookStack.isEmpty() && bookStack.getItem() instanceof IGuideItem) {
-            book.initializeContent();
+            book.initializeContent(world.registryAccess());
             try {
-
                     if (bookStack.has(ItemGuideBookDataComponents.ENTRY) && bookStack.has(ItemGuideBookDataComponents.CATEGORY)) {
                         CategoryAbstract category = book.getCategoryList().get(bookStack.get(ItemGuideBookDataComponents.CATEGORY));
                         EntryAbstract entry = category.entries.get(bookStack.get(ItemGuideBookDataComponents.ENTRY));
                         int pageNumber = bookStack.getOrDefault(ItemGuideBookDataComponents.PAGE,0);
                         EntryScreen guiEntry = new EntryScreen(book, category, entry, player, bookStack);
-                        guiEntry.pageNumber = pageNumber;
                         Minecraft.getInstance().setScreen(guiEntry);
+                        guiEntry.setPage(pageNumber);
                         return;
                     } else if (bookStack.has(ItemGuideBookDataComponents.CATEGORY)) {
                         CategoryAbstract category = book.getCategoryList().get(bookStack.get(ItemGuideBookDataComponents.CATEGORY));
                         int entryPage = bookStack.getOrDefault(ItemGuideBookDataComponents.PAGE,0);
                         CategoryScreen guiCategory = new CategoryScreen(book, category, player, bookStack, null);
-                        guiCategory.entryPage = entryPage;
                         Minecraft.getInstance().setScreen(guiCategory);
+                        guiCategory.setPage(entryPage);
                         return;
                     } else {
                         int categoryNumber = bookStack.getOrDefault(ItemGuideBookDataComponents.PAGE,0);
@@ -98,5 +84,10 @@ public class ClientProxy extends CommonProxy {
             return Optional.of(level.potionBrewing());
         }
         return Optional.empty();
+    }
+
+    @Override
+    public RecipeMap getClientSyncedRecipes() {
+        return RegistrarGuideAPIClient.getSyncedRecipes();
     }
 }

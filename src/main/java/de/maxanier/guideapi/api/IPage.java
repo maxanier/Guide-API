@@ -17,23 +17,17 @@ public interface IPage {
 
     boolean canSee(Book book, CategoryAbstract category, EntryAbstract entry, Player player, ItemStack bookStack, EntryScreen guiEntry);
 
-    @OnlyIn(Dist.CLIENT)
     void draw(GuiGraphics graphics, RegistryAccess registryAccess, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj);
 
-    @OnlyIn(Dist.CLIENT)
     void drawExtras(GuiGraphics graphics, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj);
 
-    @OnlyIn(Dist.CLIENT)
     default void onClose() {
 
     }
 
-    @OnlyIn(Dist.CLIENT)
     void onInit(Book book, CategoryAbstract category, EntryAbstract entry, Player player, ItemStack bookStack, EntryScreen guiEntry);
 
-    @OnlyIn(Dist.CLIENT)
     void onLeftClicked(Book book, CategoryAbstract category, EntryAbstract entry, double mouseX, double mouseY, Player player, EntryScreen guiEntry);
 
-    @OnlyIn(Dist.CLIENT)
     void onRightClicked(Book book, CategoryAbstract category, EntryAbstract entry, double mouseX, double mouseY, Player player, EntryScreen guiEntry);
 }

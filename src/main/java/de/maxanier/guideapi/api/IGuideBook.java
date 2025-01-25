@@ -2,10 +2,11 @@ package de.maxanier.guideapi.api;
 
 import de.maxanier.guideapi.GuideMod;
 import de.maxanier.guideapi.api.impl.Book;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -21,20 +22,10 @@ public interface IGuideBook {
      */
     @Nullable
     Book buildBook();
-
-    /**
-     * @return The resource location of your own model or null if you want handle rendering yourself somehow
-     */
-    @Nullable
-    @OnlyIn(Dist.CLIENT)
-    default ResourceLocation getModel() {
-        return ResourceLocation.fromNamespaceAndPath(GuideMod.ID, "item/guidebook");
-    }
-
     /**
      * Called during Post Initialization.
      */
-    default void handlePost(@Nonnull ItemStack bookStack) {
+    default void handlePost(@Nonnull Holder<Item> bookItem) {
         // No-op
     }
 

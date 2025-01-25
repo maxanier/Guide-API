@@ -11,6 +11,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -18,7 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 /**
  * Render an entity in the middle of the page.
@@ -28,7 +29,7 @@ public class PageEntity extends Page {
 
     @Nullable
     private final Component title;
-    private final Function<Level, ? extends LivingEntity> supplier;
+    private final BiFunction<Level, EntitySpawnReason, ? extends LivingEntity> supplier;
     @Nullable
     private LivingEntity e;
 
@@ -40,12 +41,12 @@ public class PageEntity extends Page {
      * @param supplier Supply a (new) entity instance
      * @param title    Title to render below the entity. If null, the name of the entity will be rendered
      */
-    public PageEntity(Function<Level, ? extends LivingEntity> supplier, @Nullable Component title) {
+    public PageEntity(BiFunction<Level, EntitySpawnReason, ? extends LivingEntity> supplier, @Nullable Component title) {
         this.supplier = supplier;
         this.title = title;
     }
 
-    public PageEntity(Function<Level, ? extends LivingEntity> supplier) {
+    public PageEntity(BiFunction<Level, EntitySpawnReason, ? extends LivingEntity> supplier) {
         this(supplier, null);
     }
 
@@ -70,6 +71,7 @@ public class PageEntity extends Page {
 
     @Override
     public void onInit(Book book, CategoryAbstract category, EntryAbstract entry, Player player, ItemStack bookStack, EntryScreen guiEntry) {
-        if (guiEntry.getMinecraft().level != null) this.e = supplier.apply(guiEntry.getMinecraft().level);
+        if (guiEntry.getMinecraft().level != null)
+            this.e = supplier.apply(guiEntry.getMinecraft().level, EntitySpawnReason.MOB_SUMMONED);
     }
 }

@@ -10,13 +10,13 @@ import de.maxanier.guideapi.api.util.GuiHelper;
 import de.maxanier.guideapi.gui.BaseScreen;
 import de.maxanier.guideapi.gui.EntryScreen;
 import de.maxanier.guideapi.gui.LinkedEntryScreen;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Util;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -33,7 +33,7 @@ public class PageHolderWithLinks implements IPage {
 
     private final IPage page;
     private final BookHelper bookHelper;
-    private final List<ResourceLocation> lateLinks = Lists.newArrayList();
+    private final List<Identifier> lateLinks = Lists.newArrayList();
     private final List<Link> links = Lists.newArrayList();
     private long lastLinkClick = 0;
 
@@ -57,7 +57,7 @@ public class PageHolderWithLinks implements IPage {
      *
      * @return This
      */
-    public PageHolderWithLinks addLink(ResourceLocation entry) {
+    public PageHolderWithLinks addLink(Identifier entry) {
         lateLinks.add(entry);
         return this;
     }
@@ -78,13 +78,11 @@ public class PageHolderWithLinks implements IPage {
     }
 
 
-    @OnlyIn(Dist.CLIENT)
     @Override
     public void draw(GuiGraphics graphics, RegistryAccess registryAccess, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
         page.draw(graphics, registryAccess, book, category, entry, guiLeft, guiTop, mouseX, mouseY, guiBase, fontRendererObj);
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
     public void drawExtras(GuiGraphics graphics, Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, BaseScreen guiBase, Font fontRendererObj) {
         int ll = guiLeft + guiBase.xSize - 5;
@@ -100,11 +98,10 @@ public class PageHolderWithLinks implements IPage {
         page.drawExtras(graphics, book, category, entry, guiLeft, guiTop, mouseX, mouseY, guiBase, fontRendererObj);
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
     public void onInit(Book book, CategoryAbstract category, EntryAbstract entry, Player player, ItemStack bookStack, EntryScreen guiEntry) {
         while (lateLinks.size() > 0) {
-            ResourceLocation s = lateLinks.remove(0);
+            Identifier s = lateLinks.remove(0);
             EntryAbstract e = bookHelper.getLinkedEntry(s);
             if (e == null) {
                 LOGGER.warn("Failed to find linked entry {}", s);
@@ -116,7 +113,6 @@ public class PageHolderWithLinks implements IPage {
     }
 
 
-    @OnlyIn(Dist.CLIENT)
     @Override
     public void onLeftClicked(Book book, CategoryAbstract category, EntryAbstract entry, double mouseX, double mouseY, Player player, EntryScreen guiEntry) {
         if (mouseX > guiEntry.guiLeft + guiEntry.xSize) {
@@ -126,7 +122,7 @@ public class PageHolderWithLinks implements IPage {
                 lastLinkClick = lastClock;
                 for (int i = 0; i < links.size(); i++) {
                     if (GuiHelper.isMouseBetween(mouseX, mouseY, guiEntry.guiLeft + guiEntry.xSize, guiEntry.guiTop + 10 + 20 * i, links.get(i).width, 20)) {
-                        links.get(i).onClicked(book, category, entry, player, guiEntry.bookStack, guiEntry.pageNumber);
+                        links.get(i).onClicked(book, category, entry, player, guiEntry.bookStack, guiEntry.currentPage());
                         return;
                     }
                 }
@@ -136,7 +132,6 @@ public class PageHolderWithLinks implements IPage {
         page.onLeftClicked(book, category, entry, mouseX, mouseY, player, guiEntry);
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
     public void onRightClicked(Book book, CategoryAbstract category, EntryAbstract entry, double mouseX, double mouseY, Player player, EntryScreen guiEntry) {
         page.onRightClicked(book, category, entry, mouseX, mouseY, player, guiEntry);
@@ -147,7 +142,6 @@ public class PageHolderWithLinks implements IPage {
 
         public abstract Component getDisplayName();
 
-        @OnlyIn(Dist.CLIENT)
         public abstract void onClicked(Book book, CategoryAbstract category, EntryAbstract entry, Player player, ItemStack bookStack, int page);
     }
 
@@ -188,7 +182,6 @@ public class PageHolderWithLinks implements IPage {
             return linkedEntry.getName();
         }
 
-        @OnlyIn(Dist.CLIENT)
         @Override
         public void onClicked(Book book, CategoryAbstract category, EntryAbstract entry, Player player, ItemStack bookStack, int page) {
             openLinkedEntry(book, category, linkedEntry, player, bookStack, entry, page);
@@ -197,7 +190,6 @@ public class PageHolderWithLinks implements IPage {
         /**
          * Simply opens a gui screen with a GuiLinkedEntry. Not sure why the @SideOnly does not work, but this uses Class.forName to solve server side class not found issues
          */
-        @OnlyIn(Dist.CLIENT)
         private void openLinkedEntry(Book book, CategoryAbstract category, EntryAbstract entry, Player player, ItemStack bookStack, EntryAbstract from, int fromPage) {
             BaseScreen screen = new LinkedEntryScreen(book, category, entry, player, bookStack, from, fromPage);
             Minecraft.getInstance().setScreen(screen);
