@@ -3,12 +3,12 @@ package de.maxanier.guideapi.api.util;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import de.maxanier.guideapi.GuideMod;
-import de.maxanier.guideapi.api.IPage;
-import de.maxanier.guideapi.api.IRecipeRenderer;
-import de.maxanier.guideapi.api.impl.abstraction.CategoryAbstract;
-import de.maxanier.guideapi.api.impl.abstraction.EntryAbstract;
-import de.maxanier.guideapi.page.PageHolderWithLinks;
-import de.maxanier.guideapi.page.PageRecipe;
+import de.maxanier.guideapi.api.category.CategoryBase;
+import de.maxanier.guideapi.api.entry.EntryBase;
+import de.maxanier.guideapi.api.pages.IPage;
+import de.maxanier.guideapi.api.pages.PageHolderWithLinks;
+import de.maxanier.guideapi.api.pages.PageRecipe;
+import de.maxanier.guideapi.api.recipes.IRecipeRenderer;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -17,14 +17,16 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.brewing.BrewingRecipe;
+import net.neoforged.neoforge.common.crafting.CompoundIngredient;
+import net.neoforged.neoforge.common.crafting.DataComponentIngredient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +48,7 @@ public class BookHelper {
     private final BiFunction<String, Object[], Component> localizer;
     private final Function<Block, String> blockNameMapper;
     private final Function<Item, String> itemNameMapper;
-    private final Map<Identifier, EntryAbstract> links = Maps.newHashMap();
+    private final Map<Identifier, EntryBase> links = Maps.newHashMap();
 
     private BookHelper(String modid, String baseKey, Function<RecipeHolder<?>, IRecipeRenderer> recipeRendererSupplier, BiFunction<String, Object[], Component> localizer, Function<Block, String> blockNameMapper, Function<Item, String> itemNameMapper) {
         LOGGER = LogManager.getLogger("BookHelper_" + modid);
@@ -80,7 +82,7 @@ public class BookHelper {
                         p.addLink(resourceLocation);
                     }
                 }
-                case EntryAbstract entryAbstract -> {
+                case EntryBase entryAbstract -> {
                     for (PageHolderWithLinks p : linkPages) {
                         p.addLink(entryAbstract);
                     }
@@ -109,7 +111,7 @@ public class BookHelper {
     }
 
     @Nullable
-    public EntryAbstract getLinkedEntry(Identifier location) {
+    public EntryBase getLinkedEntry(Identifier location) {
         return links.get(location);
     }
 
@@ -141,6 +143,22 @@ public class BookHelper {
         Item i0 = items[0];
         String name = itemNameMapper.apply(i0);
         return new ItemInfoBuilder(this, Ingredient.of(items), new ItemStack(i0), name, false);
+    }
+
+    public ItemInfoBuilder info(boolean block, ItemStack... stacks) {
+        assert stacks.length > 0;
+        ItemStack demoStack;
+        Ingredient ingredient;
+        if (stacks.length == 1) {
+            demoStack = stacks[0];
+            ingredient = DataComponentIngredient.of(false, demoStack);
+        } else {
+            demoStack = stacks[0];
+            ingredient = CompoundIngredient.of(Arrays.stream(stacks).map(s -> DataComponentIngredient.of(false, s)).toArray(Ingredient[]::new));
+        }
+        Item item = demoStack.getItem();
+        String name = item instanceof BlockItem ? blockNameMapper.apply(((BlockItem) item).getBlock()) : itemNameMapper.apply(item);
+        return new ItemInfoBuilder(this, ingredient, demoStack, name, block);
     }
 
     /**
@@ -177,8 +195,8 @@ public class BookHelper {
     /**
      * After building your categories register them here, so the links for the individual pages can be resolved
      */
-    public void registerLinkablePages(List<CategoryAbstract> categories) {
-        for (CategoryAbstract c : categories) {
+    public void registerLinkablePages(List<CategoryBase> categories) {
+        for (CategoryBase c : categories) {
             this.links.putAll(c.entries);
         }
     }
@@ -245,7 +263,7 @@ public class BookHelper {
         }
 
         /**
-         * Set a custom method used to localize strings instead of {@link Component::translatable}
+         * Set a custom method used to localize strings instead of {@link Component#translatable(String)}
          *
          * @param localizer Accept translation key and formats
          * @return this

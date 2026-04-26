@@ -1,16 +1,16 @@
 package de.maxanier.guideapi.api.util;
 
-import de.maxanier.guideapi.api.IPage;
-import de.maxanier.guideapi.api.impl.abstraction.EntryAbstract;
-import de.maxanier.guideapi.entry.EntryItemStack;
-import de.maxanier.guideapi.page.PageBrewingRecipe;
+import de.maxanier.guideapi.LogHelper;
+import de.maxanier.guideapi.api.entry.EntryBase;
+import de.maxanier.guideapi.api.entry.EntryItemStack;
+import de.maxanier.guideapi.api.pages.IPage;
+import de.maxanier.guideapi.api.pages.PageBrewingRecipe;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.common.brewing.BrewingRecipe;
-import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -74,7 +74,7 @@ public class ItemInfoBuilder {
     /**
      * Builds the entry and adds it to the given map
      */
-    public void build(Map<Identifier, EntryAbstract> entries) {
+    public void build(Map<Identifier, EntryBase> entries) {
         String base = bookHelper.getBaseKey() + (block ? ".blocks" : ".items") + "." + name;
         ArrayList<IPage> pages = new ArrayList<>(PageHelper.pagesForLongText(bookHelper.localize(base + ".text", formats), ingredient));
         for (Identifier id : recipes) {
@@ -84,7 +84,7 @@ public class ItemInfoBuilder {
             for (ItemStack brew : brewingStacks) {
                 BrewingRecipe r = bookHelper.getBrewingRecipe(brew);
                 if (r == null) {
-                    LogManager.getLogger().error("Could not find brewing recipe for {}", brew.toString());
+                    LogHelper.info("Could not find brewing recipe for " + brew.toString());
                 } else {
                     pages.add(new PageBrewingRecipe(r));
                 }
@@ -92,7 +92,7 @@ public class ItemInfoBuilder {
         }
         pages.addAll(this.additionalPages);
         if (links != null) bookHelper.addLinks(pages, links);
-        entries.put(Identifier.fromNamespaceAndPath(this.bookHelper.getModid(), base), new EntryItemStack(pages,customName ?  Component.translatable(base) : mainStack.getItemName(), mainStack));
+        entries.put(Identifier.fromNamespaceAndPath(this.bookHelper.getModid(), base), new EntryItemStack(pages, customName ? Component.translatable(base) : mainStack.getItemName(), mainStack));
     }
 
     /**

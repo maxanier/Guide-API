@@ -9,12 +9,15 @@ Original mod by TehNut and Tombenpotter. https://github.com/TeamAmeriFrance/Guid
 
 Allows easy creation of a guide book for your mod.
 Books are mostly maintained by Guide-API (it registers them, it puts them in its own creative tab, etc).
+Starting with 1.21.11+, you have to provide the respective model files, but can use Guide-API's methods during
+data-generation.
 
 The guide book is created mostly in code whereas e.g. Patchouli is mostly JSON based. This means:
 - Add or change content based on the configuration of your mod.
 - Wrap lines and pages based automatically, so localized strings don't overflow
 - Refer to the set keybindings
-- Refer to internal constants, balancing values etc so they are automatically changed in the book if you change them in the mod
+- Refer to internal constants, balancing values etc. so they are automatically changed in the book if you change them in
+  the mod
 - Add custom page types, recipe types, etc.
 - Use helper methods to generate parts of the book automatically
 
@@ -28,8 +31,6 @@ What else?
 * [CurseForge](https://www.curseforge.com/minecraft/mc-mods/guide-api-village-and-pillage)
 * [Modrinth](https://modrinth.com/mod/guide-api)
 
-## Original Links - Mostly still correct
-* [ReadTheDocs](http://guide-api.readthedocs.org/en/latest/)
 
 ## Mods that make use of Guide-API
 The ones we know of at least
@@ -37,24 +38,15 @@ The ones we know of at least
 * [Vampirism](https://www.curseforge.com/minecraft/mc-mods/vampirism-become-a-vampire)
 
 
-## Issue Reporting
-
-Please include the following:
-
-* Minecraft version
-* Guide-API version
-* Forge version/build
-* Versions of any mods potentially related to the issue
-* Any relevant screenshots are greatly appreciated
-* For crashes:
- * Steps to reproduce
- * Latest Forge log or crash log
-
 ## Developer Information
-The original information from Guide-API can be found [here](http://guide-api.readthedocs.org/en/latest/).
-The fork is still very similar.
-
 If you need any assistance adding your own guide book, or if you are missing a feature, create an issue here.
+
+### Structure
+
+- `api`: This should be mostly relevant for you. Note: This does not only contain "classical" API methods, but also
+  plenty of implementation that you may want to utilize or extend
+- `core`: The "mod" functionality of this mod. You probably should not (need to) use this
+- `test`: Test books that are stripped from the shipped jar. You can use this as reference
 
 ### Setup
 #### Setup Gradle build script
@@ -67,32 +59,35 @@ repositories {
     }
 }
 dependencies {
-    //Compile against and provide deobf version of Guide-API
-    compile fg.deobf("de.maxanier.guideapi:Guide-API-VP:${project.guideapi_version}")
+        compileOnly "de.maxanier.guideapi:Guide-API-VP:${project.guideapi_version}"
+        runtimeOnly "de.maxanier.guideapi:Guide-API-VP:${project.guideapi_version}"
 
 }
 ```
 
 #### Choose a version
 
-
-For a list of available Vampirism version, see [CurseForge](https://www.curseforge.com/minecraft/mc-mods/guide-api-village-and-pillage) or the [maven listing](https://maven.maxanier.de/de/maxanier/guideapi/Guide-API-VP/) .
+For a list of available GuideAPI version,
+see [CurseForge](https://www.curseforge.com/minecraft/mc-mods/guide-api-village-and-pillage) or
+the [maven listing](https://maven.maxanier.de/#/releases/de/maxanier/guideapi/Guide-API-VP).
 
 These properties can be set in a file named `gradle.properties`, placed in the same directory as your `build.gradle` file.
 Example `gradle.properties`:
 ```
-guideapi_version=1.14.4-2.2.1
+guideapi_version=1.21.1-2.3.0
 ```
 
 #### Rerun Gradle setup commands
-Please run the commands that you used to setup your development environment again.
+
+Please run the commands that you used to set up your development environment again.
 E.g. `gradlew` or `gradlew --refresh-dependencies`
-Refresh/Restart your IDE afterwards.
 
 ### How to create your book
-Checkout the test books [here](https://github.com/maxanier/Guide-API/tree/1.14.4_latest/src/main/java/de/maxanier/guideapi/test)  
 
-Checkout Vampirism which adds an extensive guide book [here](https://github.com/TeamLapen/Vampirism/blob/1.14/src/main/java/de/teamlapen/vampirism/modcompat/guide/GuideBook.java)
+Checkout the test books in the `test` source package.
+
+Checkout Vampirism which adds an extensive guide
+book [here](https://github.com/TeamLapen/Vampirism/blob/dev/projects/vampirism/src/integrations/guide/java/de/teamlapen/vampirism/common/integration/guide/GuideBook.java)
 
 #### Model
 
@@ -127,8 +122,9 @@ Add a crafting recipe for your book like this
 }
 ```
 #### API stability
-There isn't a dedicated API package since mods can/have to make use of most of GuideAPI's classes.  
-Binary breaking changes are only introduced with new main versions `*.0.0-beta.1` or new MC versions.
+
+Binary breaking changes in the `.api` package are only introduced with new main versions `*.0.0-beta.1` or new MC
+versions.
 New features are introduced with major versions `*.*.0` (possibly with alpha and beta stages) and bugfixes are introduced with minor versions (without alpha and beta phase).
 
 

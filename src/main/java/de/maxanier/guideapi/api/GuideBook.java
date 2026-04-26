@@ -1,7 +1,6 @@
 package de.maxanier.guideapi.api;
 
 
-
 import net.neoforged.bus.api.EventPriority;
 
 import java.lang.annotation.ElementType;

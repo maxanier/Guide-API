@@ -2,16 +2,16 @@ package de.maxanier.guideapi.test;
 
 import de.maxanier.guideapi.GuideMod;
 import de.maxanier.guideapi.api.GuideBook;
-import de.maxanier.guideapi.api.IGuideBook;
-import de.maxanier.guideapi.api.impl.Book;
-import de.maxanier.guideapi.api.impl.BookBinder;
-import de.maxanier.guideapi.api.impl.abstraction.CategoryAbstract;
+import de.maxanier.guideapi.api.book.Book;
+import de.maxanier.guideapi.api.book.BookBinder;
+import de.maxanier.guideapi.api.book.IGuideBook;
+import de.maxanier.guideapi.api.category.CategoryBase;
+import de.maxanier.guideapi.api.category.CategoryItemStack;
+import de.maxanier.guideapi.api.entry.EntryItemStack;
+import de.maxanier.guideapi.api.pages.PageBrewingRecipe;
+import de.maxanier.guideapi.api.pages.PageRecipe;
+import de.maxanier.guideapi.api.pages.PageText;
 import de.maxanier.guideapi.api.util.PageHelper;
-import de.maxanier.guideapi.category.CategoryItemStack;
-import de.maxanier.guideapi.entry.EntryItemStack;
-import de.maxanier.guideapi.page.PageBrewingRecipe;
-import de.maxanier.guideapi.page.PageRecipe;
-import de.maxanier.guideapi.page.PageText;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -24,15 +24,13 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.common.brewing.BrewingRecipe;
 
 import javax.annotation.Nullable;
-import java.awt.*;
 import java.util.List;
 
 @GuideBook
 public class TestBook2 implements IGuideBook {
 
-    public static Book book;
     public final static Identifier ID = Identifier.fromNamespaceAndPath(GuideMod.ID, "test_book2");
-
+    public static Book book;
 
     @Nullable
     @Override
@@ -44,12 +42,13 @@ public class TestBook2 implements IGuideBook {
         return (book = binder.build());
     }
 
-    private void buildContent(RegistryAccess registryAccess, List<CategoryAbstract> categories) {
-        CategoryAbstract testCategory = new CategoryItemStack(Component.translatable("guideapi.test.category"), new ItemStack(Items.BLUE_BANNER)).withKeyBase("guideapi");
+    private void buildContent(RegistryAccess registryAccess, List<CategoryBase> categories) {
+        CategoryBase testCategory = new CategoryItemStack(Component.translatable("guideapi.test.category"), new ItemStack(Items.BLUE_BANNER)).withKeyBase("guideapi");
         testCategory.addEntry("entry", new EntryItemStack(Component.translatable("guideapi.test.entry"), new ItemStack(Items.POTATO)));
         testCategory.getEntry("entry").addPage(new PageText(Component.literal("Hello, this is\nsome text")));
         //testCategory.getEntry("entry").addPage(new PageFurnaceRecipe(Blocks.COBBLESTONE));
         //testCategory.getEntry("entry").addPage(PageIRecipe.newShaped(new ItemStack(Items.ACACIA_BOAT), "X X", "XXX", 'X', new ItemStack(Blocks.ACACIA_PLANKS, 1, 4)));
+        testCategory.addEntry("entry2", new EntryItemStack(Component.translatable("guideapi.test.entry"), new ItemStack(Items.TNT_MINECART)));
         testCategory.getEntry("entry2").addPage(new PageText(Component.literal("Hello, this is\nsome text")));
         testCategory.getEntry("entry2").addPage(new PageBrewingRecipe(new BrewingRecipe(Ingredient.of(Items.POTION), Ingredient.of(Items.GLISTERING_MELON_SLICE), PotionContents.createItemStack(Items.POTION, Potions.HEALING))));
         testCategory.getEntry("entry").addPage(new PageRecipe(Identifier.withDefaultNamespace("bread")));

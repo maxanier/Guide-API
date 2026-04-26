@@ -1,7 +1,6 @@
 package de.maxanier.guideapi.api.util;
 
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;

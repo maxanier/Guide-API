@@ -4,47 +4,38 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import de.maxanier.guideapi.GuideMod;
 import de.maxanier.guideapi.api.GuideBook;
-import de.maxanier.guideapi.api.IGuideBook;
-import de.maxanier.guideapi.api.IPage;
-import de.maxanier.guideapi.api.impl.Book;
-import de.maxanier.guideapi.api.impl.BookBinder;
-import de.maxanier.guideapi.api.impl.Entry;
-import de.maxanier.guideapi.api.impl.abstraction.CategoryAbstract;
-import de.maxanier.guideapi.api.impl.abstraction.EntryAbstract;
+import de.maxanier.guideapi.api.book.Book;
+import de.maxanier.guideapi.api.book.BookBinder;
+import de.maxanier.guideapi.api.book.IGuideBook;
+import de.maxanier.guideapi.api.category.CategoryBase;
+import de.maxanier.guideapi.api.category.CategoryItemStack;
+import de.maxanier.guideapi.api.entry.Entry;
+import de.maxanier.guideapi.api.entry.EntryBase;
+import de.maxanier.guideapi.api.entry.EntryItemStack;
+import de.maxanier.guideapi.api.pages.*;
 import de.maxanier.guideapi.api.util.PageHelper;
-import de.maxanier.guideapi.category.CategoryItemStack;
-import de.maxanier.guideapi.entry.EntryItemStack;
-import de.maxanier.guideapi.page.*;
-import de.maxanier.guideapi.page.reciperenderer.ShapedRecipesRenderer;
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ARGB;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.ShapedRecipe;
-import net.minecraft.world.item.crafting.ShapedRecipePattern;
-import net.minecraft.world.level.block.Blocks;
 
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @GuideBook
 public class TestBook implements IGuideBook {
 
-    public static Book book;
     public final static Identifier ID = Identifier.fromNamespaceAndPath(GuideMod.ID, "test_book");
+    public static Book book;
 
     @Nullable
     @Override
@@ -54,9 +45,9 @@ public class TestBook implements IGuideBook {
         return (book = binder.build());
     }
 
-    private void buildContent(RegistryAccess registryAccess, List<CategoryAbstract> categories) {
+    private void buildContent(RegistryAccess registryAccess, List<CategoryBase> categories) {
 
-        Map<Identifier, EntryAbstract> entries = Maps.newHashMap();
+        Map<Identifier, EntryBase> entries = Maps.newHashMap();
 
         List<IPage> pages = Lists.newArrayList();
         pages.add(new PageText(Component.literal("Hello, this is\nsome text with a new line.")));

@@ -1,19 +1,24 @@
 package de.maxanier.guideapi.api;
 
-import com.google.common.collect.*;
-import de.maxanier.guideapi.api.impl.Book;
-import de.maxanier.guideapi.util.BlockIdentifier;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import de.maxanier.guideapi.api.book.Book;
+import de.maxanier.guideapi.api.book.IGuideBook;
+import de.maxanier.guideapi.api.world.BlockIdentifier;
+import de.maxanier.guideapi.api.world.IInfoRenderer;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class GuideAPI {
 

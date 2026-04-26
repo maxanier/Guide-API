@@ -2,6 +2,7 @@ package de.maxanier.guideapi.api.util;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -31,8 +32,8 @@ public class GuiHelper {
 
     /**
      *
-     * @param x         - The position on the x-axis to draw the itemstack
-     * @param y         - The position on the y-axis to draw the itemstack
+     * @param x - The position on the x-axis to draw the itemstack
+     * @param y - The position on the y-axis to draw the itemstack
      */
     public static void drawItemStack(GuiGraphics graphics, ItemStack stack, int x, int y) {
         graphics.renderItem(stack, x, y);
@@ -41,9 +42,9 @@ public class GuiHelper {
 
     /**
      *
-     * @param x         - The position on the x-axis to draw the itemstack
-     * @param y         - The position on the y-axis to draw the itemstack
-     * @param scale     - The scale with which to draw the itemstack
+     * @param x     - The position on the x-axis to draw the itemstack
+     * @param y     - The position on the y-axis to draw the itemstack
+     * @param scale - The scale with which to draw the itemstack
      */
     public static void drawScaledItemStack(GuiGraphics graphics, ItemStack stack, int x, int y, float scale) {
         var mStack = graphics.pose();
@@ -52,7 +53,6 @@ public class GuiHelper {
         graphics.renderItem(stack, (int) (x / scale), (int) (y / scale));
         mStack.popMatrix();
     }
-
 
 
     public static List<Component> getTooltip(ItemStack stack) {
@@ -69,5 +69,9 @@ public class GuiHelper {
             }
         }
         return list;
+    }
+
+    public static void drawCenteredStringWithoutShadow(GuiGraphics graphics, Font fontRendererObj, Component string, int x, int y, int color) {
+        graphics.drawString(fontRendererObj, string, x - fontRendererObj.width(string) / 2, y, color, false);
     }
 }

@@ -1,7 +1,7 @@
 package de.maxanier.guideapi.test;
 
 import de.maxanier.guideapi.GuideMod;
-import de.maxanier.guideapi.util.ModelHelper;
+import de.maxanier.guideapi.api.util.ModelHelper;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.ModelProvider;

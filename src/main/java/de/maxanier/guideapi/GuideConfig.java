@@ -2,7 +2,7 @@ package de.maxanier.guideapi;
 
 
 import de.maxanier.guideapi.api.GuideAPI;
-import de.maxanier.guideapi.api.impl.Book;
+import de.maxanier.guideapi.api.book.Book;
 
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModLoadingContext;

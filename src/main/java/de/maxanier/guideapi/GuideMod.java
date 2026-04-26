@@ -1,47 +1,39 @@
 package de.maxanier.guideapi;
 
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import de.maxanier.guideapi.api.GuideAPI;
-import de.maxanier.guideapi.api.IGuideBook;
-import de.maxanier.guideapi.api.impl.Book;
-import de.maxanier.guideapi.item.ItemGuideBookDataComponents;
-import de.maxanier.guideapi.network.ReadingStatePayload;
-import de.maxanier.guideapi.proxy.ClientProxy;
-import de.maxanier.guideapi.proxy.CommonProxy;
-import de.maxanier.guideapi.util.AnnotationHandler;
-import de.maxanier.guideapi.util.ReloadCommand;
-import net.minecraft.commands.CommandSourceStack;
+import de.maxanier.guideapi.api.book.Book;
+import de.maxanier.guideapi.api.book.IGuideBook;
+import de.maxanier.guideapi.core.APISetter;
+import de.maxanier.guideapi.core.AnnotationHandler;
+import de.maxanier.guideapi.core.item.ItemGuideBookDataComponents;
+import de.maxanier.guideapi.core.network.ReadingStatePayload;
+import de.maxanier.guideapi.core.proxy.ClientProxy;
+import de.maxanier.guideapi.core.proxy.CommonProxy;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import org.apache.commons.lang3.tuple.Pair;
 
 @Mod(value = GuideMod.ID)
-public class GuideMod {
+public record GuideMod(IEventBus modBus) {
 
     public static final String NAME = "Guide-API VP";
     public static final String ID = "guideapi_vp";
+    public static final CommonProxy PROXY = FMLEnvironment.getDist() == Dist.CLIENT ? new ClientProxy() : new CommonProxy();
     public static boolean inDev = false;
-
     public static GuideMod INSTANCE;
-
-    public static final CommonProxy PROXY =  FMLEnvironment.getDist() == Dist.CLIENT ? new ClientProxy() : new CommonProxy();
-    public final IEventBus modBus;
 
     public GuideMod(IEventBus modBus) {
         INSTANCE = this;
         this.modBus = modBus;
         checkDevEnv();
         GuideAPI.initialize();
+        APISetter.setScreenFactories();
         modBus.addListener(this::setup);
         modBus.addListener(this::loadComplete);
         modBus.addListener(this::registerPackets);
@@ -53,12 +45,14 @@ public class GuideMod {
     }
 
     private void loadComplete(final FMLLoadCompleteEvent event) {
-        PROXY.initColors();
-
         for (Pair<Book, IGuideBook> guide : AnnotationHandler.BOOK_CLASSES)
             guide.getRight().handlePost(GuideAPI.getItemForBook(guide.getLeft()));
     }
 
+    private void registerPackets(RegisterPayloadHandlersEvent event) {
+        PayloadRegistrar registrar = event.registrar("1");
+        registrar.playToServer(ReadingStatePayload.TYPE, ReadingStatePayload.STREAM_CODEC, ReadingStatePayload::handle);
+    }
 
     private void setup(final FMLClientSetupEvent event) {
         if (GuideConfig.COMMON == null) {
@@ -68,10 +62,5 @@ public class GuideMod {
             IGuideBook guide = pair.getRight();
             guide.registerInfoRenderer(pair.getLeft());
         }
-    }
-
-    private void registerPackets(RegisterPayloadHandlersEvent event) {
-        PayloadRegistrar registrar = event.registrar("1");
-        registrar.playToServer(ReadingStatePayload.TYPE, ReadingStatePayload.STREAM_CODEC, ReadingStatePayload::handle);
     }
 }
