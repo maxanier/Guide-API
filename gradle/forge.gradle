@@ -34,6 +34,7 @@ runs {
         systemProperty 'forge.logging.console.level', 'debug'
         workingDirectory project.layout.projectDirectory.dir('runs').dir(name)
         modSource project.sourceSets.main
+        modSource project.sourceSets.test
 
     }
     client {

@@ -98,28 +98,11 @@ In the `GatherDataEvent.Client` you can generate models for your guidebooks usin
 Keep in mind that at least the item state file must be in the `guideapi_vp/items` assets folder.
 
 #### Crafting recipe
-Add a crafting recipe for your book like this
+
+Generate a crafting recipe for your book like this in your `RecipeProvider` (see `test/TestModDataProvider`).  
+Take note of the `ModLoadedCondition`.
 ```
-{
-  "result": {
-    "item": "guideapi_vp:vampirism-guidebook"
-  },
-  "ingredients": [
-    {
-      "item": "vampirism:vampire_fang"
-    },
-    {
-      "item": "minecraft:book"
-    }
-  ],
-  "conditions": [
-    {
-      "type": "forge:mod_loaded",
-      "modid": "guideapi_vp"
-    }
-  ],
-  "type": "minecraft:crafting_shapeless"
-}
+shapeless(RecipeCategory.MISC, GuideAPI.getItemForBook(TestBook.book).value()).requires(Items.BOOK).requires(Items.BONE).unlockedBy("has_book", has(Items.BOOK)).unlockedBy("has_bone", has(Items.BONE)).save(output.withConditions(new ModLoadedCondition(GuideMod.ID)));
 ```
 #### API stability
 
