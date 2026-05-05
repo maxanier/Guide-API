@@ -58,7 +58,7 @@ public class PageHelper {
      * Spread the text over multiple pages if necessary. Display ingredient at first page
      */
     public static List<IPage> pagesForLongText(FormattedText text, Ingredient ingredient) {
-        List<FormattedText> pageText = prepareForLongText(text, 164, 81, 120);
+        List<FormattedText> pageText = prepareForLongText(text, 164, 79, 126);
         List<IPage> pageList = new ArrayList<>();
         for (int i = 0; i < pageText.size(); i++) {
             if (i == 0) {

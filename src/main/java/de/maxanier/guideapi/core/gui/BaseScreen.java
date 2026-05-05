@@ -20,18 +20,24 @@ import javax.annotation.Nullable;
 public abstract class BaseScreen extends Screen implements GuideBookScreen {
 
     protected final Book book;
-    private final int xSize = 245;
-    private final int ySize = 192;
+    protected final int screenWidth = 197;
+    protected final int screenHeight = 181;
+    private final int pageWidth = 167;
+    private final int pageHeight = 145;
+    private final int pageXOffset = 39;
+    private final int pageYOffset = 13;
+    private final int backgroundXOffset = 25;
+    private final int backgroundYOffset = 0;
     private final Identifier outlineTexture;
     private final Identifier pageTexture;
     private final Player player;
+    private int screenTop, screenLeft;
+    private int pageTop, pageLeft;
     private NavigationButton btnNext;
     private NavigationButton btnPrev;
     @Nullable
     private NavigationButton btnBack;
     private int currentPage;
-    private int guiLeft;
-    private int guiTop;
 
     public BaseScreen(Component title, Book book, Player player) {
         super(title);
@@ -44,16 +50,6 @@ public abstract class BaseScreen extends Screen implements GuideBookScreen {
 
     public int currentPage() {
         return currentPage;
-    }
-
-    @Override
-    public int guiLeft() {
-        return guiLeft;
-    }
-
-    @Override
-    public int guiTop() {
-        return guiTop;
     }
 
     @Override
@@ -89,6 +85,36 @@ public abstract class BaseScreen extends Screen implements GuideBookScreen {
     }
 
     @Override
+    public int pageHeight() {
+        return pageHeight;
+    }
+
+    @Override
+    public int pageLeft() {
+        return pageLeft;
+    }
+
+    @Override
+    public int pageTop() {
+        return pageTop;
+    }
+
+    @Override
+    public int pageWidth() {
+        return pageWidth;
+    }
+
+    @Override
+    public int pageXCenter() {
+        return pageLeft + pageWidth / 2;
+    }
+
+    @Override
+    public int pageYCenter() {
+        return pageTop + pageHeight / 2;
+    }
+
+    @Override
     public Player player() {
         return player;
     }
@@ -97,15 +123,15 @@ public abstract class BaseScreen extends Screen implements GuideBookScreen {
     public void render(@NonNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
         if (getPageCount() > 1) {
-            GuiHelper.drawCenteredStringWithoutShadow(graphics, font, Component.literal(String.format("%d/%d", currentPage() + 1, getPageCount())), guiLeft() + xSize() / 2, guiTop() + 5 * ySize() / 6, book.getTextColor());
+            GuiHelper.drawCenteredStringWithoutShadow(graphics, font, Component.literal(String.format("%d/%d", currentPage() + 1, getPageCount())), pageLeft() + pageWidth / 2, pageTop() + pageHeight() + 2, book.getTextColor());
         }
     }
 
     @Override
     public void renderBackground(@NonNull GuiGraphics graphics, int p_296491_, int p_294260_, float p_294869_) {
         super.renderBackground(graphics, p_296491_, p_294260_, p_294869_);
-        graphics.blit(RenderPipelines.GUI_TEXTURED, pageTexture, guiLeft(), guiTop(), 0, 0, xSize(), ySize(), 256, 256);
-        graphics.blit(RenderPipelines.GUI_TEXTURED, outlineTexture, guiLeft(), guiTop(), 0.0F, 0.0F, xSize(), ySize(), 256, 256, book.getThemeColor());
+        graphics.blit(RenderPipelines.GUI_TEXTURED, pageTexture, screenLeft, screenTop, backgroundXOffset, backgroundYOffset, screenWidth, screenHeight, 256, 256);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, outlineTexture, screenLeft, screenTop, backgroundXOffset, backgroundYOffset, screenWidth, screenHeight, 256, 256, book.getThemeColor());
     }
 
     public void setPage(int pageNum) {
@@ -116,16 +142,6 @@ public abstract class BaseScreen extends Screen implements GuideBookScreen {
         }
     }
 
-    @Override
-    public int xSize() {
-        return xSize;
-    }
-
-    @Override
-    public int ySize() {
-        return ySize;
-    }
-
     /**
      * Must call at the end of init after page count is init (or call {@link BaseScreen#updateButtonVisibility()} afterwards
      *
@@ -133,13 +149,13 @@ public abstract class BaseScreen extends Screen implements GuideBookScreen {
      * @param search Whether to add a search button
      */
     protected void addButtons(boolean back, boolean search) {
-        addRenderableWidget(btnNext = NavigationButton.create(book.getPageTexture(), guiLeft() + 4 * xSize() / 6, guiTop() + 5 * ySize() / 6, NavigationButton.TYPE.NEXT, btn -> pageNext()));
-        addRenderableWidget(btnPrev = NavigationButton.create(book.getPageTexture(), guiLeft() + xSize() / 5, guiTop() + 5 * ySize() / 6, NavigationButton.TYPE.PREV, btn -> pagePrev()));
+        addRenderableWidget(btnNext = NavigationButton.create(book.getPageTexture(), pageLeft() + pageWidth() - 25, pageTop() + pageHeight() + 2, NavigationButton.TYPE.NEXT, btn -> pageNext()));
+        addRenderableWidget(btnPrev = NavigationButton.create(book.getPageTexture(), pageLeft() + 5, pageTop() + pageHeight() + 2, NavigationButton.TYPE.PREV, btn -> pagePrev()));
         if (back) {
-            addRenderableWidget(btnBack = NavigationButton.create(book.getPageTexture(), guiLeft() + xSize() / 6, guiTop(), NavigationButton.TYPE.BACK, btn -> goBack()));
+            addRenderableWidget(btnBack = NavigationButton.create(book.getPageTexture(), pageLeft(), pageTop() - 14, NavigationButton.TYPE.BACK, btn -> goBack()));
         }
         if (search) {
-            addRenderableWidget(NavigationButton.create(book.getPageTexture(), (guiLeft() + xSize() / 6) - 25, guiTop() + 5, NavigationButton.TYPE.SEARCH, btn -> startSearch()));
+            addRenderableWidget(NavigationButton.create(book.getPageTexture(), screenLeft - 15, screenTop, NavigationButton.TYPE.SEARCH, btn -> startSearch()));
         }
         updateButtonVisibility();
     }
@@ -151,8 +167,10 @@ public abstract class BaseScreen extends Screen implements GuideBookScreen {
     @MustBeInvokedByOverriders
     @Override
     protected void init() {
-        guiLeft = (this.width - this.xSize()) / 2;
-        guiTop = (this.height - this.ySize()) / 2;
+        screenLeft = (this.width - this.screenWidth) / 2;
+        screenTop = (this.height - this.screenHeight) / 2;
+        this.pageLeft = screenLeft + pageXOffset - backgroundXOffset;
+        this.pageTop = screenTop + pageYOffset - backgroundYOffset;
     }
 
     protected void pageNext() {
@@ -167,6 +185,14 @@ public abstract class BaseScreen extends Screen implements GuideBookScreen {
             currentPage--;
         }
         this.updateButtonVisibility();
+    }
+
+    protected int screenLeft() {
+        return screenLeft;
+    }
+
+    protected int screenTop() {
+        return screenTop;
     }
 
     protected void startSearch() {

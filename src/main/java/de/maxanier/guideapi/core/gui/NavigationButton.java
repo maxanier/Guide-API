@@ -25,7 +25,7 @@ public class NavigationButton extends Button {
         return switch (type) {
             case NEXT -> new NavigationButton(atlasTexture, 24, 47, 201, 201, x, y, 18, 10, TEXT_NEXT, onPress);
             case PREV -> new NavigationButton(atlasTexture, 24, 47, 214, 214, x, y, 18, 10, TEXT_PREV, onPress);
-            case BACK -> new NavigationButton(atlasTexture, 94, 70, 201, 201, x, y, 18, 10, TEXT_BACK, onPress);
+            case BACK -> new NavigationButton(atlasTexture, 93, 70, 201, 201, x, y, 18, 10, TEXT_BACK, onPress);
             case SEARCH -> new NavigationButton(atlasTexture, 0, 0, 241, 241, x, y, 15, 15, TEXT_SEARCH, onPress);
         };
     }

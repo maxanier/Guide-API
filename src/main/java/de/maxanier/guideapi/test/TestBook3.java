@@ -9,8 +9,12 @@ import de.maxanier.guideapi.api.book.IGuideBook;
 import de.maxanier.guideapi.api.category.CategoryBase;
 import de.maxanier.guideapi.api.category.CategoryItemStack;
 import de.maxanier.guideapi.api.entry.EntryBase;
+import de.maxanier.guideapi.api.entry.EntryItemStack;
+import de.maxanier.guideapi.api.pages.IPage;
+import de.maxanier.guideapi.api.pages.PageHolderWithLinks;
 import de.maxanier.guideapi.api.util.BookHelper;
 import de.maxanier.guideapi.api.util.ItemInfoBuilder;
+import de.maxanier.guideapi.api.util.PageHelper;
 import de.maxanier.guideapi.api.world.IInfoRenderer;
 import de.maxanier.guideapi.api.world.InfoRendererDescription;
 import de.maxanier.guideapi.api.world.InfoRendererImage;
@@ -27,6 +31,8 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Blocks;
 
 import javax.annotation.Nullable;
+import java.net.URI;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +74,11 @@ public class TestBook3 implements IGuideBook {
         Map<Identifier, EntryBase> itemEntries = new LinkedHashMap<>();
         helper.info(Items.APPLE).brewingStacks().build(itemEntries);
         helper.info(false, Ingredient.of(registryAccess.lookupOrThrow(Registries.ITEM).getOrThrow(ItemTags.WOOL)), new ItemStack(Items.IRON_INGOT)).useCustomEntryName().recipes(Identifier.withDefaultNamespace("iron_ingot_from_nuggets"), Identifier.withDefaultNamespace("gold_ingot_from_nuggets")).setKeyName("ingots").setLinks(Identifier.fromNamespaceAndPath(GuideMod.ID, "guideapi.test.blocks.compressed_blocks")).build(itemEntries);
+        List<IPage> troublePages = new ArrayList<>();
+        troublePages.addAll(PageHelper.pagesForLongText(Component.translatable("guideapi.test.entry")));
+        helper.addLinks(troublePages, new PageHolderWithLinks.URLLink(Component.literal("Troubleshooting"), URI.create("github.com/maxanier/Guide-API")), blockEntries.values().stream().findFirst().orElse(null));
+        itemEntries.put(Identifier.fromNamespaceAndPath(GuideMod.ID, "linktest"), new EntryItemStack(troublePages, Component.literal("Link"), new ItemStack(Items.BOOK)));
+
         items.addEntries(itemEntries);
         categories.add(items);
 

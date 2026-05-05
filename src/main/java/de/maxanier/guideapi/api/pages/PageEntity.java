@@ -49,17 +49,16 @@ public class PageEntity extends Page {
     }
 
     @Override
-    public void draw(GuiGraphics graphics, Book book, CategoryBase category, EntryBase entry, int guiLeft, int guiTop, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
+    public void draw(GuiGraphics graphics, Book book, CategoryBase category, EntryBase entry, int pageLeft, int pageTop, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
         if (e != null)
-            InventoryScreen.renderEntityInInventoryFollowsMouse(graphics, guiLeft + screen.xSize() / 2 - 60, guiTop + screen.ySize() / 2 - 80, guiLeft + screen.xSize() / 2 + 60, guiTop + screen.ySize() / 2 + 40, 50, 0.0625f, mouseX, mouseY, this.e);
+            InventoryScreen.renderEntityInInventoryFollowsMouse(graphics, screen.pageXCenter() - 60, screen.pageYCenter() - 80, screen.pageXCenter() + 60, screen.pageYCenter() + 40, 50, 0.0625f, mouseX, mouseY, this.e);
 
     }
 
     @Override
-    public void drawExtras(GuiGraphics graphics, Book book, CategoryBase category, EntryBase entry, int guiLeft, int guiTop, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
-
+    public void drawExtras(GuiGraphics graphics, Book book, CategoryBase category, EntryBase entry, int pageLeft, int pageTop, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
         if (e != null)
-            GuiHelper.drawCenteredStringWithoutShadow(graphics, fontRendererObj, (title != null ? title : e.getName()), guiLeft + screen.xSize() / 2, guiTop + 140, 0x050505);
+            GuiHelper.drawCenteredStringWithoutShadow(graphics, fontRendererObj, (title != null ? title : e.getName()), pageLeft + screen.pageWidth() / 2, pageTop - 13 + 140, 0xFF050505);
     }
 
     @Override

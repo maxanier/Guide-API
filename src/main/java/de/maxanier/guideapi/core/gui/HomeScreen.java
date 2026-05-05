@@ -37,8 +37,8 @@ public class HomeScreen extends BaseScreen {
         this.categoryWrapperMap.clear();
 
 
-        int cX = guiLeft() + 55;
-        int cY = guiTop() + 40;
+        int cX = pageLeft() + 17;
+        int cY = pageTop() + 20;
         int i = 0;
         int pageNumber = 0;
 
@@ -94,7 +94,7 @@ public class HomeScreen extends BaseScreen {
 //        ActiveTextCollector textCollector = graphics.textRenderer(GuiGraphics.HoveredTextEffects.TOOLTIP_AND_CURSOR);
 //        textCollector.accept(guiLeft + xSize / 2 + 1, guiTop + 15, book.getHeader());
 
-        GuiHelper.drawCenteredStringWithoutShadow(graphics, font, book.getHeader(), guiLeft() + xSize() / 2 + 1, guiTop() + 15, book.getTextColor());
+        GuiHelper.drawCenteredStringWithoutShadow(graphics, font, book.getHeader(), pageXCenter(), pageTop(), book.getTextColor());
 
         for (CategoryWrapper wrapper : this.categoryWrapperMap.get(currentPage()))
             if (wrapper.canPlayerSee())
@@ -104,7 +104,7 @@ public class HomeScreen extends BaseScreen {
             if (wrapper.canPlayerSee())
                 wrapper.drawExtras(graphics, mouseX, mouseY, this);
 
-        graphics.drawCenteredString(font, book.getTitle(), guiLeft() + xSize() / 2, guiTop() - 10, Color.WHITE.getRGB());
+        graphics.drawCenteredString(font, book.getTitle(), pageXCenter(), screenTop() - 10, Color.WHITE.getRGB());
 
     }
 

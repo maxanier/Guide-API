@@ -51,7 +51,7 @@ public class EntryScreen extends BaseScreen {
         }
         for (IPage page : this.entry.pageList) {
             page.onInit(getMinecraft().level.registryAccess(), book, category, entry, player());
-            pageWrapperList.add(new PageWrapper(this, book, category, entry, page, guiLeft(), guiTop(), player(), this.font));
+            pageWrapperList.add(new PageWrapper(this, book, category, entry, page, pageLeft(), pageTop(), player(), this.font));
         }
 
 
@@ -111,7 +111,7 @@ public class EntryScreen extends BaseScreen {
             }
         }
 
-        graphics.drawCenteredString(font, entry.getName(), guiLeft() + xSize() / 2, guiTop() - 10, Color.WHITE.getRGB());
+        graphics.drawCenteredString(font, entry.getName(), pageXCenter(), screenTop() - 10, Color.WHITE.getRGB());
 
     }
 

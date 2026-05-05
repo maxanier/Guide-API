@@ -9,7 +9,6 @@ import de.maxanier.guideapi.core.gui.EntryScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.entity.player.Player;
 
 public class PageWrapper extends AbstractWrapper {
@@ -19,18 +18,18 @@ public class PageWrapper extends AbstractWrapper {
     public CategoryBase category;
     public EntryBase entry;
     public IPage page;
-    public int guiLeft, guiTop;
+    public int pageLeft, pageTop;
     public Player player;
     public Font renderer;
 
-    public PageWrapper(EntryScreen guiEntry, Book book, CategoryBase category, EntryBase entry, IPage page, int guiLeft, int guiTop, Player player, Font renderer) {
+    public PageWrapper(EntryScreen guiEntry, Book book, CategoryBase category, EntryBase entry, IPage page, int pageLeft, int pageTop, Player player, Font renderer) {
         this.guiEntry = guiEntry;
         this.book = book;
         this.category = category;
         this.entry = entry;
         this.page = page;
-        this.guiLeft = guiLeft;
-        this.guiTop = guiTop;
+        this.pageLeft = pageLeft;
+        this.pageTop = pageTop;
         this.player = player;
         this.renderer = renderer;
     }
@@ -42,12 +41,12 @@ public class PageWrapper extends AbstractWrapper {
 
     @Override
     public void draw(GuiGraphics graphics, int mouseX, int mouseY, GuideBookScreen gui) {
-        page.draw(graphics, book, category, entry, guiLeft, guiTop, mouseX, mouseY, gui, Minecraft.getInstance().font);
+        page.draw(graphics, book, category, entry, pageLeft, pageTop, mouseX, mouseY, gui, Minecraft.getInstance().font);
     }
 
     @Override
     public void drawExtras(GuiGraphics graphics, int mouseX, int mouseY, GuideBookScreen gui) {
-        page.drawExtras(graphics, book, category, entry, guiLeft, guiTop, mouseX, mouseY, gui, Minecraft.getInstance().font);
+        page.drawExtras(graphics, book, category, entry, pageLeft, pageTop, mouseX, mouseY, gui, Minecraft.getInstance().font);
     }
 
     @Override

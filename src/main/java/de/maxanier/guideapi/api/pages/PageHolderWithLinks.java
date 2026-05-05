@@ -24,6 +24,8 @@ import java.util.List;
 
 public class PageHolderWithLinks implements IPage {
 
+    private static final int X_OFFSET = 17;
+    private static final int ENTRY_HEIGHT = 20;
     /**
      * Set via {@link de.maxanier.guideapi.core.APISetter#setScreenFactories()}
      */
@@ -74,23 +76,23 @@ public class PageHolderWithLinks implements IPage {
     }
 
     @Override
-    public void draw(GuiGraphics graphics, Book book, CategoryBase category, EntryBase entry, int guiLeft, int guiTop, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
-        page.draw(graphics, book, category, entry, guiLeft, guiTop, mouseX, mouseY, screen, fontRendererObj);
+    public void draw(GuiGraphics graphics, Book book, CategoryBase category, EntryBase entry, int pageLeft, int pageTop, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
+        page.draw(graphics, book, category, entry, pageLeft, pageTop, mouseX, mouseY, screen, fontRendererObj);
     }
 
     @Override
-    public void drawExtras(GuiGraphics graphics, Book book, CategoryBase category, EntryBase entry, int guiLeft, int guiTop, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
-        int ll = guiLeft + screen.xSize() - 5;
-        int y = guiTop + 10;
+    public void drawExtras(GuiGraphics graphics, Book book, CategoryBase category, EntryBase entry, int pageLeft, int pageTop, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
+        int ll = pageLeft + screen.pageWidth() + X_OFFSET;
+        int y = pageTop;
         for (Link l : links) {
             Component t = l.getDisplayName();
-            graphics.drawString(fontRendererObj, t, ll, y, 0xFFFFFF, true);
+            graphics.drawString(fontRendererObj, t, ll, y, -1, true);
             if (l.width == 0) {
                 l.width = fontRendererObj.width(t);
             }
-            y += 20;
+            y += ENTRY_HEIGHT;
         }
-        page.drawExtras(graphics, book, category, entry, guiLeft, guiTop, mouseX, mouseY, screen, fontRendererObj);
+        page.drawExtras(graphics, book, category, entry, pageLeft, pageTop, mouseX, mouseY, screen, fontRendererObj);
     }
 
     @Override
@@ -109,13 +111,13 @@ public class PageHolderWithLinks implements IPage {
 
     @Override
     public void onLeftClicked(Book book, CategoryBase category, EntryBase entry, double mouseX, double mouseY, Player player, GuideBookScreen screen) {
-        if (mouseX > screen.guiLeft() + screen.xSize()) {
+        if (mouseX > screen.pageLeft() + screen.pageWidth()) {
             //Avoid double/triple execution per click
             long lastClock = System.currentTimeMillis() / 4;
             if (lastClock != lastLinkClick) {
                 lastLinkClick = lastClock;
                 for (int i = 0; i < links.size(); i++) {
-                    if (GuiHelper.isMouseBetween(mouseX, mouseY, screen.guiLeft() + screen.xSize(), screen.guiTop() + 10 + 20 * i, links.get(i).width, 20)) {
+                    if (GuiHelper.isMouseBetween(mouseX, mouseY, screen.pageLeft() + screen.pageWidth() + X_OFFSET, screen.pageTop() + ENTRY_HEIGHT * i, links.get(i).width, 20)) {
                         links.get(i).onClicked(book, category, entry, player, screen.currentPage());
                         return;
                     }

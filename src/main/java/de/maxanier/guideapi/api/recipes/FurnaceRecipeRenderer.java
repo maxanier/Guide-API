@@ -30,13 +30,14 @@ public class FurnaceRecipeRenderer extends IRecipeRenderer.RecipeDisplayRenderer
     }
 
     @Override
-    public void draw(GuiGraphics graphics, Book book, CategoryBase category, EntryBase entry, int guiLeft, int guiTop, int mouseX, int mouseY, GuideBookScreen guiBase, Font fontRendererObj, IngredientCycler cycler) {
-        SubTexture.FURNACE_GRID.draw(graphics, guiLeft + 90, guiTop + 71);
+    public void draw(GuiGraphics graphics, Book book, CategoryBase category, EntryBase entry, int pageLeft, int pageTop, int mouseX, int mouseY, GuideBookScreen guiBase, Font fontRendererObj, IngredientCycler cycler) {
 
-        GuiHelper.drawCenteredStringWithoutShadow(graphics, fontRendererObj, title, guiLeft + guiBase.xSize() / 2, guiTop + 12, book.getTextColor());
+        SubTexture.FURNACE_GRID.draw(graphics, pageLeft - 39 + 90, pageTop - 13 + 71);
 
-        int x = guiLeft + 92;
-        int y = guiTop + 77;
+        GuiHelper.drawCenteredStringWithoutShadow(graphics, fontRendererObj, title, pageLeft + guiBase.pageWidth() / 2, pageTop - 13 + 12, book.getTextColor());
+
+        int x = pageLeft - 39 + 92;
+        int y = pageTop - 13 + 77;
 
         ItemStack s = cycler.getCycledIngredientStack(input, 0);
 
@@ -46,7 +47,7 @@ public class FurnaceRecipeRenderer extends IRecipeRenderer.RecipeDisplayRenderer
 
         ItemStack output = cycler.getCycledIngredientStack(outputs, -1);
 
-        int x2 = guiLeft + 135;
+        int x2 = pageLeft - 39 + 135;
         GuiHelper.drawItemStack(graphics, output, x2, y);
         if (GuiHelper.isMouseBetween(mouseX, mouseY, x2, y, 15, 15))
             tooltips = GuiHelper.getTooltip(output);

@@ -27,15 +27,14 @@ public class ShapedRecipesRenderer extends CraftingRecipeRenderer<ShapedRecipe, 
     }
 
     @Override
-    public void draw(GuiGraphics graphics, Book book, CategoryBase category, EntryBase entry, int guiLeft, int guiTop, int mouseX, int mouseY, GuideBookScreen guiBase, Font fontRendererObj, IngredientCycler cycler) {
-        super.draw(graphics, book, category, entry, guiLeft, guiTop, mouseX, mouseY, guiBase, fontRendererObj, cycler);
-
+    public void draw(GuiGraphics graphics, Book book, CategoryBase category, EntryBase entry, int pageLeft, int pageTop, int mouseX, int mouseY, GuideBookScreen guiBase, Font fontRendererObj, IngredientCycler cycler) {
+        super.draw(graphics, book, category, entry, pageLeft, pageTop, mouseX, mouseY, guiBase, fontRendererObj, cycler);
         display().ifPresent(d -> {
             for (int y = 0; y < d.height(); y++) {
                 for (int x = 0; x < d.width(); x++) {
                     int i = d.width() * y + x;
-                    int stackX = (x + 1) * 17 + (guiLeft + 53) + x;
-                    int stackY = (y + 1) * 17 + (guiTop + 38) + y;
+                    int stackX = (x + 1) * 17 + (pageLeft - 39 + 53) + x;
+                    int stackY = (y + 1) * 17 + (pageTop - 13 + 38) + y;
                     ItemStack s = cycler.getCycledIngredientStack(inputs.get(i), i);
                     GuiHelper.drawItemStack(graphics, s, stackX, stackY);
                     if (GuiHelper.isMouseBetween(mouseX, mouseY, stackX, stackY, 15, 15))

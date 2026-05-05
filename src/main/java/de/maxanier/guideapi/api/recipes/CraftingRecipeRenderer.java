@@ -28,16 +28,16 @@ public abstract class CraftingRecipeRenderer<T extends Recipe<?>, Q extends Reci
     }
 
     @Override
-    public void draw(GuiGraphics graphics, Book book, CategoryBase category, EntryBase entry, int guiLeft, int guiTop, int mouseX, int mouseY, GuideBookScreen guiBase, Font fontRendererObj, IngredientCycler cycler) {
+    public void draw(GuiGraphics graphics, Book book, CategoryBase category, EntryBase entry, int pageLeft, int pageTop, int mouseX, int mouseY, GuideBookScreen guiBase, Font fontRendererObj, IngredientCycler cycler) {
 
-        SubTexture.CRAFTING_GRID.draw(graphics, guiLeft + 68, guiTop + 53);
+        SubTexture.CRAFTING_GRID.draw(graphics, pageLeft - 39 + 68, pageTop - 13 + 53);
 
         Component recipeName = customDisplay == null ? title : customDisplay;
-        GuiHelper.drawCenteredStringWithoutShadow(graphics, fontRendererObj, recipeName, guiLeft + guiBase.xSize() / 2, guiTop + 12, book.getTextColor());
+        GuiHelper.drawCenteredStringWithoutShadow(graphics, fontRendererObj, recipeName, guiBase.pageXCenter(), pageTop, book.getTextColor());
 
 
-        int stationX = guiLeft + 125;
-        int stationY = guiTop + 55;
+        int stationX = pageLeft - 39 + 125;
+        int stationY = pageTop - 13 + 55;
 
         ItemStack c = cycler.getCycledIngredientStack(this.craftingStations, -2);
         GuiHelper.drawItemStack(graphics, c, stationX, stationY);
@@ -45,8 +45,8 @@ public abstract class CraftingRecipeRenderer<T extends Recipe<?>, Q extends Reci
             tooltips = GuiHelper.getTooltip(c);
 
 
-        int outputX = guiLeft + 148;
-        int outputY = guiTop + 73;
+        int outputX = pageLeft - 39 + 148;
+        int outputY = pageTop - 13 + 73;
         ItemStack s = cycler.getCycledIngredientStack(this.outputs, -1);
         GuiHelper.drawItemStack(graphics, s, outputX, outputY);
         if (GuiHelper.isMouseBetween(mouseX, mouseY, outputX, outputY, 15, 15))

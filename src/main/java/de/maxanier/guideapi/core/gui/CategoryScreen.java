@@ -43,16 +43,16 @@ public class CategoryScreen extends BaseScreen {
         super.init();
         this.entryWrapperMap.clear();
 
-
-        int eX = guiLeft() + 37;
-        int eY = guiTop() + 15;
+        int topOffset = 5;
+        int eX = pageLeft();
+        int eY = pageTop() + topOffset;
         int i = 0;
         int pageNumber = 0;
         int startPageNumber = 0; //We can only set the page after the buttons have been initiated, so store start page until the end
         List<EntryBase> entries = Lists.newArrayList(category.entries.values());
         for (EntryBase entry : entries) {
             entry.onInit(getMinecraft().level.registryAccess(), book, category, player());
-            entryWrapperMap.put(pageNumber, new EntryWrapper(this, book, category, entry, eX, eY, 4 * xSize() / 6, 10, player(), this.font));
+            entryWrapperMap.put(pageNumber, new EntryWrapper(this, book, category, entry, eX, eY, pageWidth(), 10, player(), this.font));
             if (entry.equals(this.startEntry)) {
                 this.startEntry = null;
                 startPageNumber = pageNumber;
@@ -62,7 +62,7 @@ public class CategoryScreen extends BaseScreen {
 
             if (i >= 11) {
                 i = 0;
-                eY = guiTop() + 15;
+                eY = pageTop() + topOffset;
                 pageNumber++;
             }
         }
@@ -112,7 +112,7 @@ public class CategoryScreen extends BaseScreen {
             }
         }
 
-        graphics.drawCenteredString(font, category.getName(), guiLeft() + xSize() / 2, guiTop() - 10, Color.WHITE.getRGB());
+        graphics.drawCenteredString(font, category.getName(), pageXCenter(), screenTop() - 10, Color.WHITE.getRGB());
 
     }
 

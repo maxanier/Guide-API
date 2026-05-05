@@ -64,8 +64,11 @@ public class TestBook implements IGuideBook {
         pages.add(new PageRecipe(Identifier.withDefaultNamespace("acacia_fence")));
         pages.add(new PageItemStack(Component.literal("These are all logs"), Ingredient.of(registryAccess.lookupOrThrow(Registries.ITEM).getOrThrow(ItemTags.LOGS)))); //Tags.Items.NATURAL_LOGS
         pages.add(new PageTextImage(Component.translatable("guideapi.test.string"), Identifier.fromNamespaceAndPath(GuideMod.ID, "textures/test/testimage.png"), true));
+        pages.add(new PageTextImage(Component.translatable("guideapi.test.string"), Identifier.fromNamespaceAndPath(GuideMod.ID, "textures/test/testimage.png"), true, 64, 64, true));
         pages.add(new PageTextImage(Component.translatable("guideapi.test.string"), Identifier.fromNamespaceAndPath(GuideMod.ID, "textures/test/testimage.png"), false));
+        pages.add(new PageTextImage(Component.translatable("guideapi.test.string"), Identifier.fromNamespaceAndPath(GuideMod.ID, "textures/test/testimage.png"), false, 64, 64, true));
         pages.add(new PageImage(Identifier.fromNamespaceAndPath(GuideMod.ID, "textures/test/testimage.png")));
+        pages.add(new PageImage(Identifier.fromNamespaceAndPath(GuideMod.ID, "textures/test/testimage.png"), 64, 64, true));
         pages.add(new PageEntity(EntityType.BLAZE));
         pages.add(new PageEntity((world, reason) -> {
             Zombie z = EntityType.ZOMBIE.create(world, reason);

@@ -51,8 +51,8 @@ public class SearchScreen extends BaseScreen {
     }
 
 
-    private final int renderXOffset = 37;
-    private final int renderYOffset = 30;
+    private final int renderXOffset = 0;
+    private final int renderYOffset = 13;
     private final Screen parent;
     private EditBox searchField;
     private List<List<Pair<EntryBase, CategoryBase>>> searchResults;
@@ -82,7 +82,7 @@ public class SearchScreen extends BaseScreen {
     @Override
     public void init() {
         super.init();
-        searchField = new EditBox(font, guiLeft() + 43, guiTop() + 12, 100, 10, Component.translatable("guideapi.button.search"));
+        searchField = new EditBox(font, pageLeft(), pageTop(), 100, 10, Component.translatable("guideapi.button.search"));
         searchField.setBordered(false);
         searchField.setFocused(true);
         searchResults = getMatches(book, null, player());
@@ -110,13 +110,13 @@ public class SearchScreen extends BaseScreen {
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
         if (!super.mouseClicked(event, doubleClick)) {
             if (event.button() == InputConstants.MOUSE_BUTTON_LEFT) {
-                int entryX = guiLeft() + renderXOffset;
-                int entryY = guiTop() + renderYOffset;
+                int entryX = pageLeft() + renderXOffset;
+                int entryY = pageTop() + renderYOffset;
 
                 if (!searchResults.isEmpty() && currentPage() >= 0 && currentPage() < searchResults.size()) {
                     List<Pair<EntryBase, CategoryBase>> pageResults = searchResults.get(currentPage());
                     for (Pair<EntryBase, CategoryBase> entry : pageResults) {
-                        if (GuiHelper.isMouseBetween(event.x(), event.y(), entryX, entryY, 4 * xSize() / 6, 10)) {
+                        if (GuiHelper.isMouseBetween(event.x(), event.y(), entryX, entryY, pageWidth(), 10)) {
                             GuideMod.PROXY.openEntry(book, entry.getRight(), entry.getLeft(), player());
                         }
                         entryY += 13;
@@ -150,15 +150,15 @@ public class SearchScreen extends BaseScreen {
         graphics.fill(searchField.getX(), searchField.getY(), searchField.getX() + searchField.getInnerWidth(), searchField.getY() + searchField.getHeight(), new Color(58, 58, 58, 128).getRGB());
         searchField.render(graphics, mouseX, mouseY, partialTicks);
 
-        int entryX = guiLeft() + renderXOffset;
-        int entryY = guiTop() + renderYOffset;
+        int entryX = pageLeft() + renderXOffset;
+        int entryY = pageTop() + renderYOffset;
 
         if (searchResults.size() != 0 && currentPage() >= 0 && currentPage() < searchResults.size()) {
             List<Pair<EntryBase, CategoryBase>> pageResults = searchResults.get(currentPage());
             for (Pair<EntryBase, CategoryBase> entry : pageResults) {
-                entry.getLeft().draw(graphics, book, entry.getRight(), entryX, entryY, 4 * xSize() / 6, 10, mouseX, mouseY, this, font);
-                entry.getLeft().drawExtras(graphics, book, entry.getRight(), entryX, entryY, 4 * xSize() / 6, 10, mouseX, mouseY, this, font);
-                if (GuiHelper.isMouseBetween(mouseX, mouseY, entryX, entryY, 4 * xSize() / 6, 10)) {
+                entry.getLeft().draw(graphics, book, entry.getRight(), entryX, entryY, pageWidth(), 10, mouseX, mouseY, this, font);
+                entry.getLeft().drawExtras(graphics, book, entry.getRight(), entryX, entryY, pageWidth(), 10, mouseX, mouseY, this, font);
+                if (GuiHelper.isMouseBetween(mouseX, mouseY, entryX, entryY, pageWidth(), 10)) {
                     if (InputConstants.isKeyDown(minecraft.getWindow(), InputConstants.KEY_LSHIFT)) {
                         List<ClientTooltipComponent> tooltips = entry.getRight().getTooltip().stream().map(c -> ClientTooltipComponent.create(c.getVisualOrderText())).toList();
                         graphics.renderTooltip(font, tooltips, mouseX, mouseY, DefaultTooltipPositioner.INSTANCE, null);

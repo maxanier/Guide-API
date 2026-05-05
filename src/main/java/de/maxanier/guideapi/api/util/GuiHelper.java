@@ -9,6 +9,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag.Default;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -53,6 +54,18 @@ public class GuiHelper {
         graphics.renderItem(stack, (int) (x / scale), (int) (y / scale));
         mStack.popMatrix();
     }
+
+    /**
+     *
+     * @param x1 Start x
+     * @param y1 Start y
+     * @param x2 End x (will be exceeded by linewidth)
+     * @param y2 End y (will be exceeded by linewidth)
+     */
+    public static void drawLine(GuiGraphics guiGraphics, int x1, int y1, int x2, int y2, int linewidth, int color) {
+        guiGraphics.fill(x1, y1, x2 + linewidth, y2 + linewidth, color);
+    }
+
 
 
     public static List<Component> getTooltip(ItemStack stack) {

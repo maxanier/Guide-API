@@ -28,14 +28,14 @@ public class ShapelessRecipesRenderer extends CraftingRecipeRenderer<ShapelessRe
     }
 
     @Override
-    public void draw(GuiGraphics graphics, Book book, CategoryBase category, EntryBase entry, int guiLeft, int guiTop, int mouseX, int mouseY, GuideBookScreen guiBase, Font fontRendererObj, IngredientCycler cycler) {
-        super.draw(graphics, book, category, entry, guiLeft, guiTop, mouseX, mouseY, guiBase, fontRendererObj, cycler);
+    public void draw(GuiGraphics graphics, Book book, CategoryBase category, EntryBase entry, int pageLeft, int pageTop, int mouseX, int mouseY, GuideBookScreen guiBase, Font fontRendererObj, IngredientCycler cycler) {
+        super.draw(graphics, book, category, entry, pageLeft, pageTop, mouseX, mouseY, guiBase, fontRendererObj, cycler);
         for (int y = 0; y < 3; y++) {
             for (int x = 0; x < 3; x++) {
                 int i = 3 * y + x;
                 if (i < inputs.size()) {
-                    int stackX = (x + 1) * 17 + (guiLeft + 53) + x;
-                    int stackY = (y + 1) * 17 + (guiTop + 38) + y;
+                    int stackX = (x + 1) * 17 + (pageLeft - 39 + 53) + x;
+                    int stackY = (y + 1) * 17 + (pageTop - 13 + 38) + y;
                     ItemStack s = cycler.getCycledIngredientStack(inputs.get(i), i);
 
                     GuiHelper.drawItemStack(graphics, s, stackX, stackY);

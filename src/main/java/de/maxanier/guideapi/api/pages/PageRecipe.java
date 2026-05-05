@@ -68,16 +68,16 @@ public class PageRecipe extends Page {
     }
 
     @Override
-    public void draw(GuiGraphics graphics, Book book, CategoryBase category, EntryBase entry, int guiLeft, int guiTop, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
-        super.draw(graphics, book, category, entry, guiLeft, guiTop, mouseX, mouseY, screen, fontRendererObj);
+    public void draw(GuiGraphics graphics, Book book, CategoryBase category, EntryBase entry, int pageLeft, int pageTop, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
+        super.draw(graphics, book, category, entry, pageLeft, pageTop, mouseX, mouseY, screen, fontRendererObj);
         ingredientCycler.tick(screen.getMinecraft().level.getGameTime());
         if (invalidWarning != null) {
-            int centerX = guiLeft + 44;
-            int centerY = guiTop + screen.ySize() / 3;
+            int centerX = pageLeft + 10;
+            int centerY = pageTop + screen.pageHeight() / 3;
             PageHelper.drawFormattedText(graphics, centerX, centerY, invalidWarning, ARGB.color(0, 30, 30));
         } else {
             if (recipeRenderer != null && recipeRenderer.isValid()) {
-                recipeRenderer.draw(graphics, book, category, entry, guiLeft, guiTop, mouseX, mouseY, screen, fontRendererObj, ingredientCycler);
+                recipeRenderer.draw(graphics, book, category, entry, pageLeft, pageTop, mouseX, mouseY, screen, fontRendererObj, ingredientCycler);
             }
         }
 
