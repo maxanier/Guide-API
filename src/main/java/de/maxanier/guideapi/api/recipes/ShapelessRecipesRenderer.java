@@ -7,7 +7,7 @@ import de.maxanier.guideapi.api.entry.EntryBase;
 import de.maxanier.guideapi.api.util.GuiHelper;
 import de.maxanier.guideapi.api.util.IngredientCycler;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.context.ContextMap;
@@ -28,7 +28,7 @@ public class ShapelessRecipesRenderer extends CraftingRecipeRenderer<ShapelessRe
     }
 
     @Override
-    public void draw(GuiGraphics graphics, Book book, CategoryBase category, EntryBase entry, int pageLeft, int pageTop, int mouseX, int mouseY, GuideBookScreen guiBase, Font fontRendererObj, IngredientCycler cycler) {
+    public void draw(GuiGraphicsExtractor graphics, Book book, CategoryBase category, EntryBase entry, int pageLeft, int pageTop, int mouseX, int mouseY, GuideBookScreen guiBase, Font fontRendererObj, IngredientCycler cycler) {
         super.draw(graphics, book, category, entry, pageLeft, pageTop, mouseX, mouseY, guiBase, fontRendererObj, cycler);
         for (int y = 0; y < 3; y++) {
             for (int x = 0; x < 3; x++) {

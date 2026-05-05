@@ -6,7 +6,7 @@ import de.maxanier.guideapi.api.category.CategoryBase;
 import de.maxanier.guideapi.api.entry.EntryBase;
 import de.maxanier.guideapi.api.util.PageHelper;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.FormattedText;
 
@@ -32,7 +32,7 @@ public class PageText extends Page {
     }
 
     @Override
-    public void draw(GuiGraphics graphics, Book book, CategoryBase category, EntryBase entry, int pageLeft, int pageTop, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
+    public void draw(GuiGraphicsExtractor graphics, Book book, CategoryBase category, EntryBase entry, int pageLeft, int pageTop, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
         PageHelper.drawFormattedText(graphics, pageLeft - 39 + 44, pageTop - 13 + 12 + yOffset, draw, book.getTextColor());
     }
 

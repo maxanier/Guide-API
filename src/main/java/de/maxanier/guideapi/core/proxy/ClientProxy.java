@@ -43,7 +43,7 @@ public class ClientProxy extends CommonProxy {
         BookEvent.Open event = new BookEvent.Open(book, player);
         NeoForge.EVENT_BUS.post(event);
         if (event.isCanceled()) {
-            player.displayClientMessage(event.getCanceledText(), true);
+            player.sendOverlayMessage(event.getCanceledText());
             return;
         }
 

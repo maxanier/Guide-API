@@ -6,7 +6,7 @@ import de.maxanier.guideapi.api.category.CategoryBase;
 import de.maxanier.guideapi.api.entry.EntryBase;
 import de.maxanier.guideapi.api.util.GuiHelper;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
@@ -49,14 +49,14 @@ public class PageEntity extends Page {
     }
 
     @Override
-    public void draw(GuiGraphics graphics, Book book, CategoryBase category, EntryBase entry, int pageLeft, int pageTop, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
+    public void draw(GuiGraphicsExtractor graphics, Book book, CategoryBase category, EntryBase entry, int pageLeft, int pageTop, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
         if (e != null)
-            InventoryScreen.renderEntityInInventoryFollowsMouse(graphics, screen.pageXCenter() - 60, screen.pageYCenter() - 80, screen.pageXCenter() + 60, screen.pageYCenter() + 40, 50, 0.0625f, mouseX, mouseY, this.e);
+            InventoryScreen.extractEntityInInventoryFollowsMouse(graphics, screen.pageXCenter() - 60, screen.pageYCenter() - 80, screen.pageXCenter() + 60, screen.pageYCenter() + 40, 50, 0.0625f, mouseX, mouseY, this.e);
 
     }
 
     @Override
-    public void drawExtras(GuiGraphics graphics, Book book, CategoryBase category, EntryBase entry, int pageLeft, int pageTop, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
+    public void drawExtras(GuiGraphicsExtractor graphics, Book book, CategoryBase category, EntryBase entry, int pageLeft, int pageTop, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
         if (e != null)
             GuiHelper.drawCenteredStringWithoutShadow(graphics, fontRendererObj, (title != null ? title : e.getName()), pageLeft + screen.pageWidth() / 2, pageTop - 13 + 140, 0xFF050505);
     }

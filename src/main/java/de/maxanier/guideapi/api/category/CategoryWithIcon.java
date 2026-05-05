@@ -5,7 +5,7 @@ import de.maxanier.guideapi.api.book.Book;
 import de.maxanier.guideapi.api.entry.EntryBase;
 import de.maxanier.guideapi.api.util.GuiHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -33,13 +33,12 @@ public class CategoryWithIcon extends Category {
     }
 
     @Override
-    public void draw(GuiGraphics graphics, Book book, int categoryX, int categoryY, int categoryWidth, int categoryHeight, int mouseX, int mouseY, GuideBookScreen guiBase, boolean drawOnLeft) {
+    public void draw(GuiGraphicsExtractor graphics, Book book, int categoryX, int categoryY, int categoryWidth, int categoryHeight, int mouseX, int mouseY, GuideBookScreen guiBase, boolean drawOnLeft) {
         graphics.blit(RenderPipelines.GUI_TEXTURED, this.image, categoryX, categoryY, 0, 0, 48, 48, 48, 48);
-        super.drawExtras(graphics, book, categoryX, categoryY, categoryWidth, categoryHeight, mouseX, mouseY, guiBase, drawOnLeft);
     }
 
     @Override
-    public void drawExtras(GuiGraphics graphics, Book book, int categoryX, int categoryY, int categoryWidth, int categoryHeight, int mouseX, int mouseY, GuideBookScreen guiBase, boolean drawOnLeft) {
+    public void drawExtras(GuiGraphicsExtractor graphics, Book book, int categoryX, int categoryY, int categoryWidth, int categoryHeight, int mouseX, int mouseY, GuideBookScreen guiBase, boolean drawOnLeft) {
         if (canSee(guiBase.player(), book) && GuiHelper.isMouseBetween(mouseX, mouseY, categoryX, categoryY, categoryWidth, categoryHeight)) {
             graphics.setTooltipForNextFrame(Minecraft.getInstance().font,
                     this.getTooltip(),

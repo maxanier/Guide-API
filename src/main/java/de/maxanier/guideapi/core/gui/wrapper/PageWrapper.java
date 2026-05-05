@@ -8,7 +8,7 @@ import de.maxanier.guideapi.api.pages.IPage;
 import de.maxanier.guideapi.core.gui.EntryScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.entity.player.Player;
 
 public class PageWrapper extends AbstractWrapper {
@@ -40,12 +40,12 @@ public class PageWrapper extends AbstractWrapper {
     }
 
     @Override
-    public void draw(GuiGraphics graphics, int mouseX, int mouseY, GuideBookScreen gui) {
+    public void draw(GuiGraphicsExtractor graphics, int mouseX, int mouseY, GuideBookScreen gui) {
         page.draw(graphics, book, category, entry, pageLeft, pageTop, mouseX, mouseY, gui, Minecraft.getInstance().font);
     }
 
     @Override
-    public void drawExtras(GuiGraphics graphics, int mouseX, int mouseY, GuideBookScreen gui) {
+    public void drawExtras(GuiGraphicsExtractor graphics, int mouseX, int mouseY, GuideBookScreen gui) {
         page.drawExtras(graphics, book, category, entry, pageLeft, pageTop, mouseX, mouseY, gui, Minecraft.getInstance().font);
     }
 

@@ -1,6 +1,6 @@
 package de.maxanier.guideapi.core.gui;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
@@ -44,7 +44,7 @@ public class NavigationButton extends Button {
     }
 
     @Override
-    protected void renderContents(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void extractContents(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, this.atlasTexture, this.getX(), this.getY(), isHoveredOrFocused() ? this.texture_u_highlight : this.texture_u, isHoveredOrFocused() ? this.texture_v_highlight : this.texture_v, this.width, this.height, 256, 256);
     }
 

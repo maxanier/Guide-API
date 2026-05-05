@@ -8,7 +8,7 @@ import de.maxanier.guideapi.api.pages.IPage;
 import de.maxanier.guideapi.core.gui.wrapper.PageWrapper;
 import de.maxanier.guideapi.core.network.ReadingStatePayload;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
@@ -101,8 +101,8 @@ public class EntryScreen extends BaseScreen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float renderPartialTicks) {
-        super.render(graphics, mouseX, mouseY, renderPartialTicks);
+    public void extractRenderState(@NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float renderPartialTicks) {
+        super.extractRenderState(graphics, mouseX, mouseY, renderPartialTicks);
 
         if (currentPage() < pageWrapperList.size()) {
             if (pageWrapperList.get(currentPage()).canPlayerSee()) {
@@ -111,7 +111,7 @@ public class EntryScreen extends BaseScreen {
             }
         }
 
-        graphics.drawCenteredString(font, entry.getName(), pageXCenter(), screenTop() - 10, Color.WHITE.getRGB());
+        graphics.centeredText(font, entry.getName(), pageXCenter(), screenTop() - 10, Color.WHITE.getRGB());
 
     }
 

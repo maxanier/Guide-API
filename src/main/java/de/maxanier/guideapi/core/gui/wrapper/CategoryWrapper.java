@@ -5,7 +5,8 @@ import de.maxanier.guideapi.api.book.Book;
 import de.maxanier.guideapi.api.category.CategoryBase;
 import de.maxanier.guideapi.api.util.GuiHelper;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -39,12 +40,12 @@ public class CategoryWrapper extends AbstractWrapper {
     }
 
     @Override
-    public void draw(GuiGraphics graphics, int mouseX, int mouseY, GuideBookScreen gui) {
+    public void draw(GuiGraphicsExtractor graphics, int mouseX, int mouseY, GuideBookScreen gui) {
         category.draw(graphics, book, x, y, width, height, mouseX, mouseY, gui, drawOnLeft);
     }
 
     @Override
-    public void drawExtras(GuiGraphics graphics, int mouseX, int mouseY, GuideBookScreen gui) {
+    public void drawExtras(GuiGraphicsExtractor graphics, int mouseX, int mouseY, GuideBookScreen gui) {
         category.drawExtras(graphics, book, x, y, width, height, mouseX, mouseY, gui, drawOnLeft);
     }
 

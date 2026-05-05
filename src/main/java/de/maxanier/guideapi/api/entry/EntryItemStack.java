@@ -6,7 +6,7 @@ import de.maxanier.guideapi.api.category.CategoryBase;
 import de.maxanier.guideapi.api.pages.IPage;
 import de.maxanier.guideapi.api.util.GuiHelper;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
@@ -29,7 +29,7 @@ public class EntryItemStack extends Entry {
     }
 
     @Override
-    public void drawExtras(GuiGraphics graphics, Book book, CategoryBase category, int entryX, int entryY, int entryWidth, int entryHeight, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
+    public void drawExtras(GuiGraphicsExtractor graphics, Book book, CategoryBase category, int entryX, int entryY, int entryWidth, int entryHeight, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
         if (itemStack != null)
             GuiHelper.drawScaledItemStack(graphics, itemStack, entryX + 2, entryY, 0.5f);
 

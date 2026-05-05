@@ -3,7 +3,7 @@ package de.maxanier.guideapi.api.util;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.Item;
@@ -36,9 +36,9 @@ public class GuiHelper {
      * @param x - The position on the x-axis to draw the itemstack
      * @param y - The position on the y-axis to draw the itemstack
      */
-    public static void drawItemStack(GuiGraphics graphics, ItemStack stack, int x, int y) {
-        graphics.renderItem(stack, x, y);
-        graphics.renderItemDecorations(Minecraft.getInstance().font, stack, x, y, null);
+    public static void drawItemStack(GuiGraphicsExtractor graphics, ItemStack stack, int x, int y) {
+        graphics.fakeItem(stack, x, y);
+        graphics.itemDecorations(Minecraft.getInstance().font, stack, x, y, null);
     }
 
     /**
@@ -47,11 +47,11 @@ public class GuiHelper {
      * @param y     - The position on the y-axis to draw the itemstack
      * @param scale - The scale with which to draw the itemstack
      */
-    public static void drawScaledItemStack(GuiGraphics graphics, ItemStack stack, int x, int y, float scale) {
+    public static void drawScaledItemStack(GuiGraphicsExtractor graphics, ItemStack stack, int x, int y, float scale) {
         var mStack = graphics.pose();
         mStack.pushMatrix();
         mStack.scale(scale, scale);
-        graphics.renderItem(stack, (int) (x / scale), (int) (y / scale));
+        graphics.fakeItem(stack, (int) (x / scale), (int) (y / scale));
         mStack.popMatrix();
     }
 
@@ -62,7 +62,7 @@ public class GuiHelper {
      * @param x2 End x (will be exceeded by linewidth)
      * @param y2 End y (will be exceeded by linewidth)
      */
-    public static void drawLine(GuiGraphics guiGraphics, int x1, int y1, int x2, int y2, int linewidth, int color) {
+    public static void drawLine(GuiGraphicsExtractor guiGraphics, int x1, int y1, int x2, int y2, int linewidth, int color) {
         guiGraphics.fill(x1, y1, x2 + linewidth, y2 + linewidth, color);
     }
 
@@ -84,7 +84,7 @@ public class GuiHelper {
         return list;
     }
 
-    public static void drawCenteredStringWithoutShadow(GuiGraphics graphics, Font fontRendererObj, Component string, int x, int y, int color) {
-        graphics.drawString(fontRendererObj, string, x - fontRendererObj.width(string) / 2, y, color, false);
+    public static void drawCenteredStringWithoutShadow(GuiGraphicsExtractor graphics, Font fontRendererObj, Component string, int x, int y, int color) {
+        graphics.text(fontRendererObj, string, x - fontRendererObj.width(string) / 2, y, color, false);
     }
 }

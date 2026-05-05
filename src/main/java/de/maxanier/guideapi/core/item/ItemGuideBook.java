@@ -81,7 +81,7 @@ public class ItemGuideBook extends Item implements IGuideItem {
         BookEvent.Open event = new BookEvent.Open(book, player);
         NeoForge.EVENT_BUS.post(event);
         if (event.isCanceled()) {
-            player.displayClientMessage(event.getCanceledText(), true);
+            player.sendOverlayMessage(event.getCanceledText());
             return InteractionResult.FAIL;
         }
         GuideMod.PROXY.openGuidebook(player, world, book, heldStack);

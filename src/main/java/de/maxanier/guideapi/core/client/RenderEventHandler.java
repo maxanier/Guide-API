@@ -10,7 +10,7 @@ import de.maxanier.guideapi.api.world.IInfoRenderer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -53,7 +53,7 @@ public class RenderEventHandler {
      *
      * @return Whether the cache should be kept
      */
-    private static boolean renderBlockInfo(GuiGraphics graphics) {
+    private static boolean renderBlockInfo(GuiGraphicsExtractor graphics) {
         HitResult rayTrace = Minecraft.getInstance().hitResult;
         if (rayTrace == null || rayTrace.getType() != HitResult.Type.BLOCK)
             return false;
@@ -101,12 +101,12 @@ public class RenderEventHandler {
             int drawX = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 10;
             int drawY = Minecraft.getInstance().getWindow().getGuiScaledHeight() / 2 - 8;
 
-            graphics.renderItem(held, drawX, drawY);
+            graphics.fakeItem(held, drawX, drawY);
 
             drawY -= 2;
             drawX += 20;
-            graphics.drawString(fontRenderer, linkedEntry instanceof MutableComponent ? ((MutableComponent) linkedEntry).withStyle(ChatFormatting.WHITE) : linkedEntry, drawX, drawY, 0xFFFFFFFF, true);
-            graphics.drawString(fontRenderer, Component.translatable("guideapi.text.linked.open").withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC), drawX, drawY + 12, 0xFFFFFFFF, true);
+            graphics.text(fontRenderer, linkedEntry instanceof MutableComponent ? ((MutableComponent) linkedEntry).withStyle(ChatFormatting.WHITE) : linkedEntry, drawX, drawY, 0xFFFFFFFF, true);
+            graphics.text(fontRenderer, Component.translatable("guideapi.text.linked.open").withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC), drawX, drawY + 12, 0xFFFFFFFF, true);
         }
 
         if (block instanceof IInfoRenderer.Block) {

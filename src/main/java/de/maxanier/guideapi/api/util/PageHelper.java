@@ -5,7 +5,7 @@ import de.maxanier.guideapi.api.pages.PageItemStack;
 import de.maxanier.guideapi.api.pages.PageText;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
@@ -78,12 +78,12 @@ public class PageHelper {
     }
 
 
-    public static void drawFormattedText(GuiGraphics graphics, int x, int y, FormattedText toDraw, int color) {
+    public static void drawFormattedText(GuiGraphicsExtractor graphics, int x, int y, FormattedText toDraw, int color) {
         Font fontRenderer = Minecraft.getInstance().font;
 
         List<FormattedCharSequence> cutLines = fontRenderer.split(toDraw, 170);
         for (FormattedCharSequence cut : cutLines) {
-            graphics.drawString(fontRenderer, cut, x, y, color, false);
+            graphics.text(fontRenderer, cut, x, y, color, false);
             y += 10;
         }
 
@@ -107,20 +107,6 @@ public class PageHelper {
         return pagesForLongText(text, Ingredient.of(block));
     }
 
-
-    /**
-     * @param recipe1 - The first IRecipe to compare
-     * @param recipe2 - The second IRecipe to compare
-     * @return whether or not the class, size and the output of the recipes are the same
-     */
-    @Deprecated(forRemoval = true)
-    public static boolean areIRecipesEqual(Recipe recipe1, Recipe recipe2, RegistryAccess registryAccess) {
-        if (recipe1 == recipe2) return true;
-        if (recipe1 == null || recipe2 == null || recipe1.getClass() != recipe2.getClass()) return false;
-        if (recipe1.equals(recipe2)) return true;
-        return ItemStack.isSameItem(recipe1.assemble(CraftingInput.EMPTY, registryAccess), (recipe2.assemble(CraftingInput.EMPTY, registryAccess)));
-//        if (recipe1.getRecipeSize() != recipe2.getRecipeSize()) return false;//FN was removed, there is no size now
-    }
 
 
     /**

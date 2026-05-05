@@ -1,6 +1,6 @@
 # Guide-API - Village and Pillage [![](https://cf.way2muchnoise.eu/versions/380771.svg)](https://www.curseforge.com/minecraft/mc-mods/guide-api-village-and-pillage)
 
-**WIP branch for 1.21.11+ - Everything may still change**
+**WIP branch for 26.1+ - Everything may still change**
 
 Library mod for easy creation of guide books.
 

@@ -6,7 +6,7 @@ import de.maxanier.guideapi.api.book.Book;
 import de.maxanier.guideapi.api.category.CategoryBase;
 import de.maxanier.guideapi.api.entry.EntryBase;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.player.Player;
@@ -33,12 +33,12 @@ public class PageSound extends Page {
     }
 
     @Override
-    public void draw(GuiGraphics graphics, Book book, CategoryBase category, EntryBase entry, int pageLeft, int pageTop, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
+    public void draw(GuiGraphicsExtractor graphics, Book book, CategoryBase category, EntryBase entry, int pageLeft, int pageTop, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
         pageToEmulate.draw(graphics, book, category, entry, pageLeft, pageTop, mouseX, mouseY, screen, fontRendererObj);
     }
 
     @Override
-    public void drawExtras(GuiGraphics graphics, Book book, CategoryBase category, EntryBase entry, int pageLeft, int pageTop, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
+    public void drawExtras(GuiGraphicsExtractor graphics, Book book, CategoryBase category, EntryBase entry, int pageLeft, int pageTop, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
         pageToEmulate.drawExtras(graphics, book, category, entry, pageLeft, pageTop, mouseX, mouseY, screen, fontRendererObj);
     }
 

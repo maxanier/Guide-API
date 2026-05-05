@@ -9,7 +9,7 @@ import de.maxanier.guideapi.api.entry.EntryBase;
 import de.maxanier.guideapi.core.gui.wrapper.EntryWrapper;
 import de.maxanier.guideapi.core.network.ReadingStatePayload;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
@@ -99,8 +99,8 @@ public class CategoryScreen extends BaseScreen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float renderPartialTicks) {
-        super.render(graphics, mouseX, mouseY, renderPartialTicks);
+    public void extractRenderState(@NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float renderPartialTicks) {
+        super.extractRenderState(graphics, mouseX, mouseY, renderPartialTicks);
 
         for (EntryWrapper wrapper : this.entryWrapperMap.get(currentPage())) {
             if (wrapper.canPlayerSee()) {
@@ -112,7 +112,7 @@ public class CategoryScreen extends BaseScreen {
             }
         }
 
-        graphics.drawCenteredString(font, category.getName(), pageXCenter(), screenTop() - 10, Color.WHITE.getRGB());
+        graphics.centeredText(font, category.getName(), pageXCenter(), screenTop() - 10, Color.WHITE.getRGB());
 
     }
 

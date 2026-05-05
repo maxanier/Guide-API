@@ -9,7 +9,7 @@ import de.maxanier.guideapi.api.category.CategoryBase;
 import de.maxanier.guideapi.api.entry.EntryBase;
 import de.maxanier.guideapi.api.util.GuiHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -143,12 +143,12 @@ public class SearchScreen extends BaseScreen {
     }
 
     @Override
-    public void render(@NonNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        super.render(graphics, mouseX, mouseY, partialTicks);
+    public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractRenderState(graphics, mouseX, mouseY, partialTicks);
 
         graphics.fill(searchField.getX() - 1, searchField.getY() - 1, searchField.getX() + searchField.getInnerWidth() + 1, searchField.getY() + searchField.getHeight() + 1, new Color(166, 166, 166, 128).getRGB());
         graphics.fill(searchField.getX(), searchField.getY(), searchField.getX() + searchField.getInnerWidth(), searchField.getY() + searchField.getHeight(), new Color(58, 58, 58, 128).getRGB());
-        searchField.render(graphics, mouseX, mouseY, partialTicks);
+        searchField.extractRenderState(graphics, mouseX, mouseY, partialTicks);
 
         int entryX = pageLeft() + renderXOffset;
         int entryY = pageTop() + renderYOffset;
@@ -161,7 +161,7 @@ public class SearchScreen extends BaseScreen {
                 if (GuiHelper.isMouseBetween(mouseX, mouseY, entryX, entryY, pageWidth(), 10)) {
                     if (InputConstants.isKeyDown(minecraft.getWindow(), InputConstants.KEY_LSHIFT)) {
                         List<ClientTooltipComponent> tooltips = entry.getRight().getTooltip().stream().map(c -> ClientTooltipComponent.create(c.getVisualOrderText())).toList();
-                        graphics.renderTooltip(font, tooltips, mouseX, mouseY, DefaultTooltipPositioner.INSTANCE, null);
+                        graphics.tooltip(font, tooltips, mouseX, mouseY, DefaultTooltipPositioner.INSTANCE, null);
                     }
                 }
 

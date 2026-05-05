@@ -8,7 +8,7 @@ import de.maxanier.guideapi.api.util.GuiHelper;
 import de.maxanier.guideapi.core.gui.wrapper.CategoryWrapper;
 import de.maxanier.guideapi.core.network.ReadingStatePayload;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
@@ -88,9 +88,10 @@ public class HomeScreen extends BaseScreen {
         ClientPacketDistributor.sendToServer(new ReadingStatePayload(currentPage(), Optional.empty(), Optional.empty()));
     }
 
+
     @Override
-    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float renderPartialTicks) {
-        super.render(graphics, mouseX, mouseY, renderPartialTicks);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractRenderState(graphics, mouseX, mouseY, a);
 //        ActiveTextCollector textCollector = graphics.textRenderer(GuiGraphics.HoveredTextEffects.TOOLTIP_AND_CURSOR);
 //        textCollector.accept(guiLeft + xSize / 2 + 1, guiTop + 15, book.getHeader());
 
@@ -104,7 +105,7 @@ public class HomeScreen extends BaseScreen {
             if (wrapper.canPlayerSee())
                 wrapper.drawExtras(graphics, mouseX, mouseY, this);
 
-        graphics.drawCenteredString(font, book.getTitle(), pageXCenter(), screenTop() - 10, Color.WHITE.getRGB());
+        graphics.centeredText(font, book.getTitle(), pageXCenter(), screenTop() - 10, Color.WHITE.getRGB());
 
     }
 

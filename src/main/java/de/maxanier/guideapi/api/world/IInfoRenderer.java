@@ -2,7 +2,7 @@ package de.maxanier.guideapi.api.world;
 
 import de.maxanier.guideapi.api.GuideAPI;
 import de.maxanier.guideapi.api.book.Book;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -35,7 +35,7 @@ public interface IInfoRenderer {
      * @param rayTrace - A RayTraceResult containing data about the block currently looked at
      * @param player   - The player looking at the block
      */
-    void drawInformation(GuiGraphics graphics, Book book, Level world, BlockPos pos, BlockState state, HitResult rayTrace, Player player);
+    void drawInformation(GuiGraphicsExtractor graphics, Book book, Level world, BlockPos pos, BlockState state, HitResult rayTrace, Player player);
 
     /**
      * You can implement this in your block. However, this of course creates a hard dependency on GuideAPI

@@ -9,7 +9,7 @@ import de.maxanier.guideapi.api.util.IngredientCycler;
 import de.maxanier.guideapi.api.util.SubTexture;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.context.ContextMap;
@@ -58,7 +58,7 @@ public class PageBrewingRecipe extends Page {
     }
 
     @Override
-    public void draw(GuiGraphics graphics, Book book, CategoryBase category, EntryBase entry, int pageLeft, int pageTop, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
+    public void draw(GuiGraphicsExtractor graphics, Book book, CategoryBase category, EntryBase entry, int pageLeft, int pageTop, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
         cycler.tick(screen.getMinecraft().level.getGameTime());
 
         int xStart = pageLeft - 39 + 88;

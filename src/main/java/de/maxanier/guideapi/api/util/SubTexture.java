@@ -1,7 +1,7 @@
 package de.maxanier.guideapi.api.util;
 
 import de.maxanier.guideapi.GuideMod;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 
@@ -33,11 +33,11 @@ public record SubTexture(Identifier textureLocation, int xPos, int yPos, int wid
     public static final SubTexture SMALL_BUTTON_POTION_PRESS = new SubTexture(RECIPE_ELEMENTS, 110, 0, 10, 10);
     private static final Identifier OTHER_ELEMENTS = Identifier.fromNamespaceAndPath(GuideMod.ID, "textures/gui/book_colored.png");
 
-    public void draw(GuiGraphics graphics, int drawX, int drawY, float zLevel) {
+    public void draw(GuiGraphicsExtractor graphics, int drawX, int drawY, float zLevel) {
         graphics.blit(RenderPipelines.GUI_TEXTURED, textureLocation, drawX, drawY, xPos, yPos, width, height, 256, 256);
     }
 
-    public void draw(GuiGraphics graphics, int drawX, int drawY) {
+    public void draw(GuiGraphicsExtractor graphics, int drawX, int drawY) {
         draw(graphics, drawX, drawY, 0.1f);
     }
 }

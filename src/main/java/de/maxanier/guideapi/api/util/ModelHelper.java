@@ -8,6 +8,7 @@ import net.minecraft.client.data.models.model.ItemModelUtils;
 import net.minecraft.client.data.models.model.ModelLocationUtils;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
+import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
@@ -23,7 +24,7 @@ public class ModelHelper {
         Identifier baseTexture = Identifier.fromNamespaceAndPath(GuideMod.ID, "item/book_base");
         Identifier genericPageTexture = Identifier.fromNamespaceAndPath(GuideMod.ID, "item/book_page");
         Item item = GuideAPI.getItemForBook(book).value();
-        Identifier model = ModelTemplates.TWO_LAYERED_ITEM.create(ModelLocationUtils.decorateItemModelLocation(item.toString()), TextureMapping.layered(baseTexture, genericPageTexture), generators.modelOutput);
+        Identifier model = ModelTemplates.TWO_LAYERED_ITEM.create(ModelLocationUtils.decorateItemModelLocation(item.toString()), TextureMapping.layered(new Material(baseTexture), new Material(genericPageTexture)), generators.modelOutput);
         generators.itemModelOutput.accept(item, ItemModelUtils.tintedModel(model, ItemModelUtils.constantTint(book.getThemeColor())));
 
 

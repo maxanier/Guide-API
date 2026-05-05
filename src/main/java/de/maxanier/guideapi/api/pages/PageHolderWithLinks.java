@@ -10,7 +10,7 @@ import de.maxanier.guideapi.api.util.BookHelper;
 import de.maxanier.guideapi.api.util.GuiHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
@@ -76,17 +76,17 @@ public class PageHolderWithLinks implements IPage {
     }
 
     @Override
-    public void draw(GuiGraphics graphics, Book book, CategoryBase category, EntryBase entry, int pageLeft, int pageTop, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
+    public void draw(GuiGraphicsExtractor graphics, Book book, CategoryBase category, EntryBase entry, int pageLeft, int pageTop, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
         page.draw(graphics, book, category, entry, pageLeft, pageTop, mouseX, mouseY, screen, fontRendererObj);
     }
 
     @Override
-    public void drawExtras(GuiGraphics graphics, Book book, CategoryBase category, EntryBase entry, int pageLeft, int pageTop, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
+    public void drawExtras(GuiGraphicsExtractor graphics, Book book, CategoryBase category, EntryBase entry, int pageLeft, int pageTop, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
         int ll = pageLeft + screen.pageWidth() + X_OFFSET;
         int y = pageTop;
         for (Link l : links) {
             Component t = l.getDisplayName();
-            graphics.drawString(fontRendererObj, t, ll, y, -1, true);
+            graphics.text(fontRendererObj, t, ll, y, -1, true);
             if (l.width == 0) {
                 l.width = fontRendererObj.width(t);
             }

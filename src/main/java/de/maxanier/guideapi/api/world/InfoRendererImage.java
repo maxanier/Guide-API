@@ -3,7 +3,7 @@ package de.maxanier.guideapi.api.world;
 import com.mojang.blaze3d.platform.Window;
 import de.maxanier.guideapi.api.book.Book;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
@@ -49,7 +49,7 @@ public record InfoRendererImage(
     }
 
     @Override
-    public void drawInformation(GuiGraphics graphics, Book book, Level world, BlockPos pos, BlockState state, HitResult rayTrace, Player player) {
+    public void drawInformation(GuiGraphicsExtractor graphics, Book book, Level world, BlockPos pos, BlockState state, HitResult rayTrace, Player player) {
         Window w = Minecraft.getInstance().getWindow();
         int x = w.getGuiScaledWidth() / 2 + 20;
         int y = w.getGuiScaledHeight() / 2 - imageHeight / 2;

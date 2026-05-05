@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import de.maxanier.guideapi.api.GuideBookScreen;
 import de.maxanier.guideapi.api.book.Book;
 import de.maxanier.guideapi.api.util.GuiHelper;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -78,7 +78,6 @@ public abstract class BaseScreen extends Screen implements GuideBookScreen {
             }
         } else if ((event.key() == InputConstants.KEY_ESCAPE || event.key() == this.minecraft.options.keyInventory.getKey().getValue())) { //Close not only on escape but also on pressing the inventory key
             this.onClose();
-            this.minecraft.setWindowActive(true);
             return true;
         }
         return super.keyPressed(event);
@@ -120,16 +119,16 @@ public abstract class BaseScreen extends Screen implements GuideBookScreen {
     }
 
     @Override
-    public void render(@NonNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        super.render(graphics, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractRenderState(graphics, mouseX, mouseY, a);
         if (getPageCount() > 1) {
             GuiHelper.drawCenteredStringWithoutShadow(graphics, font, Component.literal(String.format("%d/%d", currentPage() + 1, getPageCount())), pageLeft() + pageWidth / 2, pageTop() + pageHeight() + 2, book.getTextColor());
         }
     }
 
     @Override
-    public void renderBackground(@NonNull GuiGraphics graphics, int p_296491_, int p_294260_, float p_294869_) {
-        super.renderBackground(graphics, p_296491_, p_294260_, p_294869_);
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractBackground(graphics, mouseX, mouseY, a);
         graphics.blit(RenderPipelines.GUI_TEXTURED, pageTexture, screenLeft, screenTop, backgroundXOffset, backgroundYOffset, screenWidth, screenHeight, 256, 256);
         graphics.blit(RenderPipelines.GUI_TEXTURED, outlineTexture, screenLeft, screenTop, backgroundXOffset, backgroundYOffset, screenWidth, screenHeight, 256, 256, book.getThemeColor());
     }

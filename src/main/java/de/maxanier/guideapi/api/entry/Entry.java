@@ -8,7 +8,7 @@ import de.maxanier.guideapi.api.pages.IPage;
 import de.maxanier.guideapi.api.util.GuiHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.locale.Language;
@@ -41,7 +41,7 @@ public class Entry extends EntryBase {
     }
 
     @Override
-    public void draw(GuiGraphics graphics, Book book, CategoryBase category, int entryX, int entryY, int entryWidth, int entryHeight, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
+    public void draw(GuiGraphicsExtractor graphics, Book book, CategoryBase category, int entryX, int entryY, int entryWidth, int entryHeight, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
 
         // Cutting code ripped from GuiButtonExt#drawButton(...)
         FormattedText entryName = getName();
@@ -58,17 +58,17 @@ public class Entry extends EntryBase {
 
         FormattedCharSequence entryNameRe = Language.getInstance().getVisualOrder(entryName);
         if (GuiHelper.isMouseBetween(mouseX, mouseY, entryX, entryY, entryWidth, entryHeight)) {
-            graphics.drawString(fontRendererObj, entryNameRe, entryX + 12, entryY + 1, book.getTextColorHighlighted(), false);
-            graphics.drawString(fontRendererObj, entryNameRe, entryX + 12, entryY, 0x423EBC, false);
+            graphics.text(fontRendererObj, entryNameRe, entryX + 12, entryY + 1, book.getTextColorHighlighted(), false);
+            graphics.text(fontRendererObj, entryNameRe, entryX + 12, entryY, 0x423EBC, false);
         } else {
-            graphics.drawString(fontRendererObj, entryNameRe, entryX + 12, entryY, book.getTextColor(), false);
+            graphics.text(fontRendererObj, entryNameRe, entryX + 12, entryY, book.getTextColor(), false);
         }
 
 
     }
 
     @Override
-    public void drawExtras(GuiGraphics graphics, Book book, CategoryBase category, int entryX, int entryY, int entryWidth, int entryHeight, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
+    public void drawExtras(GuiGraphicsExtractor graphics, Book book, CategoryBase category, int entryX, int entryY, int entryWidth, int entryHeight, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
         // Cutting code ripped from GuiButtonExt#drawButton(...)
         int strWidth = fontRendererObj.width(getName());
         boolean cutString = strWidth > entryWidth && strWidth > fontRendererObj.width("...");

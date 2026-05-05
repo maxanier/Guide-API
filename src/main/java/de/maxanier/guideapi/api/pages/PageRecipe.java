@@ -13,7 +13,7 @@ import de.maxanier.guideapi.api.recipes.ShapelessRecipesRenderer;
 import de.maxanier.guideapi.api.util.IngredientCycler;
 import de.maxanier.guideapi.api.util.PageHelper;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -68,7 +68,7 @@ public class PageRecipe extends Page {
     }
 
     @Override
-    public void draw(GuiGraphics graphics, Book book, CategoryBase category, EntryBase entry, int pageLeft, int pageTop, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
+    public void draw(GuiGraphicsExtractor graphics, Book book, CategoryBase category, EntryBase entry, int pageLeft, int pageTop, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
         super.draw(graphics, book, category, entry, pageLeft, pageTop, mouseX, mouseY, screen, fontRendererObj);
         ingredientCycler.tick(screen.getMinecraft().level.getGameTime());
         if (invalidWarning != null) {
@@ -84,7 +84,7 @@ public class PageRecipe extends Page {
     }
 
     @Override
-    public void drawExtras(GuiGraphics graphics, Book book, CategoryBase category, EntryBase entry, int guiLeft, int guiTop, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
+    public void drawExtras(GuiGraphicsExtractor graphics, Book book, CategoryBase category, EntryBase entry, int guiLeft, int guiTop, int mouseX, int mouseY, GuideBookScreen screen, Font fontRendererObj) {
         super.drawExtras(graphics, book, category, entry, guiLeft, guiTop, mouseX, mouseY, screen, fontRendererObj);
         if (recipeRenderer != null && recipeRenderer.isValid()) {
             recipeRenderer.drawExtras(graphics, book, category, entry, guiLeft, guiTop, mouseX, mouseY, screen, fontRendererObj);

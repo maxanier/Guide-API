@@ -6,7 +6,7 @@ import de.maxanier.guideapi.api.book.Book;
 import de.maxanier.guideapi.api.category.CategoryBase;
 import de.maxanier.guideapi.api.pages.IPage;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -39,9 +39,9 @@ public abstract class EntryBase {
 
     public abstract boolean canSee(Player player, Book bookStack);
 
-    public abstract void draw(GuiGraphics graphics, Book book, CategoryBase category, int entryX, int entryY, int entryWidth, int entryHeight, int mouseX, int mouseY, GuideBookScreen screen, Font renderer);
+    public abstract void draw(GuiGraphicsExtractor graphics, Book book, CategoryBase category, int entryX, int entryY, int entryWidth, int entryHeight, int mouseX, int mouseY, GuideBookScreen screen, Font renderer);
 
-    public abstract void drawExtras(GuiGraphics graphics, Book book, CategoryBase category, int entryX, int entryY, int entryWidth, int entryHeight, int mouseX, int mouseY, GuideBookScreen screen, Font renderer);
+    public abstract void drawExtras(GuiGraphicsExtractor graphics, Book book, CategoryBase category, int entryX, int entryY, int entryWidth, int entryHeight, int mouseX, int mouseY, GuideBookScreen screen, Font renderer);
 
     @Override
     public boolean equals(Object o) {

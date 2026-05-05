@@ -4,7 +4,8 @@ import de.maxanier.guideapi.api.book.Book;
 import de.maxanier.guideapi.api.util.GuiHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -26,7 +27,7 @@ public class InfoRendererDescription implements IInfoRenderer {
     }
 
     @Override
-    public void drawInformation(GuiGraphics graphics, Book book, Level world, BlockPos pos, BlockState state, HitResult rayTrace, Player player) {
+    public void drawInformation(GuiGraphicsExtractor graphics, Book book, Level world, BlockPos pos, BlockState state, HitResult rayTrace, Player player) {
         if (tiny) {
             graphics.pose().pushMatrix();
             graphics.pose().scale(0.5F, 0.5F);
@@ -41,7 +42,7 @@ public class InfoRendererDescription implements IInfoRenderer {
 
         int y = Minecraft.getInstance().getWindow().getGuiScaledHeight() / 2 - 10;
 
-        graphics.drawWordWrap(fontRenderer, description, x * scaleMulti, y * scaleMulti, 100 * scaleMulti, -1);
+        graphics.textWithWordWrap(fontRenderer, description, x * scaleMulti, y * scaleMulti, 100 * scaleMulti, -1);
 
         if (tiny)
             graphics.pose().popMatrix();
