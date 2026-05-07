@@ -20,7 +20,7 @@ import net.minecraft.world.phys.HitResult;
  * @param textureWidth  Width of texture file
  * @param textureHeight Height of texture file
  */
-public record InfoRendererImage(
+public record InfoOverlayImage(
         Identifier image,
         int imageX,
         int imageY,
@@ -28,13 +28,13 @@ public record InfoRendererImage(
         int imageHeight,
         int textureWidth,
         int textureHeight
-) implements IInfoRenderer {
+) implements IInfoOverlay {
 
     /***
      * @param image       A 256x256 texture
      */
-    public InfoRendererImage(Identifier image, int imageX, int imageY, int imageWidth,
-                             int imageHeight) {
+    public InfoOverlayImage(Identifier image, int imageX, int imageY, int imageWidth,
+                            int imageHeight) {
         this(image, imageX, imageY, imageWidth, imageHeight, 256, 256);
     }
 
@@ -44,7 +44,7 @@ public record InfoRendererImage(
      * @param imageTextureWidth  Width of the texture
      * @param imageTextureHeight Height of the texture
      */
-    public InfoRendererImage(Identifier image, int imageTextureWidth, int imageTextureHeight) {
+    public InfoOverlayImage(Identifier image, int imageTextureWidth, int imageTextureHeight) {
         this(image, 0, 0, imageTextureWidth, imageTextureHeight, imageTextureWidth, imageTextureHeight);
     }
 

@@ -11,19 +11,20 @@ import net.minecraft.world.phys.HitResult;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
 /**
  * Used to render information on screen about a block while a player is looking at and holding the guide. This is only
  * called on the client.
  * <p>
- * Use {@link GuideAPI#registerInfoRenderer(Book, IInfoRenderer, net.minecraft.world.level.block.Block...)} to register your
+ * Use {@link GuideAPI#registerInfoRenderer(Book, Supplier, BlockIdentifier...)} to register your
  * handler. You can also implement {@link Block} on a block.
  * <p>
  * Some example usages can be found in {@link de.maxanier.guideapi.api.world}
  * <p>
  * You can display recipes, information about what a block does, etc
  */
-public interface IInfoRenderer {
+public interface IInfoOverlay {
 
     /**
      * Draws information on screen while the player is holding the guide and looking at the block.
@@ -49,7 +50,7 @@ public interface IInfoRenderer {
         Book getBook();
 
         /**
-         * Gets an IInfoRenderer for a block. Make sure that the book is yours.
+         * Gets an {@link IInfoOverlay} for a block. Make sure that the book is yours.
          *
          * @param book     - The book that is held
          * @param world    - The current world
@@ -60,6 +61,6 @@ public interface IInfoRenderer {
          * @return an IInfoRenderer for this block. If no IInfoRenderer is needed, return null.
          */
         @Nullable
-        IInfoRenderer getInfoRenderer(Book book, Level world, BlockPos pos, BlockState state, HitResult rayTrace, Player player);
+        IInfoOverlay getInfoOverlay(Book book, Level world, BlockPos pos, BlockState state, HitResult rayTrace, Player player);
     }
 }

@@ -60,7 +60,7 @@ public record GuideMod(IEventBus modBus) {
         }
         for (Pair<Book, IGuideBook> pair : AnnotationHandler.BOOK_CLASSES) {
             IGuideBook guide = pair.getRight();
-            guide.registerInfoRenderer(pair.getLeft());
+            guide.registerInfoOverlays(pair.getLeft());
         }
     }
 }

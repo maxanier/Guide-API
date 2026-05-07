@@ -36,7 +36,7 @@ public class TestBook2 implements IGuideBook {
     @Override
     public Book buildBook() {
         BookBinder binder = new BookBinder(ID);
-        binder.setAuthor(Component.literal("TehNut")).setThemeColor(ARGB.color(80, 50, 5)).setTextColor(ARGB.color(50, 0, 0), ARGB.color(60, 60, 60)).setItemName(Component.literal("Display Name")).setHeader(Component.literal("Hello there")).setSpawnWithBook().setGuideTitle(Component.literal("Title message")).setContentProvider(this::buildContent);
+        binder.setAuthor(Component.literal("TehNut")).setThemeColor(ARGB.color(80, 50, 5)).setTextColor(ARGB.color(70, 20, 20), ARGB.color(160, 60, 60)).setItemName(Component.literal("Display Name")).setHeader(Component.literal("Hello there")).setSpawnWithBook().setGuideTitle(Component.literal("Title message")).setContentProvider(this::buildContent);
 
 
         return (book = binder.build());

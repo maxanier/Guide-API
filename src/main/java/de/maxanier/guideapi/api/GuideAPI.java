@@ -7,7 +7,7 @@ import com.google.common.collect.Maps;
 import de.maxanier.guideapi.api.book.Book;
 import de.maxanier.guideapi.api.book.IGuideBook;
 import de.maxanier.guideapi.api.world.BlockIdentifier;
-import de.maxanier.guideapi.api.world.IInfoRenderer;
+import de.maxanier.guideapi.api.world.IInfoOverlay;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
@@ -19,12 +19,13 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class GuideAPI {
 
     private static final Map<Identifier, Book> BOOKS = Maps.newHashMap();
     private static final Map<Book, Holder<Item>> BOOK_TO_ITEM = Maps.newHashMap();
-    private static final Map<Book, List<Pair<BlockIdentifier, IInfoRenderer>>> INFO_RENDERERS = Maps.newHashMap();
+    private static final Map<Book, List<Pair<BlockIdentifier, Supplier<IInfoOverlay>>>> INFO_OVERLAYS = Maps.newHashMap();
     private static final List<Book> indexedBooks = Lists.newArrayList();
 
     /**
@@ -35,29 +36,29 @@ public class GuideAPI {
     }
 
     /**
-     * Registers an IInfoRenderer. Do this from {@link IGuideBook#registerInfoRenderer(Book)}
+     * Registers an IInfoRenderer. Do this from {@link IGuideBook#registerInfoOverlays(Book)}
      *
      * @param infoRenderer - The renderer to register
      * @param blocks       - The blocks that this should draw for
      */
-    public static void registerInfoRenderer(Book book, IInfoRenderer infoRenderer, Block... blocks) {
-        registerInfoRenderer(book, infoRenderer, new BlockIdentifier(blocks));
+    public static void registerInfoOverlay(Book book, Supplier<IInfoOverlay> infoRenderer, Block... blocks) {
+        registerInfoOverlay(book, infoRenderer, new BlockIdentifier(blocks));
     }
 
-    public static void registerInfoRenderer(Book book, IInfoRenderer infoRenderer, TagKey<Block> blocks) {
-        registerInfoRenderer(book, infoRenderer, new BlockIdentifier(blocks));
+    public static void registerInfoOverlay(Book book, Supplier<IInfoOverlay> infoRenderer, TagKey<Block> blocks) {
+        registerInfoOverlay(book, infoRenderer, new BlockIdentifier(blocks));
     }
 
-    public static void registerInfoRenderer(Book book, IInfoRenderer infoRenderer, Holder<Block> block) {
-        registerInfoRenderer(book, infoRenderer, new BlockIdentifier(block));
+    public static void registerInfoOverlay(Book book, Supplier<IInfoOverlay> infoRenderer, Holder<Block> block) {
+        registerInfoOverlay(book, infoRenderer, new BlockIdentifier(block));
     }
 
-    private static void registerInfoRenderer(Book book, IInfoRenderer infoRenderer, BlockIdentifier... blocks) {
-        if (!INFO_RENDERERS.containsKey(book))
-            INFO_RENDERERS.put(book, new ArrayList<>());
+    private static void registerInfoOverlay(Book book, Supplier<IInfoOverlay> infoRenderer, BlockIdentifier... blocks) {
+        if (!INFO_OVERLAYS.containsKey(book))
+            INFO_OVERLAYS.put(book, new ArrayList<>());
 
         for (BlockIdentifier block : blocks)
-            INFO_RENDERERS.get(book).add(Pair.of(block, infoRenderer));
+            INFO_OVERLAYS.get(book).add(Pair.of(block, infoRenderer));
     }
 
     public static void initialize() {
@@ -76,15 +77,19 @@ public class GuideAPI {
         return ImmutableList.copyOf(indexedBooks);
     }
 
+    /**
+     * Please cache the created InfoRenderer
+     *
+     * @return An InfoRenderer provided by the book for the given block or null
+     */
     @Nullable
-    public static IInfoRenderer getInfoRendererForBlock(Book book, Block block) {
-        List<Pair<BlockIdentifier, IInfoRenderer>> bookRenderers = INFO_RENDERERS.get(book);
+    public static IInfoOverlay getInfoOverlay(Book book, Block block) {
+        List<Pair<BlockIdentifier, Supplier<IInfoOverlay>>> bookRenderers = INFO_OVERLAYS.get(book);
         if (bookRenderers == null)
             return null;
-        List<IInfoRenderer> renderers = new ArrayList<>();
-        for (Pair<BlockIdentifier, IInfoRenderer> bookRenderer : bookRenderers) {
+        for (Pair<BlockIdentifier, Supplier<IInfoOverlay>> bookRenderer : bookRenderers) {
             if (bookRenderer.getLeft().matches(block)) {
-                return bookRenderer.getRight();
+                return bookRenderer.getRight().get();
             }
         }
         return null;

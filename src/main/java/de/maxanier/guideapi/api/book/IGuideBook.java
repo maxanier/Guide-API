@@ -1,7 +1,7 @@
 package de.maxanier.guideapi.api.book;
 
 import de.maxanier.guideapi.api.GuideAPI;
-import de.maxanier.guideapi.api.world.IInfoRenderer;
+import de.maxanier.guideapi.api.world.IInfoOverlay;
 import net.minecraft.core.Holder;
 import net.minecraft.world.item.Item;
 
@@ -28,9 +28,9 @@ public interface IGuideBook {
     }
 
     /**
-     * If you want to register {@link IInfoRenderer} to {@link GuideAPI}, do it in here.
+     * If you want to register {@link IInfoOverlay} to {@link GuideAPI}, do it in here.
      */
-    default void registerInfoRenderer(Book yourBook) {
+    default void registerInfoOverlays(Book yourBook) {
 
     }
 }

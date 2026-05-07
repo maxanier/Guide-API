@@ -15,9 +15,9 @@ import de.maxanier.guideapi.api.pages.PageHolderWithLinks;
 import de.maxanier.guideapi.api.util.BookHelper;
 import de.maxanier.guideapi.api.util.ItemInfoBuilder;
 import de.maxanier.guideapi.api.util.PageHelper;
-import de.maxanier.guideapi.api.world.IInfoRenderer;
-import de.maxanier.guideapi.api.world.InfoRendererDescription;
-import de.maxanier.guideapi.api.world.InfoRendererImage;
+import de.maxanier.guideapi.api.world.IInfoOverlay;
+import de.maxanier.guideapi.api.world.InfoOverlayText;
+import de.maxanier.guideapi.api.world.InfoOverlayImage;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Use {@link BookHelper} , {@link ItemInfoBuilder} and {@link IInfoRenderer}
+ * Use {@link BookHelper} , {@link ItemInfoBuilder} and {@link IInfoOverlay}
  */
 @GuideBook
 public class TestBook3 implements IGuideBook {
@@ -56,9 +56,9 @@ public class TestBook3 implements IGuideBook {
     }
 
     @Override
-    public void registerInfoRenderer(Book yourBook) {
-        GuideAPI.registerInfoRenderer(yourBook, new InfoRendererDescription(new ItemStack(Blocks.COAL_BLOCK), Component.translatable("guideapi.test.blocks.compressed_blocks.hint")).setTiny(true), Blocks.COAL_BLOCK, Blocks.IRON_BLOCK, Blocks.GOLD_BLOCK);
-        GuideAPI.registerInfoRenderer(yourBook, new InfoRendererImage(Identifier.fromNamespaceAndPath(GuideMod.ID, "textures/test/testimage.png"), 64, 64), BlockTags.WOOL);
+    public void registerInfoOverlays(Book yourBook) {
+        GuideAPI.registerInfoOverlay(yourBook, () -> new InfoOverlayText(new ItemStack(Blocks.COAL_BLOCK), Component.translatable("guideapi.test.blocks.compressed_blocks.hint")).setTiny(true), Blocks.COAL_BLOCK, Blocks.IRON_BLOCK, Blocks.GOLD_BLOCK);
+        GuideAPI.registerInfoOverlay(yourBook, () -> new InfoOverlayImage(Identifier.fromNamespaceAndPath(GuideMod.ID, "textures/test/testimage.png"), 64, 64), BlockTags.WOOL);
     }
 
     private void buildContent(RegistryAccess registryAccess, List<CategoryBase> categories) {

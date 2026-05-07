@@ -5,7 +5,6 @@ import de.maxanier.guideapi.api.util.GuiHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -14,14 +13,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 
-public class InfoRendererDescription implements IInfoRenderer {
+public class InfoOverlayText implements IInfoOverlay {
 
     private final ItemStack itemStack;
     private final Component description;
     private boolean tiny;
     private int yOffset;
 
-    public InfoRendererDescription(ItemStack stack, Component description) {
+    public InfoOverlayText(ItemStack stack, Component description) {
         this.itemStack = stack;
         this.description = description;
     }
@@ -48,12 +47,12 @@ public class InfoRendererDescription implements IInfoRenderer {
             graphics.pose().popMatrix();
     }
 
-    public InfoRendererDescription setOffsetY(int yOffset) {
+    public InfoOverlayText setOffsetY(int yOffset) {
         this.yOffset = yOffset;
         return this;
     }
 
-    public InfoRendererDescription setTiny(boolean tiny) {
+    public InfoOverlayText setTiny(boolean tiny) {
         this.tiny = tiny;
         return this;
     }

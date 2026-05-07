@@ -6,7 +6,7 @@ import de.maxanier.guideapi.api.book.Book;
 import de.maxanier.guideapi.api.book.IGuideItem;
 import de.maxanier.guideapi.api.category.CategoryBase;
 import de.maxanier.guideapi.api.world.IGuideLinked;
-import de.maxanier.guideapi.api.world.IInfoRenderer;
+import de.maxanier.guideapi.api.world.IInfoOverlay;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -32,11 +32,12 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import javax.annotation.Nullable;
 
 @EventBusSubscriber(value = Dist.CLIENT, modid = GuideMod.ID)
-public class RenderEventHandler {
+public class InfoOverlayRenderHandler {
 
     @Nullable
     private static Block cachedBlock = null;
-    private static IInfoRenderer cachedBlockInfoRenderer = null;
+    private static IInfoOverlay cachedBlockInfoRenderer = null;
+    private static Book cachedBook = null;
 
     @SubscribeEvent
     public static void renderOverlay(RenderGuiLayerEvent.Pre event) {
@@ -45,11 +46,11 @@ public class RenderEventHandler {
         if (!renderBlockInfo(event.getGuiGraphics())) {
             cachedBlock = null;
             cachedBlockInfoRenderer = null;
+            cachedBook = null;
         }
     }
 
     /**
-     * <
      *
      * @return Whether the cache should be kept
      */
@@ -109,14 +110,15 @@ public class RenderEventHandler {
             graphics.text(fontRenderer, Component.translatable("guideapi.text.linked.open").withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC), drawX, drawY + 12, 0xFFFFFFFF, true);
         }
 
-        if (block instanceof IInfoRenderer.Block) {
-            IInfoRenderer infoRenderer = ((IInfoRenderer.Block) block).getInfoRenderer(book, world, rayTracePos, state, rayTrace, player);
+        if (block instanceof IInfoOverlay.Block) {
+            IInfoOverlay infoRenderer = ((IInfoOverlay.Block) block).getInfoOverlay(book, world, rayTracePos, state, rayTrace, player);
             if (infoRenderer != null)
                 infoRenderer.drawInformation(graphics, book, world, rayTracePos, state, rayTrace, player);
         } else {
-            if (block != cachedBlock) {
-                cachedBlockInfoRenderer = GuideAPI.getInfoRendererForBlock(book, block);
+            if (block != cachedBlock || book != cachedBook) {
+                cachedBlockInfoRenderer = GuideAPI.getInfoOverlay(book, block);
                 cachedBlock = block;
+                cachedBook = book;
             }
             if (cachedBlockInfoRenderer != null) {
                 cachedBlockInfoRenderer.drawInformation(graphics, book, world, rayTracePos, state, rayTrace, player);
