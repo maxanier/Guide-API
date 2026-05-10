@@ -4,7 +4,7 @@ import de.maxanier.guideapi.api.book.Book;
 import de.maxanier.guideapi.api.book.IGuideItem;
 import de.maxanier.guideapi.api.category.CategoryBase;
 import de.maxanier.guideapi.api.entry.EntryBase;
-import de.maxanier.guideapi.core.client.ModRegistrationClient;
+import de.maxanier.guideapi.core.client.GuideModClient;
 import de.maxanier.guideapi.core.gui.CategoryScreen;
 import de.maxanier.guideapi.core.gui.EntryScreen;
 import de.maxanier.guideapi.core.gui.HomeScreen;
@@ -24,7 +24,7 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public RecipeMap getClientSyncedRecipes() {
-        return ModRegistrationClient.getSyncedRecipes();
+        return GuideModClient.getSyncedRecipes();
     }
 
     @Override

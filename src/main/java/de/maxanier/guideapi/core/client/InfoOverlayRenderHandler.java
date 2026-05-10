@@ -12,7 +12,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -93,7 +92,7 @@ public class InfoOverlayRenderHandler {
 
                 drawY -= 2;
                 drawX += 20;
-                graphics.text(fontRenderer, entry instanceof MutableComponent ? ((MutableComponent) entry).withStyle(ChatFormatting.WHITE) : entry, drawX, drawY, 0xFFFFFFFF, true);
+                graphics.text(fontRenderer, entry.copy().withStyle(ChatFormatting.WHITE), drawX, drawY, 0xFFFFFFFF, true);
                 graphics.text(fontRenderer, Component.translatable("guideapi.text.linked.open").withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC), drawX, drawY + 12, 0xFFFFFFFF, true);
             });
         }
