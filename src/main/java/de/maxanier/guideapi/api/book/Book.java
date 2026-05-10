@@ -8,16 +8,16 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 
-public class Book {
+public class Book implements IBookContentCollector {
 
     private final List<CategoryBase> categories = new ArrayList<>();
-    private final BiConsumer<RegistryAccess, List<CategoryBase>> contentProvider;
+    private final Map<Identifier, Identifier> linkedEntries = new HashMap<>();
+    private final BiConsumer<RegistryAccess, IBookContentCollector> contentProvider;
     private final Component title;
     private final Component header;
     private final Component itemName;
@@ -32,7 +32,7 @@ public class Book {
     private boolean isInitialized;
 
 
-    protected Book(BiConsumer<RegistryAccess, List<CategoryBase>> contentProvider, Component title, Component header, Component displayName, Component author, Identifier pageTexture, Identifier outlineTexture, boolean spawnWithBook, Identifier registryName, int themeColor, int colorText, int colorTextHighlight) {
+    protected Book(BiConsumer<RegistryAccess, IBookContentCollector> contentProvider, Component title, Component header, Component displayName, Component author, Identifier pageTexture, Identifier outlineTexture, boolean spawnWithBook, Identifier registryName, int themeColor, int colorText, int colorTextHighlight) {
         this.contentProvider = contentProvider;
         this.title = title;
         this.header = header;
@@ -45,6 +45,16 @@ public class Book {
         this.color_text_highlight = colorTextHighlight;
         this.spawnWithBook = spawnWithBook;
         this.registryName = registryName;
+    }
+
+    @Override
+    public void addBlockLinkedEntries(Map<Identifier, Identifier> linkedEntries) {
+        this.linkedEntries.putAll(linkedEntries);
+    }
+
+    @Override
+    public void addCategories(List<CategoryBase> categories) {
+        this.categories.addAll(categories);
     }
 
 
@@ -114,6 +124,28 @@ public class Book {
         return this.title;
     }
 
+    /**
+     * Attempt to find the given entry id in any category
+     *
+     * @return Pair of category and entry
+     */
+    public Optional<Pair<CategoryBase, EntryBase>> findEntry(Identifier entryId) {
+        for (CategoryBase category : getCategoryList()) {
+            if (category.entries.containsKey(entryId)) {
+                return Optional.of(Pair.of(category, category.getEntry(entryId)));
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * @param blockIdentifier A block id
+     * @return (Optional) Entry in this book about the given block
+     */
+    public Optional<Identifier> getLinkedEntryForBlock(Identifier blockIdentifier) {
+        return Optional.ofNullable(linkedEntries.get(blockIdentifier));
+    }
+
     @Override
     public int hashCode() {
         return getRegistryName().hashCode();
@@ -122,7 +154,7 @@ public class Book {
     public void initializeContent(RegistryAccess registryAccess) {
         if (!isInitialized) {
             LogHelper.debug("Opening book " + registryName.toString() + " for the first time -> Initializing content");
-            contentProvider.accept(registryAccess, categories);
+            contentProvider.accept(registryAccess, this);
             for (CategoryBase category : categories) {
                 for (Map.Entry<Identifier, EntryBase> resourceLocationEntryAbstractEntry : category.entries.entrySet()) {
                     if (resourceLocationEntryAbstractEntry.getValue().pageList.isEmpty()) {
@@ -153,4 +185,5 @@ public class Book {
                 .append("registryName", registryName)
                 .toString();
     }
+
 }

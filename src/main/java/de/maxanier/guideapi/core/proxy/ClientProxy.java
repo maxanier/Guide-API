@@ -1,7 +1,6 @@
 package de.maxanier.guideapi.core.proxy;
 
 import de.maxanier.guideapi.api.book.Book;
-import de.maxanier.guideapi.api.book.BookEvent;
 import de.maxanier.guideapi.api.book.IGuideItem;
 import de.maxanier.guideapi.api.category.CategoryBase;
 import de.maxanier.guideapi.api.entry.EntryBase;
@@ -18,7 +17,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.item.crafting.RecipeMap;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.Optional;
 
@@ -40,13 +38,6 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void openEntry(Book book, CategoryBase categoryAbstract, EntryBase entryAbstract, Player player) {
-        BookEvent.Open event = new BookEvent.Open(book, player);
-        NeoForge.EVENT_BUS.post(event);
-        if (event.isCanceled()) {
-            player.sendOverlayMessage(event.getCanceledText());
-            return;
-        }
-
         Minecraft.getInstance().setScreen(new EntryScreen(book, categoryAbstract, entryAbstract, player));
     }
 

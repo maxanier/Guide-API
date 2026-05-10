@@ -1,11 +1,11 @@
 package de.maxanier.guideapi.test;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import de.maxanier.guideapi.GuideMod;
 import de.maxanier.guideapi.api.GuideBook;
 import de.maxanier.guideapi.api.book.Book;
 import de.maxanier.guideapi.api.book.BookBinder;
+import de.maxanier.guideapi.api.book.IBookContentCollector;
 import de.maxanier.guideapi.api.book.IGuideBook;
 import de.maxanier.guideapi.api.category.CategoryBase;
 import de.maxanier.guideapi.api.category.CategoryItemStack;
@@ -28,6 +28,8 @@ import net.minecraft.world.item.crafting.Ingredient;
 
 import javax.annotation.Nullable;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,9 +47,9 @@ public class TestBook implements IGuideBook {
         return (book = binder.build());
     }
 
-    private void buildContent(RegistryAccess registryAccess, List<CategoryBase> categories) {
-
-        Map<Identifier, EntryBase> entries = Maps.newHashMap();
+    private void buildContent(RegistryAccess registryAccess, IBookContentCollector bookContentCollector) {
+        List<CategoryBase> categories = new ArrayList<>();
+        Map<Identifier, EntryBase> entries = new HashMap<>();
 
         List<IPage> pages = Lists.newArrayList();
         pages.add(new PageText(Component.literal("Hello, this is\nsome text with a new line.")));
@@ -86,5 +88,6 @@ public class TestBook implements IGuideBook {
         categories.add(new CategoryItemStack(entries, Component.translatable("guideapi.test.category"), new ItemStack(Items.BONE_MEAL)));
         categories.add(new CategoryItemStack(entries, Component.translatable("guideapi.test.category"), new ItemStack(Items.WHEAT)));
 
+        bookContentCollector.addCategories(categories);
     }
 }

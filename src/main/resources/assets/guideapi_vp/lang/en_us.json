@@ -23,6 +23,7 @@
   "guideapi.test.blocks.compressed_blocks.text": "Crafted from %d ingots",
   "guideapi.test.blocks.compressed_blocks": "Compressed blocks",
   "guideapi.test.blocks.compressed_blocks.hint": "Consists of compressed items",
+  "guideapi.test.blocks.oak_log.text": "These are logs",
   "guideapi.test.items.ingots.text": "There are many ingots in the game",
   "guideapi.test.items.ingots": "Ingots",
   "guideapi.test.items.apple.text": "Apples are healthy",

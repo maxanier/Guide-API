@@ -1,7 +1,6 @@
 package de.maxanier.guideapi.api.book;
 
 import de.maxanier.guideapi.GuideMod;
-import de.maxanier.guideapi.api.category.CategoryBase;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -12,13 +11,12 @@ import net.neoforged.neoforgespi.language.IModInfo;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.function.BiConsumer;
 
 public class BookBinder {
 
     private final Identifier registryName;
-    private BiConsumer<RegistryAccess, List<CategoryBase>> contentProvider;
+    private BiConsumer<RegistryAccess, IBookContentCollector> contentProvider;
     @Nonnull
     private Component guideTitle = Component.translatable("item.guideapi.book");
     @Nullable
@@ -83,10 +81,10 @@ public class BookBinder {
      * Set a consumer (method) that will generate the content for your book and add it to the provided list
      * This will be called on client side when the book is opened for the first time.
      *
-     * @param contentProvider The consumer. Categories are displayed in which they are added to the provided list
+     * @param contentProvider
      * @return the builder instance for chaining.
      */
-    public BookBinder setContentProvider(BiConsumer<RegistryAccess, List<CategoryBase>> contentProvider) {
+    public BookBinder setContentProvider(BiConsumer<RegistryAccess, IBookContentCollector> contentProvider) {
         this.contentProvider = contentProvider;
         return this;
     }

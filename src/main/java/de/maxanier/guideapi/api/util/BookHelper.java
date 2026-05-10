@@ -1,23 +1,27 @@
 package de.maxanier.guideapi.api.util;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import de.maxanier.guideapi.GuideMod;
+import de.maxanier.guideapi.api.book.IBookContentCollector;
 import de.maxanier.guideapi.api.category.CategoryBase;
 import de.maxanier.guideapi.api.entry.EntryBase;
 import de.maxanier.guideapi.api.pages.IPage;
 import de.maxanier.guideapi.api.pages.PageHolderWithLinks;
 import de.maxanier.guideapi.api.pages.PageRecipe;
 import de.maxanier.guideapi.api.recipes.IRecipeRenderer;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.brewing.BrewingRecipe;
 import net.neoforged.neoforge.common.crafting.CompoundIngredient;
@@ -26,10 +30,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -42,16 +43,19 @@ import java.util.function.Function;
 public class BookHelper {
 
     private final Logger LOGGER;
+    private final RegistryAccess registryAccess;
     private final String modid;
     private final String baseKey;
     private final Function<RecipeHolder<?>, IRecipeRenderer> recipeRendererSupplier;
     private final BiFunction<String, Object[], Component> localizer;
     private final Function<Block, String> blockNameMapper;
     private final Function<Item, String> itemNameMapper;
-    private final Map<Identifier, EntryBase> links = Maps.newHashMap();
+    private final Map<Identifier, EntryBase> links = new HashMap<>();
+    private final Map<Identifier, Identifier> blockLinks = new HashMap<>();
 
-    private BookHelper(String modid, String baseKey, Function<RecipeHolder<?>, IRecipeRenderer> recipeRendererSupplier, BiFunction<String, Object[], Component> localizer, Function<Block, String> blockNameMapper, Function<Item, String> itemNameMapper) {
+    private BookHelper(RegistryAccess registryAccess, String modid, String baseKey, Function<RecipeHolder<?>, IRecipeRenderer> recipeRendererSupplier, BiFunction<String, Object[], Component> localizer, Function<Block, String> blockNameMapper, Function<Item, String> itemNameMapper) {
         LOGGER = LogManager.getLogger("BookHelper_" + modid);
+        this.registryAccess = registryAccess;
         this.modid = modid;
         this.baseKey = baseKey;
         this.recipeRendererSupplier = recipeRendererSupplier;
@@ -101,6 +105,26 @@ public class BookHelper {
     }
 
     /**
+     * Add a link between block and entry in the book
+     * Don't forget to call {@link BookHelper#registerBlockLinkedEntries(IBookContentCollector)} at the end
+     */
+    public void addBlockLink(Identifier blockId, Identifier entryId) {
+        this.blockLinks.put(blockId, entryId);
+    }
+
+    /**
+     * Cycles through all the matching item stacks
+     *
+     * @param mainStack is used to determine the translation keys.
+     * @return A ItemInfoBuilder for the given itemsstacks.
+     */
+    public ItemInfoBuilder info(Ingredient ingredient, ItemStack mainStack) {
+        Item item = mainStack.getItem();
+        String name = itemNameMapper.apply(item);
+        return new ItemInfoBuilder(this, ingredient, mainStack, name, false);
+    }
+
+    /**
      * Return a brewing recipe that results in the given stack
      *
      * @return Null if none found
@@ -119,17 +143,32 @@ public class BookHelper {
         return new PageRecipe(id, recipeRendererSupplier);
     }
 
+    public ItemInfoBuilder info(TagKey<Item> itemTag, ItemLike mainItem) {
+        Ingredient i = Ingredient.of(registryAccess.lookupOrThrow(Registries.ITEM).getOrThrow(itemTag));
+        return info(i, new ItemStack(mainItem));
+    }
+
+    public ItemInfoBuilder infoBlock(Ingredient ingredient, Block mainBlock) {
+        String name = blockNameMapper.apply(mainBlock);
+        return new ItemInfoBuilder(this, ingredient, new ItemStack(mainBlock), name, true);
+    }
+
+    public ItemInfoBuilder infoBlocks(TagKey<Item> blockItemTag, Block mainBlock) {
+        Ingredient i = Ingredient.of(registryAccess.lookupOrThrow(Registries.ITEM).getOrThrow(blockItemTag));
+        return infoBlock(i, mainBlock);
+    }
+
     /**
-     * Cycles through all the matching item stacks
+     * The first block is used to determine the translation keys.
      *
-     * @param mainStack is used to determine the translation keys.
-     * @param block     Whether to use "block" or "item" translation keys
-     * @return A ItemInfoBuilder for the given itemsstacks.
+     * @param blocks The resulting page will cycle through the blocks in the given order
+     * @return A ItemInfoBuilder for the given blocks.
      */
-    public ItemInfoBuilder info(boolean block, Ingredient ingredient, ItemStack mainStack) {
-        Item item = mainStack.getItem();
-        String name = item instanceof BlockItem ? blockNameMapper.apply(((BlockItem) item).getBlock()) : itemNameMapper.apply(item);
-        return new ItemInfoBuilder(this, ingredient, mainStack, name, block);
+    public ItemInfoBuilder infoBlocks(Block... blocks) {
+        assert blocks.length > 0;
+        Block i0 = blocks[0];
+        String name = blockNameMapper.apply(i0);
+        return new ItemInfoBuilder(this, Ingredient.of(blocks), new ItemStack(i0), name, true);
     }
 
     /**
@@ -162,30 +201,10 @@ public class BookHelper {
     }
 
     /**
-     * The first stack is used to determine the translation keys.
-     *
-     * @param stacks The resulting page will cycle through the stacks in the given order
-     * @param block  Whether to use "block" or "item" translation keys
-     * @return A ItemInfoBuilder for the given itemsstacks.
+     * Add all collected block linked entries to the given book
      */
-    public ItemInfoBuilder info(boolean block, Item... stacks) {
-        assert stacks.length > 0;
-        Item item = stacks[0];
-        String name = item instanceof BlockItem ? blockNameMapper.apply(((BlockItem) item).getBlock()) : itemNameMapper.apply(item);
-        return new ItemInfoBuilder(this, Ingredient.of(stacks), new ItemStack(item), name, block);
-    }
-
-    /**
-     * The first block is used to determine the translation keys.
-     *
-     * @param blocks The resulting page will cycle through the blocks in the given order
-     * @return A ItemInfoBuilder for the given blocks.
-     */
-    public ItemInfoBuilder info(Block... blocks) {
-        assert blocks.length > 0;
-        Block i0 = blocks[0];
-        String name = blockNameMapper.apply(i0);
-        return new ItemInfoBuilder(this, Ingredient.of(blocks), new ItemStack(i0), name, true);
+    public void registerBlockLinkedEntries(IBookContentCollector collector) {
+        collector.addBlockLinkedEntries(this.blockLinks);
     }
 
     public Component localize(String key, Object... formats) {
@@ -222,8 +241,8 @@ public class BookHelper {
             this.baseKey = "guide." + modid;
         }
 
-        public BookHelper build() {
-            return new BookHelper(modid, baseKey, recipeRendererSupplier, localizer, blockNameMapper, itemNameMapper);
+        public BookHelper build(RegistryAccess access) {
+            return new BookHelper(access, modid, baseKey, recipeRendererSupplier, localizer, blockNameMapper, itemNameMapper);
         }
 
         /**

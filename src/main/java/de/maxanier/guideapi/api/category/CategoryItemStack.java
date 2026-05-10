@@ -6,13 +6,13 @@ import de.maxanier.guideapi.api.entry.EntryBase;
 import de.maxanier.guideapi.api.util.GuiHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 public class CategoryItemStack extends Category {
 
@@ -39,11 +39,9 @@ public class CategoryItemStack extends Category {
             graphics.setTooltipForNextFrame(
                     Minecraft.getInstance().font,
                     this.getTooltip(),
-                    itemStack.getTooltipImage(),
-                    itemStack,
+                    Optional.empty(),
                     mouseX,
-                    mouseY,
-                    itemStack.get(DataComponents.TOOLTIP_STYLE)
+                    mouseY
             );
         }
     }

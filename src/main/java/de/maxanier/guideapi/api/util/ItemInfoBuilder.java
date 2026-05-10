@@ -5,11 +5,14 @@ import de.maxanier.guideapi.api.entry.EntryBase;
 import de.maxanier.guideapi.api.entry.EntryItemStack;
 import de.maxanier.guideapi.api.pages.IPage;
 import de.maxanier.guideapi.api.pages.PageBrewingRecipe;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.brewing.BrewingRecipe;
 
 import javax.annotation.Nonnull;
@@ -41,7 +44,7 @@ public class ItemInfoBuilder {
     /**
      * @param name       name used for translation keys
      * @param ingredient The relevant item stack. Used for display and strings.
-     * @param block      If this entry is a about a block or not
+     * @param block      Whether this entry is about a block
      */
     protected ItemInfoBuilder(BookHelper bookHelper, Ingredient ingredient, ItemStack mainStack, String name, boolean block) {
         this.ingredient = ingredient;
@@ -92,7 +95,11 @@ public class ItemInfoBuilder {
         }
         pages.addAll(this.additionalPages);
         if (links != null) bookHelper.addLinks(pages, links);
-        entries.put(Identifier.fromNamespaceAndPath(this.bookHelper.getModid(), base), new EntryItemStack(pages, customName ? Component.translatable(base) : mainStack.getItemName(), mainStack));
+        Identifier entryId = Identifier.fromNamespaceAndPath(this.bookHelper.getModid(), base);
+        if (block) {
+            ingredient.getValues().stream().map(Holder::value).filter(item -> item instanceof BlockItem).map(item -> ((BlockItem) item).getBlock()).map(Block::builtInRegistryHolder).map(Holder.Reference::getKey).filter(Objects::nonNull).forEach(blockId -> bookHelper.addBlockLink(blockId.identifier(), entryId));
+        }
+        entries.put(entryId, new EntryItemStack(pages, customName ? Component.translatable(base) : mainStack.getItemName(), mainStack));
     }
 
     /**

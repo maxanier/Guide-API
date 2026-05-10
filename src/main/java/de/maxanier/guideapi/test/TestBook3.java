@@ -5,6 +5,7 @@ import de.maxanier.guideapi.api.GuideAPI;
 import de.maxanier.guideapi.api.GuideBook;
 import de.maxanier.guideapi.api.book.Book;
 import de.maxanier.guideapi.api.book.BookBinder;
+import de.maxanier.guideapi.api.book.IBookContentCollector;
 import de.maxanier.guideapi.api.book.IGuideBook;
 import de.maxanier.guideapi.api.category.CategoryBase;
 import de.maxanier.guideapi.api.category.CategoryItemStack;
@@ -16,10 +17,9 @@ import de.maxanier.guideapi.api.util.BookHelper;
 import de.maxanier.guideapi.api.util.ItemInfoBuilder;
 import de.maxanier.guideapi.api.util.PageHelper;
 import de.maxanier.guideapi.api.world.IInfoOverlay;
-import de.maxanier.guideapi.api.world.InfoOverlayText;
 import de.maxanier.guideapi.api.world.InfoOverlayImage;
+import de.maxanier.guideapi.api.world.InfoOverlayText;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
@@ -27,7 +27,6 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Blocks;
 
 import javax.annotation.Nullable;
@@ -61,19 +60,20 @@ public class TestBook3 implements IGuideBook {
         GuideAPI.registerInfoOverlay(yourBook, () -> new InfoOverlayImage(Identifier.fromNamespaceAndPath(GuideMod.ID, "textures/test/testimage.png"), 64, 64), BlockTags.WOOL);
     }
 
-    private void buildContent(RegistryAccess registryAccess, List<CategoryBase> categories) {
-        BookHelper helper = new BookHelper.Builder(GuideMod.ID).setBaseKey("guideapi.test").build();
-
+    private void buildContent(RegistryAccess registryAccess, IBookContentCollector bookContent) {
+        BookHelper helper = new BookHelper.Builder(GuideMod.ID).setBaseKey("guideapi.test").build(registryAccess);
+        List<CategoryBase> categories = new ArrayList<>();
         CategoryBase blocks = new CategoryItemStack(Component.literal("Blocks"), new ItemStack(Blocks.STONE)).withKeyBase(GuideMod.ID);
         Map<Identifier, EntryBase> blockEntries = new LinkedHashMap<>();
-        helper.info(Blocks.COAL_BLOCK, Blocks.IRON_BLOCK, Blocks.GOLD_BLOCK).recipes(Identifier.fromNamespaceAndPath("minecraft", "coal_block"), Identifier.withDefaultNamespace("iron_block"), Identifier.withDefaultNamespace("gold_block")).useCustomEntryName().setKeyName("compressed_blocks").setLinks(Identifier.fromNamespaceAndPath(GuideMod.ID, "guideapi.test.items.ingots")).setFormats(9).build(blockEntries);
+        helper.infoBlocks(Blocks.COAL_BLOCK, Blocks.IRON_BLOCK, Blocks.GOLD_BLOCK).recipes(Identifier.fromNamespaceAndPath("minecraft", "coal_block"), Identifier.withDefaultNamespace("iron_block"), Identifier.withDefaultNamespace("gold_block")).useCustomEntryName().setKeyName("compressed_blocks").setLinks(Identifier.fromNamespaceAndPath(GuideMod.ID, "guideapi.test.items.ingots")).setFormats(9).build(blockEntries);
+        helper.infoBlocks(ItemTags.LOGS, Blocks.OAK_LOG).build(blockEntries);
         blocks.addEntries(blockEntries);
         categories.add(blocks);
 
         CategoryBase items = new CategoryItemStack(Component.literal("Items"), new ItemStack(Items.IRON_AXE)).withKeyBase(GuideMod.ID);
         Map<Identifier, EntryBase> itemEntries = new LinkedHashMap<>();
         helper.info(Items.APPLE).brewingStacks().build(itemEntries);
-        helper.info(false, Ingredient.of(registryAccess.lookupOrThrow(Registries.ITEM).getOrThrow(ItemTags.WOOL)), new ItemStack(Items.IRON_INGOT)).useCustomEntryName().recipes(Identifier.withDefaultNamespace("iron_ingot_from_nuggets"), Identifier.withDefaultNamespace("gold_ingot_from_nuggets")).setKeyName("ingots").setLinks(Identifier.fromNamespaceAndPath(GuideMod.ID, "guideapi.test.blocks.compressed_blocks")).build(itemEntries);
+        helper.info(ItemTags.IRON_TOOL_MATERIALS, Items.IRON_INGOT).useCustomEntryName().recipes(Identifier.withDefaultNamespace("iron_ingot_from_nuggets"), Identifier.withDefaultNamespace("gold_ingot_from_nuggets")).setKeyName("ingots").setLinks(Identifier.fromNamespaceAndPath(GuideMod.ID, "guideapi.test.blocks.compressed_blocks")).build(itemEntries);
         List<IPage> troublePages = new ArrayList<>();
         troublePages.addAll(PageHelper.pagesForLongText(Component.translatable("guideapi.test.entry")));
         helper.addLinks(troublePages, new PageHolderWithLinks.URLLink(Component.literal("Troubleshooting"), URI.create("github.com/maxanier/Guide-API")), blockEntries.values().stream().findFirst().orElse(null));
@@ -83,5 +83,7 @@ public class TestBook3 implements IGuideBook {
         categories.add(items);
 
         helper.registerLinkablePages(categories);
+        bookContent.addCategories(categories);
+        helper.registerBlockLinkedEntries(bookContent);
     }
 }

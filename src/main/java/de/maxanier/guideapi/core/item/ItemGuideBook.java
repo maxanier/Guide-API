@@ -4,11 +4,10 @@ import de.maxanier.guideapi.GuideMod;
 import de.maxanier.guideapi.api.book.Book;
 import de.maxanier.guideapi.api.book.BookEvent;
 import de.maxanier.guideapi.api.book.IGuideItem;
-import de.maxanier.guideapi.api.category.CategoryBase;
-import de.maxanier.guideapi.api.world.IGuideLinked;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Util;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -20,6 +19,7 @@ import net.minecraft.world.item.TooltipFlag.Default;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.NeoForge;
 
@@ -94,26 +94,29 @@ public class ItemGuideBook extends Item implements IGuideItem {
         if (!context.getLevel().isClientSide() || !context.isSecondaryUseActive())
             return InteractionResult.PASS;
 
-        ItemStack stack = context.getItemInHand();
+        Player player = context.getPlayer();
+        if (player == null) {
+            return InteractionResult.PASS;
+        }
+
         BlockState state = context.getLevel().getBlockState(context.getClickedPos());
 
-        if (state.getBlock() instanceof IGuideLinked guideLinked) {
-            Identifier entryKey = guideLinked.getLinkedEntry(context.getLevel(), context.getClickedPos(), context.getPlayer(), stack);
-            if (entryKey == null)
-                return InteractionResult.FAIL;
-
-            for (CategoryBase category : book.getCategoryList()) {
-                if (category.entries.containsKey(entryKey)) {
-                    GuideMod.PROXY.openEntry(book, category, category.entries.get(entryKey), context.getPlayer());
-                    return InteractionResult.SUCCESS;
+        ResourceKey<Block> blockKey = state.typeHolder().getKey();
+        if (blockKey != null) {
+            return book.getLinkedEntryForBlock(blockKey.identifier()).flatMap(book::findEntry).map(entry -> {
+                BookEvent.Open event = new BookEvent.Open(book, player);
+                NeoForge.EVENT_BUS.post(event);
+                if (event.isCanceled()) {
+                    player.sendOverlayMessage(event.getCanceledText());
+                    return InteractionResult.FAIL;
                 }
-            }
+                GuideMod.PROXY.openEntry(book, entry.getLeft(), entry.getRight(), player);
+                return InteractionResult.SUCCESS;
+            }).orElse(InteractionResult.PASS);
         }
 
         return InteractionResult.PASS;
     }
-
-    // IGuideItem
 
     /**
      * Set a custom translation key

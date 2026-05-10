@@ -4,6 +4,7 @@ import de.maxanier.guideapi.GuideMod;
 import de.maxanier.guideapi.api.GuideBook;
 import de.maxanier.guideapi.api.book.Book;
 import de.maxanier.guideapi.api.book.BookBinder;
+import de.maxanier.guideapi.api.book.IBookContentCollector;
 import de.maxanier.guideapi.api.book.IGuideBook;
 import de.maxanier.guideapi.api.category.CategoryBase;
 import de.maxanier.guideapi.api.category.CategoryItemStack;
@@ -24,6 +25,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.common.brewing.BrewingRecipe;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 @GuideBook
@@ -42,7 +44,8 @@ public class TestBook2 implements IGuideBook {
         return (book = binder.build());
     }
 
-    private void buildContent(RegistryAccess registryAccess, List<CategoryBase> categories) {
+    private void buildContent(RegistryAccess registryAccess, IBookContentCollector contentCollector) {
+        List<CategoryBase> categories = new ArrayList<>();
         CategoryBase testCategory = new CategoryItemStack(Component.translatable("guideapi.test.category"), new ItemStack(Items.BLUE_BANNER)).withKeyBase("guideapi");
         testCategory.addEntry("entry", new EntryItemStack(Component.translatable("guideapi.test.entry"), new ItemStack(Items.POTATO)));
         testCategory.getEntry("entry").addPage(new PageText(Component.literal("Hello, this is\nsome text")));
@@ -57,5 +60,7 @@ public class TestBook2 implements IGuideBook {
         testCategory.addEntry("unicode", new EntryItemStack(Component.literal("Творческая книга"), new ItemStack(Items.BEEF)));
         testCategory.getEntry("unicode").addPage(new PageText(Component.literal("Творческая книга \u0F06")));
         categories.add(testCategory);
+
+        contentCollector.addCategories(categories);
     }
 }
